@@ -1,0 +1,118 @@
+#stm makefile
+
+PROJECT          := stm_xx
+OUTPUT_DIRECTORY := _build
+SDK_ROOT      := ../..
+
+
+#link path
+LINKER_SCRIPT  := $(SDK_ROOT)/RUI/build/stm/cmsis/arm-gcc/stm32l1xx_md_flash.ld
+
+
+# Source files common to all targets
+
+SRC_FILES += \
+  $(SDK_ROOT)/RUI/build/stm/cmsis/system_stm32l1xx.c \
+  $(SDK_ROOT)/RUI/Source/stm/app.c \
+
+
+
+ASM_FILES += \
+  $(SDK_ROOT)/RUI/build/stm/cmsis/arm-gcc/startup_stm32l1xx_md.s \
+
+OBJ_FILES += $(SRC_FILES:%.c=%.o)
+
+ASM_OBJ_FILES += $(ASM_FILES:%.s=%.o)
+
+
+# Include folders common to all targets
+
+
+INC_FOLDERS += \
+  -I $(SDK_ROOT)/RUI/build/stm/cmsis \
+  -I $(SDK_ROOT)/RUI/Source/stm/hal/cmsis \
+  -I $(SDK_ROOT)/RUI/Source/stm/hal/STM32L1xx_HAL_Driver/Inc \
+  -I $(SDK_ROOT)/RUI/Source/stm/hal/STM32L1xx_HAL_Driver/Inc/Legacy \
+  -I $(SDK_ROOT)/RUI/Source/stm/app \
+  -I $(SDK_ROOT)/RUI/Source/stm/board \
+  -I $(SDK_ROOT)/RUI/Source/stm/external/utilities \
+  -I $(SDK_ROOT)/RUI/Source/external/JSON \
+  -I $(SDK_ROOT)/RUI/Source/external/LoRaWAN/radio \
+  -I $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac \
+  -I $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region \
+  -I $(SDK_ROOT)/RUI/Source/external/LoRaWAN/radio/sx1276 \
+  -I $(SDK_ROOT)/RUI/Source/external/LoRaWAN/system/crypto \
+  -I $(SDK_ROOT)/RUI/Source/external/LoRaWAN/system \
+
+
+
+# Libraries common to all targets
+LIB_FILES += 
+
+
+# C flags common to all targets
+
+CFLAGS += -mcpu=cortex-m3
+CFLAGS += -mthumb -mabi=aapcs
+CFLAGS += -Wall
+CFLAGS += -mfloat-abi=soft
+CFLAGS += -DSTM32L151xB
+CFLAGS += $(INC_FOLDERS)
+
+# C++ flags common to all targets
+CXX_FLAGS += -mthumb
+
+
+# Assembler flags common to all targets
+ASFLAGS     += -Wall -mcpu=cortex-m3 -mthumb
+
+# ld flags
+LDFLAGS += -T $(LINKER_SCRIPT) -lgcc -lc -lm -lrdimon
+
+
+AS      = arm-none-eabi-gcc
+CC      = arm-none-eabi-gcc
+CPP     = arm-none-eabi-g++
+LD      = arm-none-eabi-gcc
+ELF2BIN = arm-none-eabi-objcopy
+OBJCP       = arm-none-eabi-objcopy
+
+
+
+.PHONY: all
+
+all: $(OUTPUT_DIRECTORY) $(PROJECT).bin $(PROJECT).hex
+	@echo "build done!"
+
+
+$(OUTPUT_DIRECTORY):
+	$(shell rm -rf $(OUTPUT_DIRECTORY);mkdir $(OUTPUT_DIRECTORY))
+
+
+$(PROJECT).hex: $(PROJECT).elf
+	@$(OBJCP) -Oihex $< $@
+	@mv $@  $(SDK_ROOT)/RUI/build/$(OUTPUT_DIRECTORY)/	
+	@mv *.elf  $(SDK_ROOT)/RUI/build/$(OUTPUT_DIRECTORY)/
+	@mv *.bin  $(SDK_ROOT)/RUI/build/$(OUTPUT_DIRECTORY)/
+	@mv $(OBJ_FILES)  $(SDK_ROOT)/RUI/build/$(OUTPUT_DIRECTORY)/
+	@mv $(ASM_OBJ_FILES)  $(SDK_ROOT)/RUI/build/$(OUTPUT_DIRECTORY)/
+	@echo "Out objects in RUI/build/$(OUTPUT_DIRECTORY)/"
+
+$(PROJECT).bin: $(PROJECT).elf
+	@$(OBJCP) -Obinary $< $@
+
+$(PROJECT).elf: $(OBJ_FILES) $(ASM_OBJ_FILES)
+	@echo "Linking"
+	@$(LD) $+ $(LDFLAGS) $(LIB_FILES) -o $@
+
+
+$(OBJ_FILES): %.o:%.c
+	@echo "Compile: $(notdir $<)"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(ASM_OBJ_FILES):%.o:%.s
+	@echo "Compile: $(notdir $<)"
+	@$(AS) $(ASFLAGS) -c $< -o $@
+
+	
+

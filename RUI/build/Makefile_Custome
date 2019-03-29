@@ -1,0 +1,11 @@
+#This makefile is a customization file. User can turn on/off features and change parameters 
+#
+#Part 1 lora config
+# choose lora freq num according to the list below
+# 1------AS923   2------AU915   3------CN470   4------CN779   5------EU433
+# 6------EU868   7------IN865    8------KR920   9------US915   10------US915_Hybrid
+REGION = 0
+
+#Part 2 sleep mode
+#0------off      1------on
+SLEEP_MODE = 0
