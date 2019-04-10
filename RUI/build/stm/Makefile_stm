@@ -68,7 +68,7 @@ ASFLAGS     += -Wall -mcpu=cortex-m3 -mthumb
 
 # ld flags
 LDFLAGS += -T $(LINKER_SCRIPT) -lgcc -lc -lm -lrdimon
-
+LDFLAGS += -u _printf_float
 
 AS      = arm-none-eabi-gcc
 CC      = arm-none-eabi-gcc
