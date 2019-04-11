@@ -14,6 +14,8 @@ else ifeq (2, $(word 1, $(P)))
     include nordic/Makefile_nRF
 else ifeq (3, $(word 1, $(P)))
     include stm/Makefile_stm
+else ifeq (4, $(word 1, $(P)))
+    include stm/Makefile_stm
 endif
 
 .PHONY: clean help
@@ -54,7 +56,7 @@ help:
 *  \033[36m1. nRF52832\033[0m    * \033[35m1. bc95-g\033[0m       * \033[33m1. bme280   2. L_70_R\033[0m            *\n  \
 *  \033[36m2. nRF52840\033[0m    * \033[35m2. bg96\033[0m         * \033[33m3. lis2mdl  4. lis3dh\033[0m            *\n  \
 *  \033[36m3. stm32L151CB\033[0m * \033[35m3. m35\033[0m          * \033[33m5. opt3001\033[0m  \033[33m6. sht31\033[0m             *\n  \
-*                 * \033[35m4. sx1276\033[0m       * \033[33m7. ublox-max7  8. shtc3\033[0m          * \n  \
+*  \033[36m4. stm32l073rz\033[0m * \033[35m4. sx1276\033[0m       * \033[33m7. ublox-max7  8. shtc3\033[0m          * \n  \
 *                 *                 * \033[33m9. lps22hb\033[0m                       * \n  \
 *                                                                      *\n  \
 *  \033[32m3. Compile command  \033[0m                                                *\n  \

@@ -6,19 +6,29 @@ SDK_ROOT      := ../..
 
 
 #link path
-LINKER_SCRIPT  := $(SDK_ROOT)/RUI/build/stm/cmsis/arm-gcc/stm32l1xx_md_flash.ld
-
+ifeq (3, $(word 1, $(P)))
+  LINKER_SCRIPT  := $(SDK_ROOT)/RUI/build/stm/stm32L151CB/cmsis/arm-gcc/stm32l1xx_md_flash.ld
+else ifeq (4, $(word 1, $(P)))
+  LINKER_SCRIPT  := $(SDK_ROOT)/RUI/build/stm/stm32l073rz/cmsis/arm-gcc/stm32l073xx_flash.ld
+endif
 
 # Source files common to all targets
 
-SRC_FILES += \
-  $(SDK_ROOT)/RUI/build/stm/cmsis/system_stm32l1xx.c \
-  $(SDK_ROOT)/RUI/Source/stm/app.c \
+ifeq (3, $(word 1, $(P)))
+  SRC_FILES += $(SDK_ROOT)/RUI/build/stm/stm32L151CB/cmsis/system_stm32l1xx.c
+else ifeq (4, $(word 1, $(P)))
+  SRC_FILES += $(SDK_ROOT)/RUI/build/stm/stm32l073rz/cmsis/system_stm32l0xx.c
+endif
+  
+SRC_FILES += $(SDK_ROOT)/RUI/Source/stm/app.c
 
 
 
-ASM_FILES += \
-  $(SDK_ROOT)/RUI/build/stm/cmsis/arm-gcc/startup_stm32l1xx_md.s \
+ifeq (3, $(word 1, $(P)))
+  ASM_FILES += $(SDK_ROOT)/RUI/build/stm/stm32L151CB/cmsis/arm-gcc/startup_stm32l1xx_md.s
+else ifeq (4, $(word 1, $(P)))
+  ASM_FILES += $(SDK_ROOT)/RUI/build/stm/stm32l073rz/cmsis/arm-gcc/startup_stm32l073xx.s
+endif
 
 OBJ_FILES += $(SRC_FILES:%.c=%.o)
 
@@ -51,12 +61,15 @@ LIB_FILES +=
 
 
 # C flags common to all targets
-
+ifeq (3, $(word 1, $(P)))
+  CFLAGS += -DSTM32L151xB
+else ifeq (4, $(word 1, $(P)))
+  CFLAGS += -DSTM32L073xx
+endif
 CFLAGS += -mcpu=cortex-m3
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS += -Wall
 CFLAGS += -mfloat-abi=soft
-CFLAGS += -DSTM32L151xB
 CFLAGS += $(INC_FOLDERS)
 
 # C++ flags common to all targets
