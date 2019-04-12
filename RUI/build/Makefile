@@ -13,9 +13,9 @@ ifeq (1, $(word 1, $(P)))
 else ifeq (2, $(word 1, $(P)))
     include nordic/Makefile_nRF
 else ifeq (3, $(word 1, $(P)))
-    include stm/Makefile_stm
+    include stm/Makefile_stm32l151cb
 else ifeq (4, $(word 1, $(P)))
-    include stm/Makefile_stm
+    include stm/Makefile_stm32l073rz
 endif
 
 .PHONY: clean help
