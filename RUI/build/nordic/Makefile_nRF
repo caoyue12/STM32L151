@@ -4,7 +4,6 @@ include Makefile_Custome
 
 TARGETS          := nrf52_xxaa
 OUTPUT_DIRECTORY := _build
-SDK_ROOT      := ../..
 
 
 ifeq (1, $(word 1, $(P)))

@@ -2,7 +2,6 @@
 
 PROJECT          := stm_xx
 OUTPUT_DIRECTORY := _build
-SDK_ROOT      := ../..
 
 
 #link path

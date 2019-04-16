@@ -5,6 +5,7 @@
 
 
 PROJECT_NAME     := RUI
+SDK_ROOT      := ../..
 P :=
 NUM := $(words $(P))
 
@@ -21,7 +22,8 @@ endif
 .PHONY: clean help
 
 # clean target
-clean: 
+clean:
+	@find $(SDK_ROOT)/RUI/Source/ -name "*.o" | xargs rm -f
 	rm -rf _build
 
 # Print all targets that can be built
