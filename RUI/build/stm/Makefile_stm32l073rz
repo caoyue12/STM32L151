@@ -49,11 +49,14 @@ LIB_FILES +=
 
 # C flags common to all targets
 
+CFLAGS += -Os
 CFLAGS += -DSTM32L073xx
 CFLAGS += -mcpu=cortex-m3
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS += -Wall
 CFLAGS += -mfloat-abi=soft
+CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-exceptions
+CFLAGS += -fno-builtin -fshort-enums
 CFLAGS += $(INC_FOLDERS)
 
 # C++ flags common to all targets
@@ -65,7 +68,16 @@ ASFLAGS     += -Wall -mcpu=cortex-m3 -mthumb
 
 # ld flags
 LDFLAGS += -T $(LINKER_SCRIPT) -lgcc -lc -lm -lrdimon
+LDFLAGS += -Os
 LDFLAGS += -u _printf_float
+LDFLAGS += -DSTM32L073xx
+LDFLAGS += -mcpu=cortex-m3
+LDFLAGS += -mthumb -mabi=aapcs
+LDFLAGS += -Wall
+LDFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-exceptions
+LDFLAGS += -fno-builtin -fshort-enums
+LDFLAGS += -mfloat-abi=soft
+
 
 AS      = arm-none-eabi-gcc
 CC      = arm-none-eabi-gcc
