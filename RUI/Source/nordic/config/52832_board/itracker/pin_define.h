@@ -89,7 +89,15 @@
 #define             GSM_RESET_HIGH                           nrf_gpio_pin_write ( GSM_RESET_PIN, 0 )
 #define             GSM_RESET_LOW                            nrf_gpio_pin_write ( GSM_RESET_PIN, 1 )
 
-
+#define 			POWER_ON       GSM_PWR_OFF;\
+    delay_ms(200);\
+    GSM_PWR_ON;\
+    GSM_RESET_HIGH;\
+    delay_ms(60);		\
+    GSM_PWRKEY_LOW;\
+    delay_ms(500); \
+    GSM_PWRKEY_HIGH;\
+    delay_ms(500)
 /*
 		GPS PIN Assignment
 		GPS_STANDBY		--	P0.07

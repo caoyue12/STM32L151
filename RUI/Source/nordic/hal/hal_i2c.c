@@ -10,7 +10,7 @@
 #define TWI_BUFFER_SIZE     	  14
 #define TWI_TIMEOUT			100000
 
-#ifdef LORA_TEST
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
 /* TWI instance ID. */
 #define TWI_INSTANCE_ID     1
 #else

@@ -2,6 +2,7 @@
 #ifndef __PIN_DEFINE_ITRACKER_52840_H__
 #define __PIN_DEFINE_ITRACKER_52840_H__
 
+#include "nrf_gpio.h"
 
 #define ASSERT_ERROR	0xA55EA55E
 
@@ -20,18 +21,9 @@
 	#define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */
 
-	
-	//#define BC95
-//#define M35
 
-/*
-		UART PIN Assignment
-		P028_UART1_RX
-		P029_UART1_TX
+#define BATTERY_ADC_PIN		28
 
-*/
-#define             LOG_RXD_PIN                        28
-#define             LOG_TXD_PIN                        29
 
 /*
 		GSM PIN Assignment
@@ -47,11 +39,15 @@
 
 
 #if defined(BG96_TEST)
-#define             GSM_TXD_PIN                        5
-#define             GSM_RXD_PIN                        4
-#define             GSM_PWRKEY_PIN                      38
-#define             GSM_RESET_PIN                        39
-#define             GSM_PWR_ON_PIN                     37   
+#define             GSM_TXD_PIN                       4
+#define             GSM_RXD_PIN                        5
+#define             GSM_PWRKEY_PIN                     NRF_GPIO_PIN_MAP(1,5)
+#define             GSM_RESET_PIN                      NRF_GPIO_PIN_MAP(1,6)
+#define             GSM_W_DISABLE_PIN                  NRF_GPIO_PIN_MAP(1,4)
+#define             GPS_EN				               NRF_GPIO_PIN_MAP(1,9)
+#define             GSM_PWR_ON_PIN                     0xFF
+#define             GSM_W_DISABLE_ON                   nrf_gpio_pin_write ( GSM_W_DISABLE_PIN, 0 )    
+#define             GSM_W_DISABLE_OFF                  nrf_gpio_pin_write ( GSM_W_DISABLE_PIN, 1 )       
 #endif
 #if defined(M35_TEST)
 #define             GSM_TXD_PIN                        12
@@ -63,8 +59,6 @@
 #endif
 
 
-#define             GSM_PWR_ON                     nrf_gpio_pin_write ( GSM_PWR_ON_PIN, 0 )
-#define             GSM_PWR_OFF                      nrf_gpio_pin_write ( GSM_PWR_ON_PIN, 1 )
 
 #define             GSM_PWRKEY_HIGH                           nrf_gpio_pin_write ( GSM_PWRKEY_PIN, 0 )
 #define             GSM_PWRKEY_LOW                            nrf_gpio_pin_write ( GSM_PWRKEY_PIN, 1 )
@@ -72,7 +66,14 @@
 #define             GSM_RESET_HIGH                           nrf_gpio_pin_write ( GSM_RESET_PIN, 0 )
 #define             GSM_RESET_LOW                            nrf_gpio_pin_write ( GSM_RESET_PIN, 1 )
 
-
+#define 			POWER_ON       		nrf_gpio_cfg_output(GPS_EN);\
+	GSM_RESET_HIGH;\
+    delay_ms(60);		\
+    GSM_PWRKEY_LOW;\
+    delay_ms(500); \
+    GSM_PWRKEY_HIGH;\
+    delay_ms(500);	\
+	nrf_gpio_pin_set(GPS_EN)
 /*
 		GPS PIN Assignment
 		GPS_STANDBY		--	P0.07
@@ -109,6 +110,7 @@
 #define             LIS3DH_INT1_PIN                        24
 #define 		  LIS3DH_RES_PIN			        26
 #define             LIS3DH_INT2_PIN                        27
+#define            LIS3DH_INT1_THRESHOLD                   3
 
 /* shtc3 PIN Assignment*/
 #define             SHTC3_TWI_SCL_PIN                        21

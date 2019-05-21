@@ -30,7 +30,7 @@ bool Max7GpsWriteSetupOK( void );
 static uint8_t Max7GpsReadRegister( char thisRegAddress );
 bool Max7GpsReadDataStream( void );
 	
-uint8_t GpsDataBuffer[512];
+uint8_t GpsDataBuffer[512] = {0};
 
 
 

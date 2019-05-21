@@ -3,11 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "queue.h"
-#include "semphr.h"
 #include "app_error.h"
 #include "app_timer.h"
 #include "nrf_log.h"
@@ -22,7 +17,29 @@
 #include "hal_gpio.h"
 #include "hal_uart.h"
 #include "pin_define.h"
+#include "nrf_drv_saadc.h"
 
+#ifdef BEM280_TEST
+#include "bme280.h"
+#endif
+
+#ifdef OPT3001_TEST
+#include "opt3001.h"
+#endif
+
+#ifdef LIS2MDL_TEST
+#include "lis2mdl.h"
+#endif
+#ifdef LIS3DH_TEST
+#include "lis3dh.h"
+#endif
+#ifdef SHTC3_TEST
+#include "shtc3.h"
+#endif
+
+#ifdef SHT31_TEST
+#include "sht31.h"
+#endif
 #if defined(BG96_TEST)
 #include "bg96.h"
 #endif
@@ -46,7 +63,7 @@
 #include "lps22hb.h"
 #endif
 
-#ifdef LORA_TEST
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
 #include "radio.h"
 #include "sx1276.h"
 #include "sx1276_lora.h"
@@ -69,6 +86,9 @@ typedef struct {
         uint8_t nwkskey[16];
         uint8_t appskey[16];
 } lora_cfg_t;
+
+
+#define LORA_CONFIG_MAGIC  	0xAB
 
 
 /*!
@@ -100,21 +120,6 @@ typedef struct {
 //#define     G_DEBUG  (LOG_NONE)     
 #define     LOG_LEVEL_CHECK(level)      (G_DEBUG & level)
 
-
-//extern OS_MUTEX   pfMutex;
-
-//static inline void p_lock_mutex(OS_MUTEX *mutex)
-//{
-//  OS_ERR oserr;  
-//  OSMutexPend(mutex, 0, OS_OPT_PEND_BLOCKING, NULL, &oserr);
-//}
-
-
-//static inline void p_unlock_mutex(OS_MUTEX *mutex)
-//{
-//  OS_ERR oserr;  
-//  OSMutexPost(mutex, OS_OPT_POST_NONE, &oserr);
-//}
 
 static inline char* log_level_str(uint8_t level)
 {
@@ -281,15 +286,11 @@ void GpsMcuIrqNotify( void );
 /*!
  * \brief Timer object description
  */
-//typedef	struct {
-//	app_timer_id_t	    id;
-//	app_timer_t		timer;
-//	uint32_t		timeout;
-//} TimerEvent_t;
 typedef	struct {
-	TimerHandle_t 	  id;
+	app_timer_id_t	    id;
+	app_timer_t		timer;
 	uint32_t		timeout;
-}TimerEvent_t;
+} TimerEvent_t;
 
 typedef uint32_t TimerTime_t;
 
@@ -360,6 +361,10 @@ TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature );
 void GpioDeinit( Gpio_t *obj );
 void delay_ms(uint32_t ms);
 void power_save_open();
+void power_save_close();
 void lora_init();
+void saadc_init(void);
+void power_manage(void);
+uint32_t get_rtc_counter(void);
 
 #endif

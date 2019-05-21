@@ -2,9 +2,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
 #include "nordic_common.h"
 #include "nrf.h"
 #include "nrf_sdh.h"
@@ -32,7 +29,7 @@ void sensors_init()
     Gps_Init();
 #endif
 
-#ifdef LORA_TEST
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
     lora_init();
 #endif
 
@@ -52,8 +49,7 @@ void sensors_init()
     }
 #endif
 #ifdef LIS3DH_TEST
-    //config interrupt
-    nrf_gpio_cfg_sense_input(LIS3DH_INT1_PIN, NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);    
+    //config interrupt   
     ret = lis3dh_twi_init();
     if(ret != NRF_SUCCESS)
     {
@@ -122,11 +118,15 @@ void sensors_init()
 
 #ifdef LPS22HB_TEST
 
-       ret = lps22hb_twi_init(void);
+       ret = lps22hb_twi_init();
        if(ret < 0)
        {
         	NRF_LOG_INFO( "lps22hb_twi_init fail %d\r\n", ret);
        }
        	lps22hb_init();
+#endif
+
+#ifdef  BATTERY_LEVEL_SUPPORT
+        saadc_init();
 #endif
 }

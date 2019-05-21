@@ -515,7 +515,7 @@ status_t LIS3DH_GetClickResponse(u8_t* val);
 status_t LIS3DH_GetTempRaw(i8_t* val);
 status_t LIS3DH_GetWHO_AM_I(u8_t* val);
 status_t LIS3DH_Get6DPosition(u8_t* val);
-
+int lis3dh_sleep_init(void);
 //Generic
 // i.e. u8_t LIS3DH_ReadReg(u8_t Reg, u8_t* Data);
 // i.e. u8_t LIS3DH_WriteReg(u8_t Reg, u8_t Data);

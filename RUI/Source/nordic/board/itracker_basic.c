@@ -9,6 +9,7 @@
 #include "app_error.h"
 #include "nrf_soc.h"
 #include "itracker.h"
+#include "gps.h"
 #include "bme280.h"
 #ifdef BG96_TEST
 #include "bg96.h"
@@ -21,8 +22,9 @@
 #endif
 #include "hal_uart.h"
 
-
-#ifdef LORA_TEST
+double gps_lat = 0;
+double gps_lon = 0;   
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
 uint32_t lora_send(uint8_t *cmd);
 #endif
 
@@ -40,7 +42,7 @@ uint32_t get_shtc3_temp_bus(double *temp)
     {
         return 1;
     }
-    SHTC3_GetTempAndHumiPolling(&temp_t,&g_humidity);
+    SHTC3_GetTempAndHumi(&temp_t,&g_humidity);
 
     *temp = temp_t;
 }
@@ -146,6 +148,9 @@ uint32_t get_lis3dh_data_bus(int *x, int *y, int *z)
         NRF_LOG_INFO( "lis3dh_twi_init fail %d\r\n", ret);
     }
     get_lis3dh_data(x,y,z);
+	*x =*x * 4000/65536;
+	*y =*y * 4000/65536;
+	*z =*z * 4000/65536;	
     return ret;
 }
 #endif
@@ -188,15 +193,28 @@ uint32_t get_opt3001_data_bus(float *light_data)
 uint32_t gps_data_get_bus(uint8_t *data, uint32_t len)
 {
     uint32_t ret = 0;
+    uint8_t i = 0;
     if(data == NULL || len < 0)
     {
         return 1;
     }
     gps_data_get(data,len);
+	memcpy(data,&data[14],len-14);
+    for (i = 0; data[i] !=0; i++)
+    {
+        
+        if (data[i] == '\r' || data[i] == '\n')
+        {
+
+            break;
+        }
+    }
+    memset(&data[i],0,127-i);
+    //gps_parse(data);
 
     return ret;
 }
-
+extern char GSM_RSP[1600];
 void Gsm_wait_response(uint8_t *rsp, uint32_t len, uint32_t timeout,GSM_RECEIVE_TYPE type)
 {
     if(rsp == NULL || len < 0)
@@ -204,7 +222,9 @@ void Gsm_wait_response(uint8_t *rsp, uint32_t len, uint32_t timeout,GSM_RECEIVE_
         return;
     }
     g_type = type;
-    Gsm_WaitRspOK(rsp, timeout, true);
+    memset(GSM_RSP, 0, 1600);
+    Gsm_WaitRspOK(GSM_RSP, timeout, true);
+    NRF_LOG_INFO("%s\r\n",GSM_RSP);
 }
 #endif
 #ifdef L70R_TEST
@@ -244,22 +264,17 @@ void Gsm_wait_response(uint8_t *rsp, uint32_t len, uint32_t timeout,GSM_RECEIVE_
 extern uint8_t GpsDataBuffer[512];
 uint32_t gps_data_get_bus(uint8_t *data, uint32_t len)
 {   
-        double lat = 0;
-        double lon = 0;    
+ 
         if(data == NULL || len < 0)
         {
-               return 1;
+           return 1;
         }
-
         Max7GpsReadDataStream();
-        NRF_LOG_INFO( "gps: %s\r\n", GpsDataBuffer);
-        memcpy(data,GpsDataBuffer,128);
-       // if (GpsParseGpsData(GpsDataBuffer, 512))
-       //  {
-       //     GpsGetLatestGpsPositionDouble(&lat, &lon);
-       // }
-
-       //   sprintf(data,"lat=%f , lot=%f \r\n",lat,lon);
+	    if (GpsParseGpsData(GpsDataBuffer, 512))
+	    {
+	          GpsGetLatestGpsPositionDouble(&gps_lat, &gps_lon);
+	    }
+	    sprintf(data,"gps: lat = %lf, lon = %lf\r\n",gps_lat,gps_lon);
 }
 #endif
 void itracker_function_init()
@@ -301,7 +316,7 @@ void itracker_function_init()
     itracker_function.communicate_response = Gsm_wait_response;
 #endif
 
-#ifdef LORA_TEST
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
     itracker_function.communicate_send = lora_send;
 #endif
 }

@@ -50,7 +50,7 @@ uint32_t lps22hb_twi_init(void)
 }
 
 /**************************************************************************************************
- * @fn          sensorReadReg
+ * @fn          sensorReadReg1
  *
  * @brief       This function implements the I2C protocol to read from a sensor. The sensor must
  *              be selected before this routine is called.
@@ -61,7 +61,7 @@ uint32_t lps22hb_twi_init(void)
  *
  * @return      TRUE if the required number of bytes are received
  **************************************************************************************************/
-bool sensorReadReg(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
+bool sensorReadReg1(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
 {
     if(rak_i2c_read(LPS22HB_ADDR, addr,pBuf,nBytes) == NRF_SUCCESS)
     {
@@ -74,7 +74,7 @@ bool sensorReadReg(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
 }
 
 /**************************************************************************************************
-* @fn          sensorWriteReg
+* @fn          sensorWriteReg1
 * @brief       This function implements the I2C protocol to write to a sensor. he sensor must
 *              be selected before this routine is called.
 *
@@ -84,7 +84,7 @@ bool sensorReadReg(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
 *
 * @return      TRUE if successful write
 */
-bool sensorWriteReg(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
+bool sensorWriteReg1(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
 {
     if(rak_i2c_write(LPS22HB_ADDR, addr, pBuf, nBytes) == NRF_SUCCESS)
     {
@@ -101,7 +101,7 @@ int lps22hb_init(void)
     bool ret;
     uint8_t cmd = 0x40; 
 
-    ret = sensorWriteReg(REG_CTRL1, &cmd,1);
+    ret = sensorWriteReg1(REG_CTRL1, &cmd,1);
     if(!ret)
     {
         NRF_LOG_INFO(LOG_INFO, "olps22hb_init fail\r\n");
@@ -120,9 +120,9 @@ int get_lps22hb_data(float *pressure_data)
     uint8_t p_h = 0;
     int32_t tmp = 0;
     bool ret;
-    ret = sensorReadReg(REG_PRE_XL, &p_xl,1);
-    ret = sensorReadReg(REG_PRE_L, &p_l,1);
-    ret = sensorReadReg(REG_PRE_H, &p_h,1);
+    ret = sensorReadReg1(REG_PRE_XL, &p_xl,1);
+    ret = sensorReadReg1(REG_PRE_L, &p_l,1);
+    ret = sensorReadReg1(REG_PRE_H, &p_h,1);
     tmp = ((uint32_t)p_h << 16) | ((uint32_t)p_l << 8) | p_xl;
     if(tmp & 0x00800000)
     {

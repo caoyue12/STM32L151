@@ -147,7 +147,64 @@ int lis2mdl_init(void)
     return 0;
 }
 
+int lis2mdl_sleep_init(void)
+{
+    uint32_t err_code;
 
+    //³õÊ¼»¯TWI
+    err_code = lis2mdl_twi_init();
+    if(err_code != NRF_SUCCESS) return -1;
+
+    /*
+     *  Initialize mems driver interface
+     */
+
+    dev_ctx.write_reg = platform_write;
+    dev_ctx.read_reg = platform_read;
+
+    uint8_t whoamI, rst;
+    /*
+     *  Check device ID
+     */
+    whoamI = 0;
+    lis2mdl_device_id_get(&dev_ctx, &whoamI);
+    if ( whoamI != LIS2MDL_ID )
+    {
+        //while(1); /*manage here device not found */
+        return -1;
+    }
+    /*
+     *  Restore default configuration
+     */
+    lis2mdl_reset_set(&dev_ctx, PROPERTY_ENABLE);
+    do
+    {
+        lis2mdl_reset_get(&dev_ctx, &rst);
+    }
+    while (rst);
+    /*
+     *  Enable Block Data Update
+     */
+    lis2mdl_block_data_update_set(&dev_ctx, PROPERTY_ENABLE);
+    /*
+     * Set Output Data Rate
+     */
+    lis2mdl_data_rate_set(&dev_ctx, LIS2MDL_ODR_10Hz);
+    /*
+     * Set / Reset sensor mode
+     */
+    lis2mdl_set_rst_mode_set(&dev_ctx, LIS2MDL_SENS_OFF_CANC_EVERY_ODR);
+    /*
+     * Enable temperature compensation
+     */
+    lis2mdl_offset_temp_comp_set(&dev_ctx, PROPERTY_ENABLE);
+    /*
+     * Set device in continuos mode
+     */
+    lis2mdl_operating_mode_set(&dev_ctx, LIS2MDL_POWER_DOWN);
+
+    return 0;
+}
 void get_lis2mdl_data(float *magnetic_x, float *magnetic_y, float *magnetic_z)
 {
     axis3bit16_t data_raw_magnetic;

@@ -1,0 +1,25 @@
+﻿Hologram test at cmd via ble：
+
+1.ATI											//query firmware of NB-IOT chip
+2.AT+COPS=?										//search operator net, it will cost at least 30s
+3.AT+COPS=1,0,"CHINA MOBILE",0					//register to your operator, query your operator whether supports hologram or not
+4.AT+CREG?										//Check whether the device is registered on the network
+5.AT+QNWINFO                       				// Query connected network information
+6.AT+COPS?   									// Query the connected web server information
+7.AT+QICSGP=1,1,"hologram","","",1      		// Set APN network to hologram
+8.AT+QIACT=1 									// Activate the APN network
+9.AT+QIACT? 									// Query the APN assigned IP address
+10.SEND,device_key,test data					//send data according to your device key,the length of test data is less than 100
+												//this cmd will automatically send you data to server, just wait for 20s 
+11.SENSOR,device_key					//send all sensor data of 8212 to server
+
+For example: 
+SEND,+C7pOb8=,12345678
+SENSOR,+C7pOb8=
+
+
+Notes:
+When send cmd, must wait for the responce of previous cmd
+
+If send failed, repeat from 10. More details is in RUI With Hologram.io V1.0.
+Ble tool is recommended to use nnRF Connect by nordic.

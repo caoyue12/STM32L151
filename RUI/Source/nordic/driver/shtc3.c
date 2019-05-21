@@ -25,9 +25,6 @@ typedef enum{
   MEAS_RH_T_CLOCKSTR = 0x5C24  // meas. read RH first, clock stretching enabled
 }etCommands;
 
-static uint32_t SHTC3_StartWriteAccess(void);
-static uint32_t SHTC3_StartReadAccess(void);
-static void SHTC3_StopAccess(void);
 static uint32_t SHTC3_Read2BytesAndCrc(uint16_t *data);
 static uint32_t SHTC3_WriteCommand(etCommands cmd);
 static uint32_t SHTC3_CheckCrc(uint8_t data[], uint8_t nbrOfBytes, uint8_t checksum);
@@ -65,8 +62,6 @@ uint32_t SHTC3_GetTempAndHumi(float *temp, float *humi){
     error |= SHTC3_Read2BytesAndCrc(&rawValueHumi);
   }
 
-  SHTC3_StopAccess();
-
   // if no error, calculate temperature in °C and humidity in %RH
   if(error == NRF_SUCCESS) {
     *temp = SHTC3_CalcTemperature(rawValueTemp);
@@ -79,30 +74,25 @@ uint32_t SHTC3_GetTempAndHumi(float *temp, float *humi){
 //------------------------------------------------------------------------------
 uint32_t SHTC3_GetTempAndHumiPolling(float *temp, float *humi){
   uint32_t  error;           // error code
-  uint8_t  maxPolling = 20; // max. retries to read the measurement (polling)
   uint16_t rawValueTemp;    // temperature raw value from sensor
   uint16_t rawValueHumi;    // humidity raw value from sensor
 
   // measure, read temperature first, clock streching disabled (polling)
   error |= SHTC3_WriteCommand(MEAS_T_RH_POLLING);
 
-  // if no error, ...
-  if(error == NRF_SUCCESS) {
+  uint8_t rx[6];
+ 
+    error = rak_i2c_simple_read(_Address, rx, 6);
+    
+    rawValueTemp = rx[1] | (rx[0] << 8);
+    rawValueTemp = (100 * rawValueTemp * 175) / 65535 - 45 * 100;
+    rawValueHumi = rx[4] | (rx[3] << 8);
+    rawValueHumi = (100 * rawValueHumi * 100) / 65535;
+    
+    *temp = (int16_t)(rawValueTemp);
+    *humi = (int16_t)(rawValueHumi);
+    return error;
 
-    // if no error, read temperature and humidity raw values
-    if(error == NRF_SUCCESS) {
-      error |= SHTC3_Read2BytesAndCrc(&rawValueTemp);
-      error |= SHTC3_Read2BytesAndCrc(&rawValueHumi);
-    }
-  }
-
-  // if no error, calculate temperature in °C and humidity in %RH
-  if(error == NRF_SUCCESS) {
-    *temp = SHTC3_CalcTemperature(rawValueTemp);
-    *humi = SHTC3_CalcHumidity(rawValueHumi);
-  }
-
-  return error;
 }
 
 //------------------------------------------------------------------------------

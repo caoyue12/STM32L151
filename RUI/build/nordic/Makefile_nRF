@@ -19,34 +19,34 @@ endif
 
 ifeq (1, $(REGION))
   CFLAGS += -DREGION_AS923
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionAS923.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionAS923.c
 else ifeq (2, $(REGION))
   CFLAGS += -DREGION_AU915
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionAU915.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionAU915.c
 else ifeq (3, $(REGION))
   CFLAGS += -DREGION_CN470
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionCN470.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionCN470.c
 else ifeq (4, $(REGION))
   CFLAGS += -DREGION_CN779
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionCN779.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionCN779.c
 else ifeq (5, $(REGION))
   CFLAGS += -DREGION_EU433
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionEU433.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionEU433.c
 else ifeq (6, $(REGION))
   CFLAGS += -DREGION_EU868
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionEU868.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionEU868.c
 else ifeq (7, $(REGION))
   CFLAGS += -DREGION_IN865
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionIN865.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionIN865.c
 else ifeq (8, $(REGION))
   CFLAGS += -DREGION_KR920
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionKR920.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionKR920.c
 else ifeq (9, $(REGION))
   CFLAGS += -DREGION_US915
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionUS915.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionUS915.c
 else ifeq (10, $(REGION))
   CFLAGS += -DREGION_US915_Hybrid
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionUS915-Hybrid.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionUS915-Hybrid.c
 endif
 
 
@@ -75,6 +75,13 @@ ifeq (1, $(word 1, $(P)))
   SRC_FILES += $(SDK_ROOT)/components/ble/peer_manager/pm_mutex.c
 endif
 
+ifeq (1, $(DFU_SUPPORT))
+  SRC_FILES += $(SDK_ROOT)/components/ble/ble_services/ble_dfu/ble_dfu.c
+  SRC_FILES += $(SDK_ROOT)/components/ble/ble_services/ble_dfu/ble_dfu_unbonded.c
+  SRC_FILES += $(SDK_ROOT)/components/libraries/bootloader/dfu/nrf_dfu_svci.c
+  SRC_FILES += $(SDK_ROOT)/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c
+endif
+
 SRC_FILES += \
   $(SDK_ROOT)/RUI/Source/nordic/main.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uart.c \
@@ -84,6 +91,7 @@ SRC_FILES += \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_twi.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_gpiote.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_spim.c \
+  $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_saadc.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/prs/nrfx_prs.c \
   $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_clock.c \
   $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_power.c \
@@ -91,17 +99,6 @@ SRC_FILES += \
   $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_swi.c \
   $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_twi.c \
   $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c \
-  $(SDK_ROOT)/external/freertos/portable/GCC/nrf52/port.c \
-  $(SDK_ROOT)/external/freertos/source/tasks.c \
-  $(SDK_ROOT)/external/freertos/source/croutine.c \
-  $(SDK_ROOT)/external/freertos/source/event_groups.c \
-  $(SDK_ROOT)/external/freertos/source/list.c \
-  $(SDK_ROOT)/external/freertos/source/queue.c \
-  $(SDK_ROOT)/external/freertos/source/stream_buffer.c \
-  $(SDK_ROOT)/external/freertos/source/timers.c \
-  $(SDK_ROOT)/external/freertos/source/portable/MemMang/heap_1.c \
-  $(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52/port_cmsis_systick.c \
-  $(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52/port_cmsis.c \
   $(SDK_ROOT)/external/fprintf/nrf_fprintf.c \
   $(SDK_ROOT)/external/fprintf/nrf_fprintf_format.c \
   $(SDK_ROOT)/components/ble/ble_link_ctx_manager/ble_link_ctx_manager.c \
@@ -134,8 +131,7 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/bsp/bsp.c \
   $(SDK_ROOT)/components/boards/boards.c \
   $(SDK_ROOT)/components/ble/nrf_ble_gatt/nrf_ble_gatt.c \
-  $(SDK_ROOT)/components/libraries/timer/app_timer_freertos.c \
-  $(SDK_ROOT)/components/softdevice/common/nrf_sdh_freertos.c \
+  $(SDK_ROOT)/components/libraries/timer/app_timer.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c \
@@ -149,12 +145,11 @@ SRC_FILES += \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
-  $(SDK_ROOT)/RUI/Source/nordic/app/test_task.c \
   $(SDK_ROOT)/RUI/Source/nordic/board/board_basic.c \
   $(SDK_ROOT)/RUI/Source/nordic/board/itracker_basic.c \
   $(SDK_ROOT)/components/libraries/uart/app_uart_fifo.c \
-  $(SDK_ROOT)/RUI/Source/external/utilities.c \
-  $(SDK_ROOT)/RUI/Source/external/utils.c \
+  $(SDK_ROOT)/RUI/Source/nordic/external/utilities.c \
+  $(SDK_ROOT)/RUI/Source/nordic/external/utils.c \
   $(SDK_ROOT)/RUI/Source/nordic/hal/hal_gpio.c \
   $(SDK_ROOT)/RUI/Source/nordic/hal/hal_i2c.c \
   $(SDK_ROOT)/RUI/Source/nordic/hal/hal_spi.c \
@@ -173,17 +168,28 @@ ifeq (1, $(word 2, $(P)))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/bc95-g.c
 else ifeq (2, $(word 2, $(P)))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/bg96.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/service/sensor/gps.c
 else ifeq (3, $(word 2, $(P)))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/m35.c
 else ifeq (4, $(word 2, $(P)))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/sx1276_lora.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/radio/sx1276/sx1276.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/Region.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/LoRaMac.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/LoRaMacCrypto.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/system/crypto/aes.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/system/crypto/cmac.c
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region/RegionCommon.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/radio/sx1276/sx1276.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/Region.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/LoRaMac.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/LoRaMacCrypto.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system/crypto/aes.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system/crypto/cmac.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionCommon.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/service/lora/app_lora.c
+else ifeq (5, $(word 2, $(P)))
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/sx1276_lora.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/radio/sx1276/sx1276.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/Region.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/LoRaMac.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/LoRaMacCrypto.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system/crypto/aes.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system/crypto/cmac.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region/RegionCommon.c
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/service/lora/app_lora.c
 endif
 
@@ -216,6 +222,12 @@ ifeq (9, $(findstring 9, $(wordlist 3, $(NUM), $(P))))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/lps22hb.c
 endif
 
+ifeq (1, $(BSP_MODE))
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/app/test_task.c
+endif
+ifeq (1, $(ACCESS_NET_TEST))
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/app/hologram_task.c
+endif
 
 # Include folders common to all targets
 
@@ -239,6 +251,8 @@ endif
 ifeq (1, $(word 1, $(P)))
 	ifeq (4, $(word 2, $(P)))
     		INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/config/52832_board/lora815
+	else ifeq (5, $(word 2, $(P)))
+        INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/config/52832_board/lora4600
 	else
         	INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/config/52832_board/itracker
     	endif
@@ -246,15 +260,33 @@ endif
 
 
 ifeq (4, $(word 2, $(P)))
-  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/radio
-  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac
-  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/mac/region
-  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/radio/sx1276
-  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/system/crypto
-  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/external/LoRaWAN/system
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/radio
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/radio/sx1276
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system/crypto
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system
   INC_FOLDERS += $(SDK_ROOT)/modules/nrfx/drivers/include
 endif
 
+ifeq (5, $(word 2, $(P)))
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/radio
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/mac/region
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/radio/sx1276
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system/crypto
+  INC_FOLDERS += $(SDK_ROOT)/RUI/Source/nordic/external/LoRaWAN/system
+  INC_FOLDERS += $(SDK_ROOT)/modules/nrfx/drivers/include
+endif
+
+ifeq (1, $(DFU_SUPPORT))
+  INC_FOLDERS += $(SDK_ROOT)/components/ble/ble_services/ble_dfu 
+  INC_FOLDERS += $(SDK_ROOT)/components/libraries/bootloader 
+  INC_FOLDERS += $(SDK_ROOT)/components/libraries/bootloader/ble_dfu 
+  INC_FOLDERS += $(SDK_ROOT)/components/libraries/bootloader/dfu 
+  INC_FOLDERS += $(SDK_ROOT)/components/libraries/pwr_mgmt 
+  INC_FOLDERS += $(SDK_ROOT)/components/libraries/svc 
+endif
 
 INC_FOLDERS += \
   $(SDK_ROOT)/components \
@@ -308,15 +340,12 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/drivers_nrf/nrf_soc_nosd \
   $(SDK_ROOT)/external/segger_rtt \
   $(SDK_ROOT)/RUI/Source/nordic/include \
-  $(SDK_ROOT)/RUI/Source/external/micro-ecc \
+  $(SDK_ROOT)/RUI/Source/nordic/external/micro-ecc \
   $(SDK_ROOT)/components/libraries/strerror \
   $(SDK_ROOT)/components/boards \
   $(SDK_ROOT)/components/toolchain/cmsis/include \
   $(SDK_ROOT)/modules/nrfx \
   $(SDK_ROOT)/components/libraries/util \
-  $(SDK_ROOT)/external/freertos/portable/GCC/nrf52/ \
-  $(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52 \
-  $(SDK_ROOT)/external/freertos/source/include \
   $(SDK_ROOT)/external/fprintf \
   $(SDK_ROOT)/external/segger_rtt \
   $(SDK_ROOT)/modules/nrfx/drivers/include \
@@ -329,7 +358,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/modules/nrfx/hal/ \
   
 # Libraries common to all targets
-LIB_FILES += $(SDK_ROOT)/RUI/Source/external/micro-ecc/micro_ecc_lib_nrf52.lib
+LIB_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/micro-ecc/micro_ecc_lib_nrf52.lib
 
 # Optimization flags
 OPT = -O3 -g3
@@ -347,7 +376,10 @@ ifeq (3, $(word 2, $(P)))
   CFLAGS += -DM35_TEST
 endif
 ifeq (4, $(word 2, $(P)))
-  CFLAGS += -DLORA_TEST
+  CFLAGS += -DLORA_81x_TEST
+endif
+ifeq (5, $(word 2, $(P)))
+  CFLAGS += -DLORA_4600_TEST
 endif
 
 ifeq (1, $(findstring 1, $(wordlist 3, $(NUM), $(P))))
@@ -375,9 +407,12 @@ ifeq (8, $(findstring 8, $(wordlist 3, $(NUM), $(P))))
   CFLAGS += -DSHTC3_TEST
 endif
 ifeq (9, $(findstring 9, $(wordlist 3, $(NUM), $(P))))
-  CFLAGS += -LPS22HB_TEST
+  CFLAGS += -DLPS22HB_TEST
 endif
 
+ifeq (1, $(BATTERY_LEVEL_SUPPORT))
+    CFLAGS += -DBATTERY_LEVEL_SUPPORT
+endif
 
 CFLAGS += $(OPT)
 ifeq (2, $(word 1, $(P)))
@@ -401,11 +436,29 @@ endif
 ifeq (1, $(SLEEP_MODE))
    CFLAGS += -DSLEEP_MODE
 endif
+ifeq (1, $(ACCESS_NET_TEST))
+   CFLAGS += -DACCESS_NET_TEST
+endif
+ifeq (1, $(BLE_SUPPORT))
+   CFLAGS += -DBLE_SUPPORT
+endif
+ifeq (1, $(BSP_MODE))
+   CFLAGS += -DBSP_MODE
+endif
+
+
+ifeq (1, $(DFU_SUPPORT))
+  CFLAGS += -DDFU_SUPPORT
+  CFLAGS += -DBL_SETTINGS_ACCESS_ONLY
+  CFLAGS += -DNRF_DFU_SVCI_ENABLED
+  CFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
+endif
+
 CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -DSWI_DISABLE0
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
-CFLAGS += -Wall
+CFLAGS += -w
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in a separate section, this allows linker to discard unused ones
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing

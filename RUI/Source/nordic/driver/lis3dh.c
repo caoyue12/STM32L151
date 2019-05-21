@@ -77,6 +77,32 @@ uint8_t nrf_drv_lis3dh_read_reg(uint8_t reg, uint8_t * p_data)
     return err_code;
 }
 
+
+int lis3dh_sleep_init(void)
+{
+    uint8_t response;
+    //Inizialize MEMS Sensor
+    //set ODR (turn ON device)
+    response = LIS3DH_SetODR(LIS3DH_ODR_100Hz);
+    if(response==1)
+    {
+        //DPRINTF(LOG_INFO,"%s", "\n\rSET_ODR_OK    \n\r\0");
+    }
+    else
+    {
+        return -1;
+    }
+    //set PowerMode
+    response = LIS3DH_SetMode(LIS3DH_POWER_DOWN);
+    if(response==1)
+    {
+        //DPRINTF(LOG_INFO,"%s", "SET_MODE_OK     \n\r\0");
+    }
+    else
+    {
+        return -1;
+    }
+}
 int lis3dh_init(void)
 {
     uint8_t response;

@@ -357,6 +357,7 @@ int32_t lis2mdl_i2c_interface_set(lis2mdl_ctx_t *ctx,
                                   lis2mdl_i2c_dis_t val);
 int32_t lis2mdl_i2c_interface_get(lis2mdl_ctx_t *ctx,
                                   lis2mdl_i2c_dis_t *val);
+int lis2mdl_sleep_init(void);
 
 /**
   * @}

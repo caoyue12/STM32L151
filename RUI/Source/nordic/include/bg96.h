@@ -108,7 +108,7 @@ void Gsm_nb_iot_config(void);
 void gsm_send_test(void);
 void gps_data_get(uint8_t *data, uint8_t len);
 void gps_config();
-
+void gps_parse(uint8_t *data);
 
 #endif
 

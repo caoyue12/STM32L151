@@ -9,3 +9,23 @@ REGION = 0
 #Part 2 sleep mode
 #0------off      1------on
 SLEEP_MODE = 0
+
+#part 3 nb-iot test, test hologram sim card
+#0------off      1------on
+ACCESS_NET_TEST = 0
+
+#Part 4 dfu support, ble dfu 
+#0------off      1------on
+DFU_SUPPORT = 0
+
+#part 5 ble enable
+#0------off      1------on
+BLE_SUPPORT = 1
+
+#part 6 bsp test, test sesnors on board
+#0------off      1------on
+BSP_MODE = 1
+
+#part 7 battery level support, support from nRF52840, the range of input volgate cannot exceed 3.6V
+#0------off      1------on
+BATTERY_LEVEL_SUPPORT = 0

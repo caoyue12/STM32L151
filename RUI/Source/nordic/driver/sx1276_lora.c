@@ -102,22 +102,9 @@ void SX1276ReadFifo( uint8_t *buffer, uint8_t size )
 }
 
 
-void tx_rx_handle(void)
-{
-    static portBASE_TYPE xHigherPriorityTaskWoken;
-    xHigherPriorityTaskWoken = pdFALSE; 
-    xSemaphoreGive( xBinarySemaphore); 
-    if(xHigherPriorityTaskWoken == pdTRUE )
-     {
-             portYIELD_FROM_ISR(xHigherPriorityTaskWoken );
-     }
-}
-GpioIrqHandler *lora[]={tx_rx_handle,NULL,NULL,NULL};
-
 void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
 {
-    NRF_LOG_DEBUG("SX1276IoIrqInit\r\n");
-    GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, lora[0]);
+    GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[0]);
     GpioSetInterrupt( &SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[1] );
     //GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[2] );
     //GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
@@ -236,8 +223,10 @@ Gpio_t AntSwitchHf_RADIO_RF_CPS;
 void SX1276AntSwInit( void )
 {
 	// Turn On RF switch
-    GpioInit( &AntSwitchHf_RADIO_RF_CTX, RADIO_RF_CTX, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-    GpioInit( &AntSwitchHf_RADIO_RF_CPS, RADIO_RF_CPS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+    memset(&AntSwitchHf_RADIO_RF_CTX,0,sizeof(AntSwitchHf_RADIO_RF_CTX));
+    memset(&AntSwitchHf_RADIO_RF_CPS,0,sizeof(AntSwitchHf_RADIO_RF_CPS));
+    GpioInit( &AntSwitchHf_RADIO_RF_CTX, RADIO_RF_CTX, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, RF_ANT_INIT );
+    GpioInit( &AntSwitchHf_RADIO_RF_CPS, RADIO_RF_CPS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, RF_ANT_INIT );
 }
 
 void SX1276AntSwDeInit( void )

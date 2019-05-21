@@ -52,14 +52,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "queue.h"
-#include "semphr.h"
 #include "nordic_common.h"
 #include "nrf.h"
 #include "ble_hci.h"
+#include "ble_gap.h"
 #include "ble_advdata.h"
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
@@ -97,6 +93,10 @@
 #include "itracker.h"
 #include "hal_uart.h"
 
+#ifdef DFU_SUPPORT
+#include "ble_dfu.h"
+#endif
+
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2        /**< Reply when unsupported features are requested. */
@@ -106,8 +106,8 @@
 
 #define APP_BLE_OBSERVER_PRIO           1                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 
-#define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS      180                                         /**< The advertising timeout (in units of seconds). */
+#define APP_ADV_INTERVAL                800                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
+#define APP_ADV_TIMEOUT_IN_SECONDS      90                                         /**< The advertising timeout (in units of seconds). */
 
 #define MIN_CONN_INTERVAL               MSEC_TO_UNITS(20, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
 #define MAX_CONN_INTERVAL               MSEC_TO_UNITS(75, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
@@ -140,41 +140,18 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 #define SEC_PARAM_OOB                       0                                       /**< Out Of Band data not available. */
 #define SEC_PARAM_MIN_KEY_SIZE              7                                       /**< Minimum encryption key size. */
 #define SEC_PARAM_MAX_KEY_SIZE              16                                      /**< Maximum encryption key size. */
-/***************************FreeRTOS********************************/
-/*considering the limination of ram and power,num of tasks should as little as possible */
-//test task
-extern void test_task(void * pvParameter);
 
-#ifdef LORA_TEST
-uint8_t JOIN_FLAG = 0;  // 0-not connect; 1- connect
-extern int lora_send_ok;
-
-xSemaphoreHandle xBinarySemaphore = NULL;
-extern void SX1276OnDio0Irq(void); 
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
 extern lora_cfg_t g_lora_cfg_t;
 extern int  parse_lora_config(char* str, lora_cfg_t *cfg);
 extern void write_lora_config(void);
-void lora_task(void * pvParameter)
-{
-    while(1)
-    {
-         if( xSemaphoreTake( xBinarySemaphore, portMAX_DELAY ) == pdTRUE )
-         {
-             SX1276OnDio0Irq();
-         }
-         vTaskDelay(2000);
-    }
-
-}
-
 #endif
 
-
-#ifdef DFU_TEST
-//dfu task
-extern void dfu_settings_init(void);
-void dfu_task(void * pvParameter);
+#ifdef ACCESS_NET_TEST
+extern void nb_iot_task(void);
+uint8_t cmd[128] = {0};
 #endif
+
 
 /**@brief Function for the Timer initialization.
  *
@@ -197,32 +174,17 @@ static void advertising_start()
 
 /**@brief Function for placing the application in low power state while waiting for events.
  */
-static void power_manage(void)
+void power_manage(void)
 {
-    uint32_t err_code = sd_app_evt_wait();
-    APP_ERROR_CHECK(err_code);
-}
-/**@brief A function which is hooked to idle task.
- * @note Idle hook must be enabled in FreeRTOS configuration (configUSE_IDLE_HOOK).
- */
-void vApplicationIdleHook( void )
-{
-    while(1)
-    {
-#ifdef SLEEP_MODE
-#ifdef LORA_TEST
-	if(lora_send_ok==1)
-        {
-             (void)sd_power_system_off();
-        }
+#ifdef BLE_SUPPORT
+	sd_app_evt_wait();
 #else
-	(void)sd_power_system_off();
+    __WFI();
+    __WFE();	
 #endif
-#endif
-    }
 }
 
-/***************************FreeRTOS********************************/
+
 
 /**@brief Function for assert macro callback.
  *
@@ -298,38 +260,105 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
     {
         uint32_t err_code;
 
-        NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
+        NRF_LOG_DEBUG("Received data from BLE NUS.");
         NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
-#ifdef LORA_TEST
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
         if(strncmp((char*)p_evt->params.rx_data.p_data, "lora_cfg:", strlen("lora_cfg:")) == 0)
         {
             parse_lora_config((char*)p_evt->params.rx_data.p_data+strlen("lora_cfg:"), &g_lora_cfg_t);
             write_lora_config();
         }
 #endif
-        for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
-        {
-            do
-            {
-                err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
-                if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
-                {
-                    NRF_LOG_ERROR("Failed receiving NUS message. Error 0x%x. ", err_code);
-                    APP_ERROR_CHECK(err_code);
-                }
-            }
-            while (err_code == NRF_ERROR_BUSY);
-        }
-        if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
-        {
-            while (app_uart_put('\n') == NRF_ERROR_BUSY);
-        }
+
+#ifdef ACCESS_NET_TEST
+        memset(cmd,0,128);
+        memcpy(cmd,&(p_evt->params.rx_data.p_data[0]),p_evt->params.rx_data.length);
+        NRF_LOG_DEBUG("cmd = %s\r\n",cmd);
+        nb_iot_task();
+#endif
     }
 
 }
 /**@snippet [Handling the data received over BLE] */
 
+#ifdef DFU_SUPPORT
 
+static void advertising_config_get(ble_adv_modes_config_t * p_config)
+{
+    memset(p_config, 0, sizeof(ble_adv_modes_config_t));
+
+    p_config->ble_adv_fast_enabled  = true;
+    p_config->ble_adv_fast_interval = APP_ADV_INTERVAL;
+    p_config->ble_adv_fast_timeout  = APP_ADV_TIMEOUT_IN_SECONDS;
+}
+
+static void disconnect(uint16_t conn_handle, void * p_context)
+{
+    UNUSED_PARAMETER(p_context);
+
+    ret_code_t err_code = sd_ble_gap_disconnect(conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+    if (err_code != NRF_SUCCESS)
+    {
+        NRF_LOG_WARNING("Failed to disconnect connection. Connection handle: %d Error: %d", conn_handle, err_code);
+    }
+    else
+    {
+        NRF_LOG_DEBUG("Disconnected connection handle %d", conn_handle);
+    }
+}
+
+/**@brief Function for handling dfu events from the Buttonless Secure DFU service
+ *
+ * @param[in]   event   Event from the Buttonless Secure DFU service.
+ */
+static void ble_dfu_evt_handler(ble_dfu_buttonless_evt_type_t event)
+{
+    switch (event)
+    {
+        case BLE_DFU_EVT_BOOTLOADER_ENTER_PREPARE:
+        {
+            NRF_LOG_INFO("Device is preparing to enter bootloader mode.");
+
+            // Prevent device from advertising on disconnect.
+            ble_adv_modes_config_t config;
+            advertising_config_get(&config);
+            config.ble_adv_on_disconnect_disabled = true;
+            ble_advertising_modes_config_set(&m_advertising, &config);
+
+            // Disconnect all other bonded devices that currently are connected.
+            // This is required to receive a service changed indication
+            // on bootup after a successful (or aborted) Device Firmware Update.
+            uint32_t conn_count = ble_conn_state_for_each_connected(disconnect, NULL);
+            NRF_LOG_INFO("Disconnected %d links.", conn_count);
+            break;
+        }
+
+        case BLE_DFU_EVT_BOOTLOADER_ENTER:
+            // YOUR_JOB: Write app-specific unwritten data to FLASH, control finalization of this
+            //           by delaying reset by reporting false in app_shutdown_handler
+            NRF_LOG_INFO("Device will enter bootloader mode.");
+            break;
+
+        case BLE_DFU_EVT_BOOTLOADER_ENTER_FAILED:
+            NRF_LOG_ERROR("Request to enter bootloader mode failed asynchroneously.");
+            // YOUR_JOB: Take corrective measures to resolve the issue
+            //           like calling APP_ERROR_CHECK to reset the device.
+            break;
+
+        case BLE_DFU_EVT_RESPONSE_SEND_ERROR:
+            NRF_LOG_ERROR("Request to send a response to client failed.");
+            // YOUR_JOB: Take corrective measures to resolve the issue
+            //           like calling APP_ERROR_CHECK to reset the device.
+            APP_ERROR_CHECK(false);
+            break;
+
+        default:
+            NRF_LOG_ERROR("Unknown event from ble_dfu_buttonless.");
+            break;
+    }
+}
+
+#endif
 /**@brief Function for initializing services that will be used by the application.
  */
 static void services_init(void)
@@ -343,6 +372,21 @@ static void services_init(void)
 
     err_code = ble_nus_init(&m_nus, &nus_init);
     APP_ERROR_CHECK(err_code);
+
+#ifdef DFU_SUPPORT
+
+    ble_dfu_buttonless_init_t dfus_init = {0};
+
+    // Initialize the async SVCI interface to bootloader.
+    err_code = ble_dfu_buttonless_async_svci_init();
+    APP_ERROR_CHECK(err_code); 
+
+    dfus_init.evt_handler = ble_dfu_evt_handler; 
+
+    err_code = ble_dfu_buttonless_init(&dfus_init);
+    APP_ERROR_CHECK(err_code);
+
+#endif
 }
 
 
@@ -434,11 +478,11 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     switch (ble_adv_evt)
     {
     case BLE_ADV_EVT_FAST:
-        err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
-        APP_ERROR_CHECK(err_code);
+        //err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
+        //APP_ERROR_CHECK(err_code);
         break;
     case BLE_ADV_EVT_IDLE:
-        sleep_mode_enter();
+        //sleep_mode_enter();
         break;
     default:
         break;
@@ -569,7 +613,6 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
  *
  * @details This function initializes the SoftDevice and the BLE event interrupt.
  */
-void test(char *s);
 
 static void ble_stack_init(void)
 {
@@ -677,7 +720,7 @@ static void advertising_init(void)
 
     init.config.ble_adv_fast_enabled  = true;
     init.config.ble_adv_fast_interval = APP_ADV_INTERVAL;
-    init.config.ble_adv_fast_timeout  = 0;
+    init.config.ble_adv_fast_timeout  = APP_ADV_TIMEOUT_IN_SECONDS;
 
     init.evt_handler = on_adv_evt;
 
@@ -688,11 +731,9 @@ static void advertising_init(void)
 }
 
 
-/**@brief Function for initializing the nrf log module.
- */
 void log_init(void)
 {
-    ret_code_t err_code = NRF_LOG_INIT(NULL);
+    ret_code_t err_code = NRF_LOG_INIT(get_rtc_counter);
     APP_ERROR_CHECK(err_code);
 
     NRF_LOG_DEFAULT_BACKENDS_INIT();
@@ -841,62 +882,57 @@ static void peer_manager_init(void)
 /**@brief Application main function.
  */
 
+#ifdef BLE_SUPPORT 
+void ble_advertising_begin(void)
+{
+	advertising_start();
+}
+
+void ble_advertising_stop(void)
+{
+	sd_ble_gap_adv_stop((&m_advertising)->adv_handle);
+}
+
+#endif
+
+#ifdef BSP_MODE
+app_timer_id_t bsp_timer;
+extern void bsp_timer_handler(void * p_context);
+#endif
+
+void rui_event_init()
+{
+#ifdef BSP_MODE
+    app_timer_create(&bsp_timer, APP_TIMER_MODE_REPEATED, bsp_timer_handler);    
+	app_timer_start(bsp_timer, APP_TIMER_TICKS(10000), NULL);
+#endif
+}
+
 int main(void)
 {
-    uint32_t err_code;
-    bool erase_bonds;
-    BaseType_t xReturned;
-    int ret;
     log_init();
-    //clock init
-    nrf_drv_clock_init();
-
-    // Activate deep sleep mode.
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-
-    ble_stack_init();
     timers_init();
+    NRF_POWER->DCDCEN = 1;
+#ifdef BLE_SUPPORT
+    ble_stack_init();
     gap_params_init();
     gatt_init();
     services_init();
     advertising_init();
     conn_params_init();
     peer_manager_init();
-#ifdef DFU_TEST
-    dfu_settings_init();
 #endif
     sensors_init();
     itracker_function_init();
-    // Create a FreeRTOS task for the BLE stack. The task will run advertising_start() before entering its loop.
-    nrf_sdh_freertos_init(advertising_start, NULL);
-#ifdef DFU_TEST
-    // dfu task is the only background task
-    xReturned = xTaskCreate(dfu_task, "dfu", 512, NULL, 1, NULL);
+    rui_event_init();
+#ifdef BLE_SUPPORT
+	advertising_start();
 #endif
-    //
-    xReturned = xTaskCreate(test_task, "test", 512, NULL, 2, NULL);
-#ifdef LORA_TEST
-
-    vSemaphoreCreateBinary(xBinarySemaphore);
-    if(xBinarySemaphore == NULL)
-    {
-        NRF_LOG_INFO("xBinarySemaphore is NULL\r\n");
-    }
-   //creat lorawan IRQ sync task for TX and RX interrupt
-    xReturned = xTaskCreate(lora_task, "lora", 256, NULL, 1, NULL);
-   //test task
-
-#endif
-
-
-    // Start FreeRTOS scheduler.
-
-    vTaskStartScheduler();
-
     for (;;)
     {
-        APP_ERROR_HANDLER(NRF_ERROR_FORBIDDEN);
+        power_manage();
     }
+
 }
 
 /**

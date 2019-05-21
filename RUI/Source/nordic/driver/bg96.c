@@ -17,7 +17,6 @@ static uint16_t rxWriteIndex = 0;
 static uint16_t rxCount      = 0;
 static uint8_t Gsm_RxBuf[GSM_RXBUF_MAXSIZE];
 
-const nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(2); /**< Declaring an instance of nrf_drv_rtc for RTC0. */
 
 extern GSM_RECEIVE_TYPE g_type;
 char GSM_RSP[1600] = {0};
@@ -28,12 +27,6 @@ char GSM_RSP[1600] = {0};
 *                                         FUNCTION PROTOTYPES
 *********************************************************************************************************
 */
-
-uint32_t get_stamp(void)
-{
-    uint32_t ticks = nrf_drv_rtc_counter_get(&rtc);
-    return (ticks / RTC_DEFAULT_CONFIG_FREQUENCY);
-}
 
 int GSM_UART_TxBuf(uint8_t *buffer, int nbytes)
 {
@@ -78,20 +71,7 @@ void Gsm_RingBuf(uint8_t in_data)
 void Gsm_PowerUp(void)
 {
     NRF_LOG_INFO("GMS_PowerUp\r\n");
-
-    GSM_PWR_OFF;
-    delay_ms(200);
-
-    /*Pwr stable wait at least 30ms before pulling down PWRKEY pin*/
-    GSM_PWR_ON;
-    GSM_RESET_HIGH;
-    delay_ms(60);		// >30ms
-
-    /*Pwr key keep to low at least 100ms*/
-    GSM_PWRKEY_LOW;
-    delay_ms(500); //300ms
-    GSM_PWRKEY_HIGH;
-    delay_ms(500);
+    POWER_ON;
 }
 
 
@@ -141,7 +121,7 @@ int Gsm_WaitRspOK(char *rsp_value, uint16_t timeout_ms, uint8_t is_rf)
             }
 
             rsp_value[i++] = (char)c;
-            SEGGER_RTT_printf(0, "%02X", rsp_value[i - 1]);
+            //NRF_LOG_INFO("%02X", rsp_value[i - 1]);
             time_count--;
         }
         while(time_count > 0);
@@ -159,11 +139,10 @@ int Gsm_WaitRspOK(char *rsp_value, uint16_t timeout_ms, uint8_t is_rf)
                 delay_ms(1);
                 continue;
             }
-            //R485_UART_TxBuf((uint8_t *)&c,1);
-            SEGGER_RTT_printf(0, "%c", c);
+
             GSM_RSP[i++] = (char)c;
 
-            if(i >= wait_len)
+            if(i >= 0 && rsp_value != NULL)
             {
                 if(is_rf)
                     cmp_p = strstr(GSM_RSP, GSM_CMD_RSP_OK_RF);
@@ -173,8 +152,8 @@ int Gsm_WaitRspOK(char *rsp_value, uint16_t timeout_ms, uint8_t is_rf)
                 {
                     if(i > wait_len && rsp_value != NULL)
                     {
-                        //SEGGER_RTT_printf(0,"--%s  len=%d\r\n", resp, (cmp_p-resp));
-                        memcpy(rsp_value, GSM_RSP, (cmp_p - GSM_RSP));
+                        //SEGGER_RTT_printf(0,"--%s  len=%d\r\n", rsp_value, i);
+                        memcpy(rsp_value, GSM_RSP, i);
                     }
                     ret = 0;
                     break;
@@ -456,37 +435,40 @@ void Gsm_nb_iot_config(void)
 #if 1
     Gsm_print("AT+COPS=?");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
-    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 400, true);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 120, true);
+    NRF_LOG_INFO("AT+COPS=? %s\r\n",GSM_RSP);
     delay_ms(1000);
     Gsm_print("AT+COPS=1,0,\"CHINA MOBILE\",0");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+COPS=1 %s\r\n",GSM_RSP);
     delay_ms(1000);
     Gsm_print("AT+QNWINFO");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 4, true);
+    NRF_LOG_INFO("AT+QNWINFO %s\r\n",GSM_RSP);    
     delay_ms(1000);
     Gsm_print("AT+QICSGP=1,1,\"CMCC\","","",1");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+QICSGP=1 %s\r\n",GSM_RSP);
     delay_ms(1000);
     Gsm_print("AT+QIACT=1");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+QIACT=1 %s\r\n",GSM_RSP);    
     delay_ms(1000);
     Gsm_print("AT+QIACT?");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+QIACT? %s\r\n",GSM_RSP); 
     delay_ms(1000);
-    Gsm_print("AT+QIOPEN=1,1,\"TCP LISTENER\",\"127.0.0.1\",0,2020,0");
+    Gsm_print("AT+QPING=1,\"www.baidu.com\"");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+QPING? %s\r\n",GSM_RSP); 
     delay_ms(1000);
-    Gsm_print("AT+QISTATE");
-    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
-    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
-    NRF_LOG_INFO("AT+QISTATE GSM_RSP = %s\r\n", GSM_RSP);
-    delay_ms(1000);
+
 #endif
 }
 
@@ -542,6 +524,37 @@ void gps_data_checksum(char *str)
     }
     
 }
+
+void gps_parse(uint8_t *data)
+{
+    uint8_t gps_info[50] = {0};  
+    int i = 0;
+    int i_gps = 0;
+    int j_d = 0;
+    for (i = 0; data[i] != 0 ; i++)
+    {
+        if (data[i] == ',')
+        {
+            j_d++;
+            i++;
+        }
+        if (j_d==2)
+        {
+            break;
+        }
+    }
+    for (i; data[i] != 0; i++)
+    {
+        if (data[i] == 'E' || data[i] == 'W')
+        {   
+            break;
+        }
+        gps_info[i_gps++]=data[i];
+    }
+    gps_info[i_gps] = data[i];
+    memset(data,0,128);
+    memcpy(data,gps_info,i_gps+1);
+}
 void gps_data_get(uint8_t *data, uint8_t len)
 {
     int ret = -1;
@@ -570,135 +583,71 @@ void gsm_send_test(void)
 int Gsm_test_hologram(void)
 {
     int ret = -1;
-    int time_count;
-    int cmd_len;
-    int retry_count;
-
+    NRF_LOG_INFO("Gsm_test_hologram begin\r\n");
+    Gsm_print("ATI");
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 120, true);
+    NRF_LOG_INFO("ATI %s\r\n",GSM_RSP);
+    delay_ms(1000);
     Gsm_print("AT+COPS=?");
-    ret = Gsm_WaitRspOK(NULL, GSM_GENER_CMD_TIMEOUT, true);
-    vTaskDelay(300);
-
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 120, true);
+    NRF_LOG_INFO("AT+COPS=? %s\r\n",GSM_RSP);
+    delay_ms(1000);
     Gsm_print("AT+COPS=1,0,\"CHINA MOBILE\",0");
-    ret = Gsm_WaitRspOK(NULL, GSM_GENER_CMD_TIMEOUT, true);
-    vTaskDelay(300);
-
-    while((Gsm_CheckNetworkCmd() < 0))
-    {
-        //delay_ms(GSM_CHECKSIM_RETRY_TIME);
-        vTaskDelay(300);
-        if(++time_count > GSM_CHECKSIM_RETRY_NUM)
-        {
-            DPRINTF(LOG_WARN, "check network timeout\r\n");
-            return -1;
-        }
-    }
-
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+COPS=1,0,\"CHINA MOBILE\",0 %s\r\n",GSM_RSP);
+    delay_ms(1000);
+    Gsm_print("AT+CREG?");
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+CREG? %s\r\n",GSM_RSP);
+    delay_ms(1000);
     Gsm_print("AT+QNWINFO");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
     ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 4, true);
-    if(ret >= 0)
-    {
-        NRF_LOG_INFO( "Wait +QNWINFO RSP!\n");
-        if(NULL != strstr(GSM_RSP, "+QNWINFO: \"EDGE\""))
-        {
-            ret = 0;
-        }
-        else
-        {
-            ret = -1;
-        }
-    }
-    vTaskDelay(300);
-
+    NRF_LOG_INFO("AT+QNWINFO %s\r\n",GSM_RSP);
+    delay_ms(1000);
     Gsm_print("AT+COPS?");
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
-    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT, true);
-    if(ret >= 0)
-    {
-        if(NULL != strstr(GSM_RSP, "Hologram"))
-        {
-            ret = 0;
-        }
-        else
-        {
-            ret = -1;
-        }
-    }
-    vTaskDelay(300);
-
-    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 4, true);
+    NRF_LOG_INFO("AT+COPS? %s\r\n",GSM_RSP);
+    delay_ms(1000);
     Gsm_print("AT+QICSGP=1,1,\"hologram\",\"\",\"\",1");
-    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT, true);
-    vTaskDelay(300);
-
-
-    Gsm_print("AT+QIACT=1");
-    ret = Gsm_WaitRspOK(NULL, GSM_GENER_CMD_TIMEOUT * 4, true);
-    NRF_LOG_INFO( "AT+QIACT=1\n");
-    vTaskDelay(300);
-
-
-    retry_count = 3;
-    do
-    {
-        retry_count--;
-        Gsm_print("AT+QIACT?");
-        memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
-        ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT, true);
-        if(ret >= 0)
-        {
-            if(NULL != strstr(GSM_RSP, "+QIACT: 1,1,1"))
-            {
-                ret = 0;
-            }
-            else
-            {
-                ret = -1;
-            }
-        }
-    }
-    while(retry_count && ret);
-    vTaskDelay(100);
-
-    retry_count = 3;
-    do
-    {
-        retry_count--;
-        Gsm_print("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
-        memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
-        ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT, true);
-    }
-    while(retry_count && ret);
-    vTaskDelay(300);
-
-    retry_count = 2;
-    do
-    {
-        retry_count--;
-        Gsm_print("AT+QISEND=0,48");
-        ret = Gsm_WaitSendAck(GSM_GENER_CMD_TIMEOUT);
-    }
-    while(retry_count && ret);
-    vTaskDelay(300);
-    if(ret == 0)
-    {
-        NRF_LOG_INFO( "------GSM_SEND_DATA\n");
-        Gsm_print("{\"k\":\"+C7pOb8=\",\"d\":\"Hello,World!\",\"t\":\"TOPIC1\"}");
-    }
-
     memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
-    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT, true);
-    if(ret >= 0)
-    {
-        if(NULL != strstr(GSM_RSP, "SEND OK"))
-        {
-            ret = 0;
-        }
-        else
-        {
-            ret = -1;
-        }
-    }
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 10, true);
+    NRF_LOG_INFO("AT+QICSGP= %s\r\n",GSM_RSP);
+    delay_ms(1000);
+    Gsm_print("AT+QIACT=1");
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 120, true);
+    NRF_LOG_INFO("AT+QIACT=1 %s\r\n",GSM_RSP);
+    delay_ms(1000);
+    Gsm_print("AT+QIACT?");
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 40, true);
+    NRF_LOG_INFO("AT+QIACT? %s\r\n",GSM_RSP);
+    delay_ms(1000);
+    Gsm_print("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 60, true);
+    NRF_LOG_INFO("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1 %s\r\n",GSM_RSP);
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT * 20, true);
+    NRF_LOG_INFO("%s\r\n",GSM_RSP);
+    delay_ms(1000);
+    Gsm_print("AT+QISEND=0,48");
+    delay_ms(1000);
+    Gsm_print("{\"k\":\"+C7pOb8=\",\"d\":\"Hello,World!\",\"t\":\"TOPIC1\"}");
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT *60, true);
+    NRF_LOG_INFO("%s\r\n",GSM_RSP);
+    memset(GSM_RSP, 0, GSM_GENER_CMD_LEN);
+    ret = Gsm_WaitRspOK(GSM_RSP, GSM_GENER_CMD_TIMEOUT *80, true);
+    NRF_LOG_INFO("%s\r\n",GSM_RSP);
+    Gsm_print("AT+QICLOSE=0");
+    delay_ms(5000);
     return ret;
 }
 
@@ -808,6 +757,7 @@ int Gsm_Init()
     Gsm_PowerUp();
     NRF_LOG_INFO( "check auto baud\r\n");
     rak_uart_init(GSM_USE_UART, GSM_RXD_PIN, GSM_TXD_PIN, UARTE_BAUDRATE_BAUDRATE_Baud115200);
+    delay_ms(1000);
     /*module init ,check is auto baud,if auto,config to 115200 baud.*/
     Gsm_CheckAutoBaud();
 
@@ -819,25 +769,7 @@ int Gsm_Init()
     /*check SIM Card status,if not ready,retry 60s,return*/
     time_count = 0;
     gps_config();
-    while((Gsm_CheckSimCmd() < 0))
-    {
-        delay_ms(GSM_CHECKSIM_RETRY_TIME);
-
-        if(++time_count > GSM_CHECKSIM_RETRY_NUM)
-        {
-            DPRINTF(LOG_WARN, "check sim card timeout\r\n");
-            return -1;
-        }
-    }
-
-    //NRF_LOG_INFO("Test with Hologram on China Telecom\r\n");
-
-    //time_count=0;
-    //Gsm_test_hologram();
-    /*config NB-IOT param, this test is based China Telecom,if not success, contact your operator.
-      The detail of command can refer to  Quectel document https://www.quectel.com/support/ */
-    Gsm_nb_iot_config();
-
+    delay_ms(1000);
     return 0;
 }
 /**

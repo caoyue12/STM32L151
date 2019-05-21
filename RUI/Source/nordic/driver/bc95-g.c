@@ -16,8 +16,6 @@ static uint16_t rxWriteIndex = 0;
 static uint16_t rxCount      = 0;
 static uint8_t Gsm_RxBuf[GSM_RXBUF_MAXSIZE];
 
-const nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(2); /**< Declaring an instance of nrf_drv_rtc for RTC0. */
-
 extern GSM_RECEIVE_TYPE g_type;
 char GSM_RSP[1600] = {0};
 
@@ -27,12 +25,6 @@ char GSM_RSP[1600] = {0};
 *                                         FUNCTION PROTOTYPES
 *********************************************************************************************************
 */
-
-uint32_t get_stamp(void)
-{
-    uint32_t ticks = nrf_drv_rtc_counter_get(&rtc);
-    return (ticks / RTC_DEFAULT_CONFIG_FREQUENCY);
-}
 
 int GSM_UART_TxBuf(uint8_t *buffer, int nbytes)
 {
@@ -133,7 +125,7 @@ int Gsm_WaitRspOK(char *rsp_value, uint16_t timeout_ms, uint8_t is_rf)
             }
 
             rsp_value[i++] = (char)c;
-            SEGGER_RTT_printf(0, "%02X", rsp_value[i - 1]);
+            //NRF_LOG_INFO("%02X", rsp_value[i - 1]);
             time_count--;
         }
         while(time_count > 0);
@@ -152,7 +144,7 @@ int Gsm_WaitRspOK(char *rsp_value, uint16_t timeout_ms, uint8_t is_rf)
                 continue;
             }
             //R485_UART_TxBuf((uint8_t *)&c,1);
-            SEGGER_RTT_printf(0, "%c", c);
+            //NRF_LOG_INFO("%c", c);
             GSM_RSP[i++] = (char)c;
 
             if(i >= wait_len)

@@ -22,6 +22,9 @@
 #define RADIO_RF_CTX	        P23
 #define RADIO_RF_CPS	        P22
 
+
+#define RF_ANT_INIT		1
+
 #define ASSERT_ERROR	0xA55EA55E
 
 #define USE_FULL_ASSERT
