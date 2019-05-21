@@ -45,9 +45,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
 #include "nrf_drv_twi.h"
 #include "nrf_gpio.h"
 #include "nrf_delay.h"

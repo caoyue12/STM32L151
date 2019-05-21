@@ -203,7 +203,7 @@ ifeq (3, $(findstring 3, $(wordlist 3, $(NUM), $(P))))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/lis2mdl.c
 endif
 ifeq (4, $(findstring 4, $(wordlist 3, $(NUM), $(P))))
-  SRC_FILES += $(SDK_ROOT)/RUI/Source/driver/lis3dh.c
+  SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/lis3dh.c
 endif
 ifeq (5, $(findstring 5, $(wordlist 3, $(NUM), $(P))))
   SRC_FILES += $(SDK_ROOT)/RUI/Source/nordic/driver/opt3001.c
