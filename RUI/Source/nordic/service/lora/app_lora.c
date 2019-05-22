@@ -792,7 +792,7 @@ void region_init()
 	     LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
             LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
             LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;
-            LoRaMacCallbacks.GetBatteryLevel = BoardGetBatteryLevel;
+            LoRaMacCallbacks.GetBatteryLevel = NULL;
 #if defined( REGION_AS923 )
             LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, LORAMAC_REGION_AS923 );
 #elif defined( REGION_AU915 )

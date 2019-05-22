@@ -7,7 +7,6 @@
  * Flag used to set the RF switch control pins in low power mode when the radio is not active.
  */
 static bool RadioIsActive = false;
-extern xSemaphoreHandle xBinarySemaphore;
 /*!
  * Radio driver structure initialization
  */
