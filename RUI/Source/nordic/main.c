@@ -751,7 +751,7 @@ void rui_event_init()
 {
 #ifdef BSP_MODE
     app_timer_create(&bsp_timer, APP_TIMER_MODE_REPEATED, bsp_timer_handler);    
-	app_timer_start(bsp_timer, APP_TIMER_TICKS(3000), NULL);
+	app_timer_start(bsp_timer, APP_TIMER_TICKS(30000), NULL);
 #endif
 }
 
