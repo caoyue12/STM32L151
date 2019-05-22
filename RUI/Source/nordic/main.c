@@ -106,7 +106,7 @@
 #define APP_BLE_OBSERVER_PRIO           1                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS      180                                         /**< The advertising timeout (in units of seconds). */
+#define APP_ADV_TIMEOUT_IN_SECONDS      60000                                         /**< The advertising timeout (in units of seconds). */
 
 #define MIN_CONN_INTERVAL               MSEC_TO_UNITS(20, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
 #define MAX_CONN_INTERVAL               MSEC_TO_UNITS(75, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
@@ -451,15 +451,15 @@ static void conn_params_init(void)
  */
 static void sleep_mode_enter(void)
 {
-    uint32_t err_code = bsp_indication_set(BSP_INDICATE_IDLE);
-    APP_ERROR_CHECK(err_code);
+    // uint32_t err_code = bsp_indication_set(BSP_INDICATE_IDLE);
+    // APP_ERROR_CHECK(err_code);
 
-    // Prepare wakeup buttons.
-    err_code = bsp_btn_ble_sleep_mode_prepare();
-    APP_ERROR_CHECK(err_code);
+    // // Prepare wakeup buttons.
+    // err_code = bsp_btn_ble_sleep_mode_prepare();
+    // APP_ERROR_CHECK(err_code);
 
     // Go to system-off mode (this function will not return; wakeup will cause a reset).
-    err_code = sd_power_system_off();
+    uint32_t err_code = sd_power_system_off();
     APP_ERROR_CHECK(err_code);
 }
 
@@ -477,11 +477,11 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     switch (ble_adv_evt)
     {
     case BLE_ADV_EVT_FAST:
-        err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
-        APP_ERROR_CHECK(err_code);
+        //err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
+        //APP_ERROR_CHECK(err_code);
         break;
     case BLE_ADV_EVT_IDLE:
-        sleep_mode_enter();
+        //sleep_mode_enter();
         break;
     default:
         break;
@@ -502,15 +502,15 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     {
     case BLE_GAP_EVT_CONNECTED:
         NRF_LOG_INFO("Connected");
-        err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
-        APP_ERROR_CHECK(err_code);
+        // err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
+        // APP_ERROR_CHECK(err_code);
         m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
         break;
 
     case BLE_GAP_EVT_DISCONNECTED:
         NRF_LOG_INFO("Disconnected");
-        err_code = bsp_indication_set(BSP_INDICATE_IDLE);
-        APP_ERROR_CHECK(err_code);
+        // err_code = bsp_indication_set(BSP_INDICATE_IDLE);
+        // APP_ERROR_CHECK(err_code);
         m_conn_handle = BLE_CONN_HANDLE_INVALID;
         break;
 
@@ -712,7 +712,7 @@ static void advertising_init(void)
 
     init.advdata.name_type          = BLE_ADVDATA_FULL_NAME;
     init.advdata.include_appearance = false;
-    init.advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
+    init.advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
 
     init.srdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
     init.srdata.uuids_complete.p_uuids  = m_adv_uuids;
