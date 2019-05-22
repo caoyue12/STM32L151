@@ -745,12 +745,18 @@ void log_init(void)
 #ifdef BSP_MODE
 APP_TIMER_DEF(bsp_timer);
 extern void bsp_timer_handler(void * p_context);
+uint8_t BSP_FLAG = 0;
+void bsp_handle(void * p_context)
+{
+    BSP_FLAG = 1;
+}
 #endif
+
 
 void rui_event_init()
 {
 #ifdef BSP_MODE
-    app_timer_create(&bsp_timer, APP_TIMER_MODE_REPEATED, bsp_timer_handler);    
+    app_timer_create(&bsp_timer, APP_TIMER_MODE_REPEATED, bsp_handle);    
 	app_timer_start(bsp_timer, APP_TIMER_TICKS(30000), NULL);
 #endif
 }
@@ -777,6 +783,11 @@ int main(void)
 #endif
     for (;;)
     {
+        if (BSP_FLAG == 1)
+        {
+            BSP_FLAG = 0;
+            bsp_timer_handler(NULL);
+        }
         power_manage();
     }
 

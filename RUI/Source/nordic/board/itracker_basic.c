@@ -104,33 +104,39 @@ uint32_t get_lps22hb_pressure_bus(double *pressure)
 uint32_t get_bme280_temp_bus(double *temp)
 {
     uint32_t ret = 1;
+    double tmp = 0;
     if(temp == NULL)
     {
         return 1;
     }
-    ret = get_bme280_temp(temp);
+    ret = get_bme280_temp(&tmp);
+    *temp = tmp;
     return ret;
 }
 
 uint32_t get_bme280_humidity_bus(double *humidity)
 {
     uint32_t ret = 1;
+    double tmp = 0;
     if(humidity == NULL)
     {
         return 1;
     }
-    ret = get_bme280_humidity(humidity);
+    ret = get_bme280_humidity(&tmp);
+    *humidity = tmp;
     return ret;
 }
 
 uint32_t get_bme280_pressure_bus(double *pressure)
 {
     uint32_t ret = 1;
+    double tmp = 0;
     if(pressure == NULL)
     {
         return 1;
     }
-    ret = get_bme280_pressure(pressure);
+    ret = get_bme280_pressure(&tmp);
+    *pressure = tmp;
     return ret;
 }
 #endif
