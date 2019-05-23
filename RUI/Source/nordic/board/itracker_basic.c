@@ -270,17 +270,21 @@ void Gsm_wait_response(uint8_t *rsp, uint32_t len, uint32_t timeout,GSM_RECEIVE_
 extern uint8_t GpsDataBuffer[512];
 uint32_t gps_data_get_bus(uint8_t *data, uint32_t len)
 {   
- 
+        uint8_t count = 8;
         if(data == NULL || len < 0)
         {
            return 1;
         }
-        Max7GpsReadDataStream();
-	    if (GpsParseGpsData(GpsDataBuffer, 512))
-	    {
-	          GpsGetLatestGpsPositionDouble(&gps_lat, &gps_lon);
-	    }
-	    sprintf(data,"gps: lat = %lf, lon = %lf\r\n",gps_lat,gps_lon);
+        while(count--)
+        {
+            Max7GpsReadDataStream();
+	        if (GpsParseGpsData(GpsDataBuffer, 512))
+	        {
+                GpsGetLatestGpsPositionDouble(&gps_lat, &gps_lon);
+	        }
+            delay_ms(500);
+        }
+	    sprintf(data,"gps: lat = %lf, lon = %lf",gps_lat,gps_lon);
 }
 #endif
 void itracker_function_init()

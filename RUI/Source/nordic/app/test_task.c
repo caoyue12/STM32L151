@@ -49,7 +49,7 @@ void bsp_timer_handler(void * p_context)
 
 #ifdef LPS22HB_TEST
 	itracker_function.pressure_get(&pressure);
-        NRF_LOG_INFO("pressure = %d hPa",pressure);	
+        NRF_LOG_INFO("pressure = "NRF_LOG_FLOAT_MARKER" hPa", NRF_LOG_FLOAT(pressure));
 #endif
 #ifdef LIS3DH_TEST
         itracker_function.acceleration_get(&x,&y,&z);
@@ -58,11 +58,11 @@ void bsp_timer_handler(void * p_context)
 #endif
 #ifdef LIS2MDL_TEST
         itracker_function.magnetic_get(&magnetic_x,&magnetic_y,&magnetic_z);
-        NRF_LOG_INFO("magnetic x,y,z = %d,%d,%d",magnetic_x,magnetic_y,magnetic_z);
+        NRF_LOG_INFO("magnetic x,y,z = "NRF_LOG_FLOAT_MARKER","NRF_LOG_FLOAT_MARKER","NRF_LOG_FLOAT_MARKER"",NRF_LOG_FLOAT(magnetic_x),NRF_LOG_FLOAT(magnetic_y),NRF_LOG_FLOAT(magnetic_z));
 #endif
 #ifdef OPT3001_TEST
         itracker_function.light_strength_get(&light);
-        NRF_LOG_INFO("light strength = %d",light);
+        NRF_LOG_INFO("light strength = "NRF_LOG_FLOAT_MARKER"", NRF_LOG_FLOAT(light)); 
 #endif
 
 #if defined(L70R_TEST) ||  defined(BG96_TEST) || defined(MAX7_TEST)
@@ -76,9 +76,9 @@ void bsp_timer_handler(void * p_context)
 
 #if defined(SHT31_TEST) || defined(SHTC3_TEST)
         itracker_function.temperature_get(&temp);
-        NRF_LOG_INFO("temperature = %d",temp);
+        NRF_LOG_INFO("temperature = "NRF_LOG_FLOAT_MARKER"", NRF_LOG_FLOAT(temp));
         itracker_function.humidity_get(&humidity);
-        NRF_LOG_INFO("humidity = %d",humidity);
+        NRF_LOG_INFO("humidity = "NRF_LOG_FLOAT_MARKER"", NRF_LOG_FLOAT(humidity));
 #endif
 
 #if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
@@ -88,7 +88,7 @@ void bsp_timer_handler(void * p_context)
         lora_len_t_h = 0;
         lora_len_gps = 0;
         lora_len_acc = sprintf(lora_data,"A:%d,%d,%d;",x,y,z);
-        lora_len_t_h = sprintf(lora_data+lora_len_acc,"T:%d;H:%d;",(int)temp,(int)humidity);
+        lora_len_t_h = sprintf(lora_data+lora_len_acc,"T:%lf;H:%lf;",NRF_LOG_FLOAT(temp),NRF_LOG_FLOAT(humidity));
         lora_len_gps = sprintf(lora_data+lora_len_acc+lora_len_t_h,"G:%lf,%lf;",gps_lat,gps_lon);            
         itracker_function.communicate_send(lora_data);        
 #endif
