@@ -117,11 +117,11 @@ void nb_iot_task(void)
         itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
         memset(rsp, 0, 500);
         itracker_function.communicate_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
-        vTaskDelay(500);
+        delay_ms(500);
         memset(len,0,20);
         sprintf(len,"AT+QISEND=0,%d",36+j+1);
         itracker_function.communicate_send(len);
-        vTaskDelay(500);                              
+        delay_ms(500);                              
         itracker_function.communicate_send(cmd);
         memset(rsp, 0, 500);
         itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
@@ -189,11 +189,11 @@ void nb_iot_task(void)
          itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
          memset(rsp, 0, 500);
          itracker_function.communicate_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
-         vTaskDelay(500);
+         delay_ms(500);
          memset(len,0,20);
          sprintf(len,"AT+QISEND=0,%d",36+sensor_len+1);
          itracker_function.communicate_send(len);
-         vTaskDelay(500);                              
+         delay_ms(500);                              
          itracker_function.communicate_send(cmd);
          memset(rsp, 0, 500);
          itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
