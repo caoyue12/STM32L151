@@ -106,6 +106,10 @@ void battery_level(void)
     int adc_num = 3;
     nrf_saadc_value_t adc_avg = 0;
     nrf_saadc_value_t adc_sum = 0;
+    float voltage_x[] = {3.00,3.101,3.20,3.301,3.40,3.50,3.601,3.70,3.801,3.90,4.00,4.101,4.201,4.30,4.40,4.50,4.601,4.701,4.801,4.90,5.00};
+    float adc[] = {7932,8210,8528,8872,9046,9190,9254,9300,9325,9340,9365,9386,9394,9398,9407,9412,9421,9435,9446,9456,9468};
+    //The length of the array is 21 !
+
     for (int i = 0; i < adc_num; ++i)
     {
         nrf_drv_saadc_sample_convert(0,&saadc_val);
@@ -113,9 +117,24 @@ void battery_level(void)
         delay_ms(300);
     }
     adc_avg = adc_sum/adc_num;
-    voltage = ((float)adc_avg * 3.6 / 1024) * 5 / 3;
+    for(int i=0;i<=20;i++)
+    {
+        if(adc_avg<7932 || adc_avg>9468)
+        {
+            break;
+        }
+        if(adc_avg>=adc[i])
+        {
+            voltage=voltage_x[i];
+        }
+    }
     //NRF_LOG_INFO("voltage = %lf V\r\n",voltage);
-    NRF_LOG_INFO("Battery Voltage = "NRF_LOG_FLOAT_MARKER" V !\r\n", NRF_LOG_FLOAT(voltage));
+    if(adc_avg<7932 || adc_avg>9468){
+        NRF_LOG_INFO("Voltage out of range 3.00V to 5.00V!\r\n");
+    }
+    else{
+        NRF_LOG_INFO("Battery Voltage = "NRF_LOG_FLOAT_MARKER" V !\r\n", NRF_LOG_FLOAT(voltage));
+    }
 }
 
 
