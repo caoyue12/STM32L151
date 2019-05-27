@@ -5,7 +5,7 @@
 #include "nrf_rtc.h"
 #include <string.h>
 #include "sensor.h"
-#include "itracker.h"
+#include "rui.h"
 #include "nrf_log.h"
 
 
@@ -112,24 +112,24 @@ void nb_iot_task(void)
         NRF_LOG_INFO("device_key = %s\r\n",device_key);
         NRF_LOG_INFO("test_data = %s\r\n",test_data); 
         NRF_LOG_INFO("send packet = %s\r\n",cmd);  
-        itracker_function.communicate_send("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
+        rui_lte_send("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
         memset(rsp, 0, 500);
-        itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
         memset(rsp, 0, 500);
-        itracker_function.communicate_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
         vTaskDelay(500);
         memset(len,0,20);
         sprintf(len,"AT+QISEND=0,%d",36+j+1);
-        itracker_function.communicate_send(len);
+        rui_lte_send(len);
         vTaskDelay(500);                              
-        itracker_function.communicate_send(cmd);
+        rui_lte_send(cmd);
         memset(rsp, 0, 500);
-        itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
         memset(rsp, 0, 500);
-        itracker_function.communicate_response(rsp, 500, 500 * 80, GSM_TYPE_CHAR);
-        itracker_function.communicate_send("AT+QICLOSE=0,30000");
+        rui_lte_response(rsp, 500, 500 * 80, GSM_TYPE_CHAR);
+        rui_lte_send("AT+QICLOSE=0,30000");
         memset(rsp, 0, 500);
-        itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
         }
         else if (strstr(cmd,"SENSOR")!= NULL)
         {
@@ -140,40 +140,40 @@ void nb_iot_task(void)
             j = 0;
 
 #ifdef BEM280_TEST
-         itracker_function.temperature_get(&temp);
+         rui_temperature_get(&temp);
          NRF_LOG_INFO("temperature = %d\r\n",temp);
-         itracker_function.humidity_get(&humidity);
+         rui_humidity_get(&humidity);
          NRF_LOG_INFO("humidity = %d\r\n",humidity);
-         itracker_function.pressure_get(&pressure);
+         rui_pressure_get(&pressure);
          NRF_LOG_INFO("pressure = %d\r\n",pressure);
 #endif
 
 #ifdef LPS22HB_TEST
-         itracker_function.pressure_get(&pressure);
+         rui_pressure_get(&pressure);
          NRF_LOG_INFO("pressure = %d hPa\r\n",pressure); 
 #endif
 #ifdef LIS3DH_TEST
-         itracker_function.acceleration_get(&x,&y,&z);
+         rui_acceleration_get(&x,&y,&z);
          NRF_LOG_INFO("acceleration x,y,z = %d mg,%d mg,%d mg",x,y,z);
 
 #endif
 #ifdef LIS2MDL_TEST
-         itracker_function.magnetic_get(&magnetic_x,&magnetic_y,&magnetic_z);
+         rui_magnetic_get(&magnetic_x,&magnetic_y,&magnetic_z);
          NRF_LOG_INFO("magnetic x,y,z = %d,%d,%d\r\n",magnetic_x,magnetic_y,magnetic_z);
 #endif
 #ifdef OPT3001_TEST
-         itracker_function.light_strength_get(&light);
+         rui_light_strength_get(&light);
          NRF_LOG_INFO("light strength = %d\r\n",light);
 #endif
 
 #if defined(SHT31_TEST) || defined(SHTC3_TEST)
-         itracker_function.temperature_get(&temp);
+         rui_temperature_get(&temp);
          NRF_LOG_INFO("temperature = %d\r\n",temp);
-         itracker_function.humidity_get(&humidity);
+         rui_humidity_get(&humidity);
          NRF_LOG_INFO("humidity = %d\r\n",humidity);
 #endif
 
-         itracker_function.gps_get(gps_data,128);
+         rui_gps_get(gps_data,128);
          delay_ms(500);
 		 NRF_LOG_INFO("GPS = %s\r\n",gps_data);
          memset(test_data,0,256);
@@ -184,30 +184,30 @@ void nb_iot_task(void)
          NRF_LOG_INFO("test_data = %s\r\n",test_data);
          NRF_LOG_INFO("test_data len = %d\r\n",sensor_len);                 
          NRF_LOG_INFO("send packet = %s\r\n",cmd);  
-         itracker_function.communicate_send("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
+         rui_lte_send("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
          memset(rsp, 0, 500);
-         itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
          memset(rsp, 0, 500);
-         itracker_function.communicate_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
          vTaskDelay(500);
          memset(len,0,20);
          sprintf(len,"AT+QISEND=0,%d",36+sensor_len+1);
-         itracker_function.communicate_send(len);
+         rui_lte_send(len);
          vTaskDelay(500);                              
-         itracker_function.communicate_send(cmd);
+         rui_lte_send(cmd);
          memset(rsp, 0, 500);
-         itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
          memset(rsp, 0, 500);
-         itracker_function.communicate_response(rsp, 500, 500 * 80, GSM_TYPE_CHAR);
-         itracker_function.communicate_send("AT+QICLOSE=0,30000");
+         rui_lte_response(rsp, 500, 500 * 80, GSM_TYPE_CHAR);
+         rui_lte_send("AT+QICLOSE=0,30000");
          memset(rsp, 0, 500);
-         itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
       }
       else
       {
-         itracker_function.communicate_send(cmd);
+         rui_lte_send(cmd);
          memset(rsp, 0, 500);
-         itracker_function.communicate_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
       }
 
          memset(cmd,0,128);

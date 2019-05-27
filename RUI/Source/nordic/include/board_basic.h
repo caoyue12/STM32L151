@@ -87,6 +87,9 @@ typedef struct {
         uint8_t appskey[16];
 } lora_cfg_t;
 
+#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
+extern uint8_t g_lora_join_success;
+#endif
 
 #define LORA_CONFIG_MAGIC  	0xAB
 
@@ -365,6 +368,7 @@ void power_save_close();
 void lora_init();
 void saadc_init(void);
 void power_manage(void);
+void RtcInit(void);
 uint32_t get_rtc_counter(void);
 
 #endif

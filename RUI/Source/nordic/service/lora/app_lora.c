@@ -67,6 +67,8 @@ Maintainer: Miguel Luis and Gregory Cristian
 
 #include "LoRaMacTest.h"
 
+uint8_t g_lora_join_success = 0;
+
 /*!
 * LoRaWAN ETSI duty cycle control enable/disable
 *
@@ -220,25 +222,25 @@ void dump_hex2str(uint8_t *buf , uint8_t len);
 void lora_region_print()
 {
 #if defined( REGION_AS923 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_AS923 \r\n");    
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_AS923 \r\n");    
 #elif defined( REGION_AU915 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_AU915 \r\n");    
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_AU915 \r\n");    
 #elif defined( REGION_CN470 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_CN470 \r\n"); 
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_CN470 \r\n"); 
 #elif defined( REGION_CN779 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_CN779 \r\n"); 
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_CN779 \r\n"); 
 #elif defined( REGION_EU433 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_EU433 \r\n");
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_EU433 \r\n");
 #elif defined( REGION_EU868 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_EU868 \r\n");
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_EU868 \r\n");
 #elif defined( REGION_IN865 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_IN865 \r\n");
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_IN865 \r\n");
 #elif defined( REGION_KR920 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_KR920 \r\n");
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_KR920 \r\n");
 #elif defined( REGION_US915 )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_US915 \r\n");
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_US915 \r\n");
 #elif defined( REGION_US915_HYBRID )
-	NRF_LOG_INFO("\r\nSelected LoraWAN 1.0.2 Region: REGION_US915_HYBRID \r\n");
+	NRF_LOG_INFO("Selected LoraWAN 1.0.2 Region: REGION_US915_HYBRID \r\n");
 #else
 #error "Please define a region in the compiler options."
 #endif
@@ -750,6 +752,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
                 // Status is OK, node has joined the network
                 DeviceState = DEVICE_STATE_SEND;
                 NRF_LOG_INFO("OTAA Join Success \r\n");
+                g_lora_join_success = 1;
             }
             else
             {
@@ -962,7 +965,12 @@ Gpio_t ioreset;
 GpioIrqHandler *callback;
 void reset_handle(void)
 {
-    NRF_LOG_INFO("Reset!!!\r\n");
+    NRF_LOG_INFO("Device will Reset after 3s...\r\n");
+    delay_ms(1000);
+    NRF_LOG_INFO("Device will Reset after 2s...\r\n");
+    delay_ms(1000);    
+    NRF_LOG_INFO("Device will Reset after 1s...\r\n");
+    delay_ms(1000);
     NVIC_SystemReset();
 }
 
@@ -976,11 +984,10 @@ void lora_init()
     callback = reset_handle;
     GpioInit(&ioreset,RESET_PIN ,PIN_INPUT,PIN_PUSH_PULL,PIN_PULL_UP,1 );
     GpioSetInterrupt(&ioreset,IRQ_FALLING_EDGE,IRQ_HIGH_PRIORITY,callback);
-    rak_uart_init(LOG_USE_UART,UART_RXD_PIN,UART_TXD_PIN,UART_BAUDRATE_BAUDRATE_Baud115200);
     read_lora_config();
     if(g_lora_cfg_t.sof == LORA_CONFIG_MAGIC)
     {
-       region_init();
+        region_init();
     }
 }
 

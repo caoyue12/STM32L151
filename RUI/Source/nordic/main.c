@@ -89,7 +89,6 @@
 #include "nrf_fstorage.h"
 #include "hal_uart.h"
 #include "sensor.h"
-#include "itracker.h"
 #include "hal_uart.h"
 
 #ifdef DFU_SUPPORT
@@ -763,10 +762,11 @@ void rui_event_init()
 
 int main(void)
 {
+    RtcInit();
     timers_init();
     log_init();
     NRF_POWER->DCDCEN = 1;
-    NRF_LOG_INFO("RUI Device Init!!!\r\n");
+    NRF_LOG_INFO("RUI Version 2.0 Device Init!!!\r\n");
 #ifdef BLE_SUPPORT
     ble_stack_init();
     gap_params_init();
@@ -775,9 +775,9 @@ int main(void)
     advertising_init();
     conn_params_init();
 #endif
-    sensors_init();
-    itracker_function_init();
     rui_event_init();
+    sensors_init();
+
 #ifdef BLE_SUPPORT
 	advertising_start();
 #endif
@@ -786,7 +786,7 @@ int main(void)
         if (BSP_FLAG == 1)
         {
             BSP_FLAG = 0;
-            bsp_timer_handler(NULL);
+            //bsp_timer_handler(NULL);
         }
         power_manage();
     }

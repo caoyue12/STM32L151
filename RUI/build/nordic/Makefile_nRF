@@ -136,7 +136,7 @@ SRC_FILES += \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
   $(SDK_ROOT)/RUI/Source/nordic/board/board_basic.c \
-  $(SDK_ROOT)/RUI/Source/nordic/board/itracker_basic.c \
+  $(SDK_ROOT)/RUI/Source/nordic/service/rui/rui.c \
   $(SDK_ROOT)/components/libraries/uart/app_uart_fifo.c \
   $(SDK_ROOT)/RUI/Source/nordic/external/utilities.c \
   $(SDK_ROOT)/RUI/Source/nordic/external/utils.c \
@@ -346,6 +346,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/bsp \
   $(SDK_ROOT)/modules/nrfx/drivers/include \
   $(SDK_ROOT)/modules/nrfx/hal/ \
+  $(SDK_ROOT)/RUI/Source/rui \
   
 # Libraries common to all targets
 LIB_FILES += $(SDK_ROOT)/RUI/Source/nordic/external/micro-ecc/micro_ecc_lib_nrf52.lib
