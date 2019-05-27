@@ -23,8 +23,6 @@ uint32_t get_rtc_counter(void)
 } 
 
 
-#if defined(LORA_81x_TEST) || defined(LORA_4600_TEST)
-
 #define RTC_FREQUENCY 1000 /* Hz */
 typedef void (*rtc_wakeup_callback_t)(void);
 static uint32_t timestamp_base = 0;
@@ -151,8 +149,6 @@ TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature )
 	return period;
 }
 
-
-#endif
 
 void delay_ms(uint32_t ms)
 {
