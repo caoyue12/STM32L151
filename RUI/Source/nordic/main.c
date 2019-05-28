@@ -777,17 +777,19 @@ int main(void)
 #endif
     rui_event_init();
     sensors_init();
-
 #ifdef BLE_SUPPORT
 	advertising_start();
+    
 #endif
     for (;;)
     {
+#ifdef BSP_MODE
         if (BSP_FLAG == 1)
         {
             BSP_FLAG = 0;
-            //bsp_timer_handler(NULL);
+            bsp_timer_handler(NULL);
         }
+#endif
         power_manage();
     }
 

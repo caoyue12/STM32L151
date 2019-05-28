@@ -58,7 +58,10 @@ void bsp_timer_handler(void * p_context)
 #endif
 #ifdef LIS2MDL_TEST
         rui_magnetic_get(&magnetic_x,&magnetic_y,&magnetic_z);
-        NRF_LOG_INFO("magnetic x,y,z = "NRF_LOG_FLOAT_MARKER","NRF_LOG_FLOAT_MARKER","NRF_LOG_FLOAT_MARKER"",NRF_LOG_FLOAT(magnetic_x),NRF_LOG_FLOAT(magnetic_y),NRF_LOG_FLOAT(magnetic_z));
+        NRF_LOG_INFO("magnetic x = "NRF_LOG_FLOAT_MARKER"",NRF_LOG_FLOAT(magnetic_x));
+        NRF_LOG_INFO("magnetic y = "NRF_LOG_FLOAT_MARKER"",NRF_LOG_FLOAT(magnetic_y));
+        NRF_LOG_INFO("magnetic z = "NRF_LOG_FLOAT_MARKER"",NRF_LOG_FLOAT(magnetic_z));
+        
 #endif
 #ifdef OPT3001_TEST
         rui_light_strength_get(&light);

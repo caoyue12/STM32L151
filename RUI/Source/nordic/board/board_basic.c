@@ -23,6 +23,7 @@ uint32_t get_rtc_counter(void)
 } 
 
 
+
 #define RTC_FREQUENCY 1000 /* Hz */
 typedef void (*rtc_wakeup_callback_t)(void);
 static uint32_t timestamp_base = 0;
@@ -148,6 +149,7 @@ TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature )
 {
 	return period;
 }
+
 
 
 void delay_ms(uint32_t ms)

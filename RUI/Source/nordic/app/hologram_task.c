@@ -114,22 +114,22 @@ void nb_iot_task(void)
         NRF_LOG_INFO("send packet = %s\r\n",cmd);  
         rui_lte_send("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
         memset(rsp, 0, 500);
-        rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 60);
         memset(rsp, 0, 500);
-        rui_lte_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
-        vTaskDelay(500);
+        rui_lte_response(rsp, 500, 500 * 20);
+        delay_ms(500);
         memset(len,0,20);
         sprintf(len,"AT+QISEND=0,%d",36+j+1);
         rui_lte_send(len);
-        vTaskDelay(500);                              
+        delay_ms(500);                              
         rui_lte_send(cmd);
         memset(rsp, 0, 500);
-        rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 60);
         memset(rsp, 0, 500);
-        rui_lte_response(rsp, 500, 500 * 80, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 80);
         rui_lte_send("AT+QICLOSE=0,30000");
         memset(rsp, 0, 500);
-        rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+        rui_lte_response(rsp, 500, 500 * 60);
         }
         else if (strstr(cmd,"SENSOR")!= NULL)
         {
@@ -173,7 +173,7 @@ void nb_iot_task(void)
          NRF_LOG_INFO("humidity = %d\r\n",humidity);
 #endif
 
-         rui_gps_get(gps_data,128);
+         rui_gps_info_get(gps_data,128);
          delay_ms(500);
 		 NRF_LOG_INFO("GPS = %s\r\n",gps_data);
          memset(test_data,0,256);
@@ -186,28 +186,28 @@ void nb_iot_task(void)
          NRF_LOG_INFO("send packet = %s\r\n",cmd);  
          rui_lte_send("AT+QIOPEN=1,0,\"TCP\",\"cloudsocket.hologram.io\",9999,0,1");
          memset(rsp, 0, 500);
-         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60);
          memset(rsp, 0, 500);
-         rui_lte_response(rsp, 500, 500 * 20, GSM_TYPE_CHAR);
-         vTaskDelay(500);
+         rui_lte_response(rsp, 500, 500 * 20);
+         delay_ms(500);
          memset(len,0,20);
          sprintf(len,"AT+QISEND=0,%d",36+sensor_len+1);
          rui_lte_send(len);
-         vTaskDelay(500);                              
+         delay_ms(500);                              
          rui_lte_send(cmd);
          memset(rsp, 0, 500);
-         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60);
          memset(rsp, 0, 500);
-         rui_lte_response(rsp, 500, 500 * 80, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 80);
          rui_lte_send("AT+QICLOSE=0,30000");
          memset(rsp, 0, 500);
-         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60);
       }
       else
       {
          rui_lte_send(cmd);
          memset(rsp, 0, 500);
-         rui_lte_response(rsp, 500, 500 * 60, GSM_TYPE_CHAR);
+         rui_lte_response(rsp, 500, 500 * 60);
       }
 
          memset(cmd,0,128);
