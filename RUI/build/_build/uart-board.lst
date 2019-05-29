@@ -1,0 +1,1418 @@
+ARM GAS  /tmp/ccSho242.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"uart-board.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.UartMcuInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	UartMcuInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	UartMcuInit:
+  24              	.LFB72:
+  25              		.file 1 "..//Source/stm/board/board_stm32l151cd/uart-board.c"
+   1:..//Source/stm/board/board_stm32l151cd/uart-board.c **** /*!
+   2:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \file      uart-board.c
+   3:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *
+   4:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \brief     Target board UART driver implementation
+   5:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *
+   6:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *
+   8:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \code
+   9:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *                ______                              _
+  10:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *               / _____)             _              | |
+  11:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *
+  17:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \endcode
+  18:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *
+  19:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  *
+  21:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  */
+  23:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #include "stm32l1xx.h"
+  24:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #include "utilities.h"
+  25:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #include "board.h"
+  26:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #include "uart-board.h"
+  27:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+  28:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #include "uart-usb-board.h"
+  29:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+  30:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  31:..//Source/stm/board/board_stm32l151cd/uart-board.c **** /*!
+  32:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * Number of times the UartPutBuffer will try to send the buffer before
+  33:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  * returning ERROR
+ARM GAS  /tmp/ccSho242.s 			page 2
+
+
+  34:..//Source/stm/board/board_stm32l151cd/uart-board.c ****  */
+  35:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #define TX_BUFFER_RETRY_COUNT                       10
+  36:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  37:..//Source/stm/board/board_stm32l151cd/uart-board.c **** static UART_HandleTypeDef UartHandle;
+  38:..//Source/stm/board/board_stm32l151cd/uart-board.c **** uint8_t RxData = 0;
+  39:..//Source/stm/board/board_stm32l151cd/uart-board.c **** uint8_t TxData = 0;
+  40:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  41:..//Source/stm/board/board_stm32l151cd/uart-board.c **** extern Uart_t Uart1;
+  42:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  43:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void UartMcuInit( Uart_t *obj, UartId_t uartId, PinNames tx, PinNames rx )
+  44:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+  26              		.loc 1 44 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 8
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  45:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     obj->UartId = uartId;
+  31              		.loc 1 45 0
+  32 0000 0170     		strb	r1, [r0]
+  46:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  47:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( uartId == UART_USB_CDC )
+  33              		.loc 1 47 0
+  34 0002 FF29     		cmp	r1, #255
+  35 0004 2AD0     		beq	.L4
+  44:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     obj->UartId = uartId;
+  36              		.loc 1 44 0
+  37 0006 F0B5     		push	{r4, r5, r6, r7, lr}
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 20
+  40              		.cfi_offset 4, -20
+  41              		.cfi_offset 5, -16
+  42              		.cfi_offset 6, -12
+  43              		.cfi_offset 7, -8
+  44              		.cfi_offset 14, -4
+  45 0008 85B0     		sub	sp, sp, #20
+  46              	.LCFI1:
+  47              		.cfi_def_cfa_offset 40
+  48 000a 1E46     		mov	r6, r3
+  49 000c 1146     		mov	r1, r2
+  50              	.LVL1:
+  51 000e 0546     		mov	r5, r0
+  48:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+  49:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+  50:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         UartUsbInit( obj, uartId, NC, NC );
+  51:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+  52:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+  53:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     else
+  54:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+  55:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         __HAL_RCC_USART1_FORCE_RESET( );
+  52              		.loc 1 55 0
+  53 0010 134C     		ldr	r4, .L7
+  54 0012 6369     		ldr	r3, [r4, #20]
+  55              	.LVL2:
+  56 0014 43F48043 		orr	r3, r3, #16384
+  57 0018 6361     		str	r3, [r4, #20]
+  58              	.LVL3:
+  56:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         __HAL_RCC_USART1_RELEASE_RESET( );
+ARM GAS  /tmp/ccSho242.s 			page 3
+
+
+  59              		.loc 1 56 0
+  60 001a 6369     		ldr	r3, [r4, #20]
+  61 001c 23F48043 		bic	r3, r3, #16384
+  62 0020 6361     		str	r3, [r4, #20]
+  63              	.LBB2:
+  57:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         __HAL_RCC_USART1_CLK_ENABLE( );
+  64              		.loc 1 57 0
+  65 0022 236A     		ldr	r3, [r4, #32]
+  66 0024 43F48043 		orr	r3, r3, #16384
+  67 0028 2362     		str	r3, [r4, #32]
+  68 002a 236A     		ldr	r3, [r4, #32]
+  69 002c 03F48043 		and	r3, r3, #16384
+  70 0030 0393     		str	r3, [sp, #12]
+  71 0032 039B     		ldr	r3, [sp, #12]
+  72              	.LBE2:
+  58:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  59:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         GpioInit( &obj->Tx, tx, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_UP, GPIO_AF7_USART1 );
+  73              		.loc 1 59 0
+  74 0034 0727     		movs	r7, #7
+  75 0036 0197     		str	r7, [sp, #4]
+  76 0038 0124     		movs	r4, #1
+  77 003a 0094     		str	r4, [sp]
+  78 003c 0023     		movs	r3, #0
+  79 003e 0222     		movs	r2, #2
+  80              	.LVL4:
+  81 0040 0430     		adds	r0, r0, #4
+  82              	.LVL5:
+  83 0042 FFF7FEFF 		bl	GpioInit
+  84              	.LVL6:
+  60:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         GpioInit( &obj->Rx, rx, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_UP, GPIO_AF7_USART1 );
+  85              		.loc 1 60 0
+  86 0046 0197     		str	r7, [sp, #4]
+  87 0048 0094     		str	r4, [sp]
+  88 004a 0023     		movs	r3, #0
+  89 004c 0222     		movs	r2, #2
+  90 004e 3146     		mov	r1, r6
+  91 0050 05F11000 		add	r0, r5, #16
+  92 0054 FFF7FEFF 		bl	GpioInit
+  93              	.LVL7:
+  61:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+  62:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+  94              		.loc 1 62 0
+  95 0058 05B0     		add	sp, sp, #20
+  96              	.LCFI2:
+  97              		.cfi_def_cfa_offset 20
+  98              		@ sp needed
+  99 005a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 100              	.LVL8:
+ 101              	.L4:
+ 102              	.LCFI3:
+ 103              		.cfi_def_cfa_offset 0
+ 104              		.cfi_restore 4
+ 105              		.cfi_restore 5
+ 106              		.cfi_restore 6
+ 107              		.cfi_restore 7
+ 108              		.cfi_restore 14
+ 109 005c 7047     		bx	lr
+ARM GAS  /tmp/ccSho242.s 			page 4
+
+
+ 110              	.L8:
+ 111 005e 00BF     		.align	2
+ 112              	.L7:
+ 113 0060 00380240 		.word	1073887232
+ 114              		.cfi_endproc
+ 115              	.LFE72:
+ 117              		.section	.text.UartMcuConfig,"ax",%progbits
+ 118              		.align	1
+ 119              		.global	UartMcuConfig
+ 120              		.syntax unified
+ 121              		.thumb
+ 122              		.thumb_func
+ 123              		.fpu softvfp
+ 125              	UartMcuConfig:
+ 126              	.LFB73:
+  63:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  64:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void UartMcuConfig( Uart_t *obj, UartMode_t mode, uint32_t baudrate, WordLength_t wordLength, StopB
+  65:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 127              		.loc 1 65 0
+ 128              		.cfi_startproc
+ 129              		@ args = 12, pretend = 0, frame = 0
+ 130              		@ frame_needed = 0, uses_anonymous_args = 0
+ 131              	.LVL9:
+ 132 0000 70B5     		push	{r4, r5, r6, lr}
+ 133              	.LCFI4:
+ 134              		.cfi_def_cfa_offset 16
+ 135              		.cfi_offset 4, -16
+ 136              		.cfi_offset 5, -12
+ 137              		.cfi_offset 6, -8
+ 138              		.cfi_offset 14, -4
+ 139 0002 9DF81450 		ldrb	r5, [sp, #20]	@ zero_extendqisi2
+ 140 0006 9DF81840 		ldrb	r4, [sp, #24]	@ zero_extendqisi2
+  66:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 141              		.loc 1 66 0
+ 142 000a 0078     		ldrb	r0, [r0]	@ zero_extendqisi2
+ 143              	.LVL10:
+ 144 000c FF28     		cmp	r0, #255
+ 145 000e 30D0     		beq	.L9
+  67:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+  68:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+  69:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         UartUsbConfig( obj, mode, baudrate, wordLength, stopBits, parity, flowCtrl );
+  70:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+  71:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+  72:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     else
+  73:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+  74:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         UartHandle.Instance = USART1;
+ 146              		.loc 1 74 0
+ 147 0010 3448     		ldr	r0, .L32
+ 148 0012 354E     		ldr	r6, .L32+4
+ 149 0014 0660     		str	r6, [r0]
+  75:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         UartHandle.Init.BaudRate = baudrate;
+ 150              		.loc 1 75 0
+ 151 0016 4260     		str	r2, [r0, #4]
+  76:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+  77:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( mode == TX_ONLY )
+ 152              		.loc 1 77 0
+ 153 0018 61BB     		cbnz	r1, .L11
+ARM GAS  /tmp/ccSho242.s 			page 5
+
+
+  78:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+  79:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             if( obj->FifoTx.Data == NULL )
+  80:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             {
+  81:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 assert_param( FAIL );
+  82:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             }
+  83:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.Mode = UART_MODE_TX;
+ 154              		.loc 1 83 0
+ 155 001a 0821     		movs	r1, #8
+ 156              	.LVL11:
+ 157 001c 4161     		str	r1, [r0, #20]
+ 158              	.LVL12:
+ 159              	.L12:
+  84:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+  85:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( mode == RX_ONLY )
+  86:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+  87:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             if( obj->FifoRx.Data == NULL )
+  88:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             {
+  89:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 assert_param( FAIL );
+  90:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             }
+  91:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.Mode = UART_MODE_RX;
+  92:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+  93:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( mode == RX_TX )
+  94:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+  95:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             if( ( obj->FifoTx.Data == NULL ) || ( obj->FifoRx.Data == NULL ) )
+  96:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             {
+  97:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 assert_param( FAIL );
+  98:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             }
+  99:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.Mode = UART_MODE_TX_RX;
+ 100:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 101:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else
+ 102:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 103:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             assert_param( FAIL );
+ 104:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 105:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 106:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( wordLength == UART_8_BIT )
+ 160              		.loc 1 106 0
+ 161 001e 002B     		cmp	r3, #0
+ 162 0020 34D1     		bne	.L14
+ 107:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 108:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
+ 163              		.loc 1 108 0
+ 164 0022 0022     		movs	r2, #0
+ 165 0024 2F4B     		ldr	r3, .L32
+ 166              	.LVL13:
+ 167 0026 9A60     		str	r2, [r3, #8]
+ 168              	.L15:
+ 109:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 110:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( wordLength == UART_9_BIT )
+ 111:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 112:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.WordLength = UART_WORDLENGTH_9B;
+ 113:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 114:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 115:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         switch( stopBits )
+ 169              		.loc 1 115 0
+ 170 0028 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 171 002c 022B     		cmp	r3, #2
+ 172 002e 34D1     		bne	.L26
+ARM GAS  /tmp/ccSho242.s 			page 6
+
+
+ 116:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 117:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         case UART_2_STOP_BIT:
+ 118:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.StopBits = UART_STOPBITS_2;
+ 173              		.loc 1 118 0
+ 174 0030 4FF40052 		mov	r2, #8192
+ 175 0034 2B4B     		ldr	r3, .L32
+ 176 0036 DA60     		str	r2, [r3, #12]
+ 177              	.L18:
+ 119:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             break;
+ 120:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         case UART_1_STOP_BIT:
+ 121:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         default:
+ 122:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.StopBits = UART_STOPBITS_1;
+ 123:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             break;
+ 124:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 125:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 126:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( parity == NO_PARITY )
+ 178              		.loc 1 126 0
+ 179 0038 002D     		cmp	r5, #0
+ 180 003a 32D1     		bne	.L19
+ 127:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 128:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.Parity = UART_PARITY_NONE;
+ 181              		.loc 1 128 0
+ 182 003c 0022     		movs	r2, #0
+ 183 003e 294B     		ldr	r3, .L32
+ 184 0040 1A61     		str	r2, [r3, #16]
+ 185              	.L20:
+ 129:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 130:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( parity == EVEN_PARITY )
+ 131:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 132:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.Parity = UART_PARITY_EVEN;
+ 133:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 134:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else
+ 135:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 136:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.Parity = UART_PARITY_ODD;
+ 137:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 138:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 139:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( flowCtrl == NO_FLOW_CTRL )
+ 186              		.loc 1 139 0
+ 187 0042 002C     		cmp	r4, #0
+ 188 0044 39D1     		bne	.L22
+ 140:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 141:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+ 189              		.loc 1 141 0
+ 190 0046 0022     		movs	r2, #0
+ 191 0048 264B     		ldr	r3, .L32
+ 192 004a 9A61     		str	r2, [r3, #24]
+ 193              	.L23:
+ 142:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 143:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( flowCtrl == RTS_FLOW_CTRL )
+ 144:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 145:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.HwFlowCtl = UART_HWCONTROL_RTS;
+ 146:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 147:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( flowCtrl == CTS_FLOW_CTRL )
+ 148:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 149:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.HwFlowCtl = UART_HWCONTROL_CTS;
+ 150:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 151:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else if( flowCtrl == RTS_CTS_FLOW_CTRL )
+ARM GAS  /tmp/ccSho242.s 			page 7
+
+
+ 152:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 153:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             UartHandle.Init.HwFlowCtl = UART_HWCONTROL_RTS_CTS;
+ 154:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 155:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 156:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
+ 194              		.loc 1 156 0
+ 195 004c 254C     		ldr	r4, .L32
+ 196 004e 0025     		movs	r5, #0
+ 197 0050 E561     		str	r5, [r4, #28]
+ 157:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 158:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( HAL_UART_Init( &UartHandle ) != HAL_OK )
+ 198              		.loc 1 158 0
+ 199 0052 2046     		mov	r0, r4
+ 200 0054 FFF7FEFF 		bl	HAL_UART_Init
+ 201              	.LVL14:
+ 159:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 160:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             assert_param( FAIL );
+ 161:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 162:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 163:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         HAL_NVIC_SetPriority( USART1_IRQn, 8, 0 );
+ 202              		.loc 1 163 0
+ 203 0058 2A46     		mov	r2, r5
+ 204 005a 0821     		movs	r1, #8
+ 205 005c 2520     		movs	r0, #37
+ 206 005e FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 207              	.LVL15:
+ 164:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         HAL_NVIC_EnableIRQ( USART1_IRQn );
+ 208              		.loc 1 164 0
+ 209 0062 2520     		movs	r0, #37
+ 210 0064 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 211              	.LVL16:
+ 165:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 166:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         /* Enable the UART Data Register not empty Interrupt */
+ 167:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         HAL_UART_Receive_IT( &UartHandle, &RxData, 1 );
+ 212              		.loc 1 167 0
+ 213 0068 0122     		movs	r2, #1
+ 214 006a 2049     		ldr	r1, .L32+8
+ 215 006c 2046     		mov	r0, r4
+ 216 006e FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 217              	.LVL17:
+ 218              	.L9:
+ 219 0072 70BD     		pop	{r4, r5, r6, pc}
+ 220              	.LVL18:
+ 221              	.L11:
+  85:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 222              		.loc 1 85 0
+ 223 0074 0129     		cmp	r1, #1
+ 224 0076 05D0     		beq	.L28
+  93:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 225              		.loc 1 93 0
+ 226 0078 0229     		cmp	r1, #2
+ 227 007a D0D1     		bne	.L12
+  99:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 228              		.loc 1 99 0
+ 229 007c 0C21     		movs	r1, #12
+ 230              	.LVL19:
+ 231 007e 194A     		ldr	r2, .L32
+ARM GAS  /tmp/ccSho242.s 			page 8
+
+
+ 232              	.LVL20:
+ 233 0080 5161     		str	r1, [r2, #20]
+ 234 0082 CCE7     		b	.L12
+ 235              	.LVL21:
+ 236              	.L28:
+  91:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 237              		.loc 1 91 0
+ 238 0084 0421     		movs	r1, #4
+ 239              	.LVL22:
+ 240 0086 174A     		ldr	r2, .L32
+ 241              	.LVL23:
+ 242 0088 5161     		str	r1, [r2, #20]
+ 243 008a C8E7     		b	.L12
+ 244              	.L14:
+ 110:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 245              		.loc 1 110 0
+ 246 008c 012B     		cmp	r3, #1
+ 247 008e CBD1     		bne	.L15
+ 112:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 248              		.loc 1 112 0
+ 249 0090 4FF48052 		mov	r2, #4096
+ 250 0094 134B     		ldr	r3, .L32
+ 251              	.LVL24:
+ 252 0096 9A60     		str	r2, [r3, #8]
+ 253 0098 C6E7     		b	.L15
+ 254              	.L26:
+ 122:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             break;
+ 255              		.loc 1 122 0
+ 256 009a 0022     		movs	r2, #0
+ 257 009c 114B     		ldr	r3, .L32
+ 258 009e DA60     		str	r2, [r3, #12]
+ 123:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 259              		.loc 1 123 0
+ 260 00a0 CAE7     		b	.L18
+ 261              	.L19:
+ 130:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 262              		.loc 1 130 0
+ 263 00a2 012D     		cmp	r5, #1
+ 264 00a4 04D0     		beq	.L29
+ 136:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 265              		.loc 1 136 0
+ 266 00a6 4FF4C062 		mov	r2, #1536
+ 267 00aa 0E4B     		ldr	r3, .L32
+ 268 00ac 1A61     		str	r2, [r3, #16]
+ 269 00ae C8E7     		b	.L20
+ 270              	.L29:
+ 132:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 271              		.loc 1 132 0
+ 272 00b0 4FF48062 		mov	r2, #1024
+ 273 00b4 0B4B     		ldr	r3, .L32
+ 274 00b6 1A61     		str	r2, [r3, #16]
+ 275 00b8 C3E7     		b	.L20
+ 276              	.L22:
+ 143:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 277              		.loc 1 143 0
+ 278 00ba 012C     		cmp	r4, #1
+ 279 00bc 08D0     		beq	.L30
+ARM GAS  /tmp/ccSho242.s 			page 9
+
+
+ 147:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 280              		.loc 1 147 0
+ 281 00be 022C     		cmp	r4, #2
+ 282 00c0 0BD0     		beq	.L31
+ 151:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 283              		.loc 1 151 0
+ 284 00c2 032C     		cmp	r4, #3
+ 285 00c4 C2D1     		bne	.L23
+ 153:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 286              		.loc 1 153 0
+ 287 00c6 4FF44072 		mov	r2, #768
+ 288 00ca 064B     		ldr	r3, .L32
+ 289 00cc 9A61     		str	r2, [r3, #24]
+ 290 00ce BDE7     		b	.L23
+ 291              	.L30:
+ 145:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 292              		.loc 1 145 0
+ 293 00d0 4FF48072 		mov	r2, #256
+ 294 00d4 034B     		ldr	r3, .L32
+ 295 00d6 9A61     		str	r2, [r3, #24]
+ 296 00d8 B8E7     		b	.L23
+ 297              	.L31:
+ 149:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 298              		.loc 1 149 0
+ 299 00da 4FF40072 		mov	r2, #512
+ 300 00de 014B     		ldr	r3, .L32
+ 301 00e0 9A61     		str	r2, [r3, #24]
+ 302 00e2 B3E7     		b	.L23
+ 303              	.L33:
+ 304              		.align	2
+ 305              	.L32:
+ 306 00e4 00000000 		.word	.LANCHOR0
+ 307 00e8 00380140 		.word	1073821696
+ 308 00ec 00000000 		.word	.LANCHOR1
+ 309              		.cfi_endproc
+ 310              	.LFE73:
+ 312              		.section	.text.UartMcuDeInit,"ax",%progbits
+ 313              		.align	1
+ 314              		.global	UartMcuDeInit
+ 315              		.syntax unified
+ 316              		.thumb
+ 317              		.thumb_func
+ 318              		.fpu softvfp
+ 320              	UartMcuDeInit:
+ 321              	.LFB74:
+ 168:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 169:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 170:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 171:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void UartMcuDeInit( Uart_t *obj )
+ 172:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 322              		.loc 1 172 0
+ 323              		.cfi_startproc
+ 324              		@ args = 0, pretend = 0, frame = 0
+ 325              		@ frame_needed = 0, uses_anonymous_args = 0
+ 326              	.LVL25:
+ 173:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 327              		.loc 1 173 0
+ARM GAS  /tmp/ccSho242.s 			page 10
+
+
+ 328 0000 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 329 0002 FF2B     		cmp	r3, #255
+ 330 0004 23D0     		beq	.L37
+ 172:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 331              		.loc 1 172 0
+ 332 0006 30B5     		push	{r4, r5, lr}
+ 333              	.LCFI5:
+ 334              		.cfi_def_cfa_offset 12
+ 335              		.cfi_offset 4, -12
+ 336              		.cfi_offset 5, -8
+ 337              		.cfi_offset 14, -4
+ 338 0008 83B0     		sub	sp, sp, #12
+ 339              	.LCFI6:
+ 340              		.cfi_def_cfa_offset 24
+ 341 000a 0546     		mov	r5, r0
+ 174:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 175:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+ 176:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         UartUsbDeInit( obj );
+ 177:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+ 178:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 179:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     else
+ 180:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 181:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         __HAL_RCC_USART1_FORCE_RESET( );
+ 342              		.loc 1 181 0
+ 343 000c 104B     		ldr	r3, .L40
+ 344 000e 5A69     		ldr	r2, [r3, #20]
+ 345 0010 42F48042 		orr	r2, r2, #16384
+ 346 0014 5A61     		str	r2, [r3, #20]
+ 182:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         __HAL_RCC_USART1_RELEASE_RESET( );
+ 347              		.loc 1 182 0
+ 348 0016 5A69     		ldr	r2, [r3, #20]
+ 349 0018 22F48042 		bic	r2, r2, #16384
+ 350 001c 5A61     		str	r2, [r3, #20]
+ 183:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         __HAL_RCC_USART1_CLK_DISABLE( );
+ 351              		.loc 1 183 0
+ 352 001e 1A6A     		ldr	r2, [r3, #32]
+ 353 0020 22F48042 		bic	r2, r2, #16384
+ 354 0024 1A62     		str	r2, [r3, #32]
+ 184:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 185:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         GpioInit( &obj->Tx, obj->Tx.pin, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 355              		.loc 1 185 0
+ 356 0026 10F9041F 		ldrsb	r1, [r0, #4]!
+ 357              	.LVL26:
+ 358 002a 0024     		movs	r4, #0
+ 359 002c 0194     		str	r4, [sp, #4]
+ 360 002e 0094     		str	r4, [sp]
+ 361 0030 2346     		mov	r3, r4
+ 362 0032 0322     		movs	r2, #3
+ 363 0034 FFF7FEFF 		bl	GpioInit
+ 364              	.LVL27:
+ 186:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         GpioInit( &obj->Rx, obj->Rx.pin, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 365              		.loc 1 186 0
+ 366 0038 2846     		mov	r0, r5
+ 367 003a 10F9101F 		ldrsb	r1, [r0, #16]!
+ 368 003e 0194     		str	r4, [sp, #4]
+ 369 0040 0094     		str	r4, [sp]
+ 370 0042 2346     		mov	r3, r4
+ARM GAS  /tmp/ccSho242.s 			page 11
+
+
+ 371 0044 0322     		movs	r2, #3
+ 372 0046 FFF7FEFF 		bl	GpioInit
+ 373              	.LVL28:
+ 187:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 188:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 374              		.loc 1 188 0
+ 375 004a 03B0     		add	sp, sp, #12
+ 376              	.LCFI7:
+ 377              		.cfi_def_cfa_offset 12
+ 378              		@ sp needed
+ 379 004c 30BD     		pop	{r4, r5, pc}
+ 380              	.LVL29:
+ 381              	.L37:
+ 382              	.LCFI8:
+ 383              		.cfi_def_cfa_offset 0
+ 384              		.cfi_restore 4
+ 385              		.cfi_restore 5
+ 386              		.cfi_restore 14
+ 387 004e 7047     		bx	lr
+ 388              	.L41:
+ 389              		.align	2
+ 390              	.L40:
+ 391 0050 00380240 		.word	1073887232
+ 392              		.cfi_endproc
+ 393              	.LFE74:
+ 395              		.section	.text.UartMcuPutChar,"ax",%progbits
+ 396              		.align	1
+ 397              		.global	UartMcuPutChar
+ 398              		.syntax unified
+ 399              		.thumb
+ 400              		.thumb_func
+ 401              		.fpu softvfp
+ 403              	UartMcuPutChar:
+ 404              	.LFB75:
+ 189:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 190:..//Source/stm/board/board_stm32l151cd/uart-board.c **** uint8_t UartMcuPutChar( Uart_t *obj, uint8_t data )
+ 191:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 405              		.loc 1 191 0
+ 406              		.cfi_startproc
+ 407              		@ args = 0, pretend = 0, frame = 0
+ 408              		@ frame_needed = 0, uses_anonymous_args = 0
+ 409              	.LVL30:
+ 410 0000 38B5     		push	{r3, r4, r5, lr}
+ 411              	.LCFI9:
+ 412              		.cfi_def_cfa_offset 16
+ 413              		.cfi_offset 3, -16
+ 414              		.cfi_offset 4, -12
+ 415              		.cfi_offset 5, -8
+ 416              		.cfi_offset 14, -4
+ 192:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 417              		.loc 1 192 0
+ 418 0002 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 419 0004 FF2B     		cmp	r3, #255
+ 420 0006 01D1     		bne	.L47
+ 193:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 194:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+ 195:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return UartUsbPutChar( obj, data );
+ARM GAS  /tmp/ccSho242.s 			page 12
+
+
+ 196:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #else
+ 197:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 255; // Not supported
+ 421              		.loc 1 197 0
+ 422 0008 FF20     		movs	r0, #255
+ 423              	.LVL31:
+ 198:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+ 199:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 200:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     else
+ 201:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 202:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         BoardDisableIrq( );
+ 203:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         TxData = data;
+ 204:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 205:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( IsFifoFull( &obj->FifoTx ) == false )
+ 206:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 207:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             FifoPush( &obj->FifoTx, TxData );
+ 208:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 209:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             // Trig UART Tx interrupt to start sending the FIFO contents.
+ 210:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             __HAL_UART_ENABLE_IT( &UartHandle, UART_IT_TC );
+ 211:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 212:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             BoardEnableIrq( );
+ 213:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             return 0; // OK
+ 214:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 215:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         BoardEnableIrq( );
+ 216:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 1; // Busy
+ 217:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 218:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 424              		.loc 1 218 0
+ 425 000a 38BD     		pop	{r3, r4, r5, pc}
+ 426              	.LVL32:
+ 427              	.L47:
+ 428 000c 0D46     		mov	r5, r1
+ 429 000e 0446     		mov	r4, r0
+ 202:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         TxData = data;
+ 430              		.loc 1 202 0
+ 431 0010 FFF7FEFF 		bl	BoardDisableIrq
+ 432              	.LVL33:
+ 203:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 433              		.loc 1 203 0
+ 434 0014 0C4B     		ldr	r3, .L49
+ 435 0016 1D70     		strb	r5, [r3]
+ 205:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 436              		.loc 1 205 0
+ 437 0018 1C34     		adds	r4, r4, #28
+ 438              	.LVL34:
+ 439 001a 2046     		mov	r0, r4
+ 440 001c FFF7FEFF 		bl	IsFifoFull
+ 441              	.LVL35:
+ 442 0020 18B1     		cbz	r0, .L48
+ 215:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 1; // Busy
+ 443              		.loc 1 215 0
+ 444 0022 FFF7FEFF 		bl	BoardEnableIrq
+ 445              	.LVL36:
+ 216:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 446              		.loc 1 216 0
+ 447 0026 0120     		movs	r0, #1
+ 448 0028 38BD     		pop	{r3, r4, r5, pc}
+ 449              	.LVL37:
+ARM GAS  /tmp/ccSho242.s 			page 13
+
+
+ 450              	.L48:
+ 207:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 451              		.loc 1 207 0
+ 452 002a 074B     		ldr	r3, .L49
+ 453 002c 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 454 002e 2046     		mov	r0, r4
+ 455 0030 FFF7FEFF 		bl	FifoPush
+ 456              	.LVL38:
+ 210:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 457              		.loc 1 210 0
+ 458 0034 054B     		ldr	r3, .L49+4
+ 459 0036 1A68     		ldr	r2, [r3]
+ 460 0038 D368     		ldr	r3, [r2, #12]
+ 461 003a 43F04003 		orr	r3, r3, #64
+ 462 003e D360     		str	r3, [r2, #12]
+ 212:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             return 0; // OK
+ 463              		.loc 1 212 0
+ 464 0040 FFF7FEFF 		bl	BoardEnableIrq
+ 465              	.LVL39:
+ 213:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 466              		.loc 1 213 0
+ 467 0044 0020     		movs	r0, #0
+ 468 0046 38BD     		pop	{r3, r4, r5, pc}
+ 469              	.L50:
+ 470              		.align	2
+ 471              	.L49:
+ 472 0048 00000000 		.word	.LANCHOR2
+ 473 004c 00000000 		.word	.LANCHOR0
+ 474              		.cfi_endproc
+ 475              	.LFE75:
+ 477              		.section	.text.UartMcuGetChar,"ax",%progbits
+ 478              		.align	1
+ 479              		.global	UartMcuGetChar
+ 480              		.syntax unified
+ 481              		.thumb
+ 482              		.thumb_func
+ 483              		.fpu softvfp
+ 485              	UartMcuGetChar:
+ 486              	.LFB76:
+ 219:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 220:..//Source/stm/board/board_stm32l151cd/uart-board.c **** uint8_t UartMcuGetChar( Uart_t *obj, uint8_t *data )
+ 221:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 487              		.loc 1 221 0
+ 488              		.cfi_startproc
+ 489              		@ args = 0, pretend = 0, frame = 0
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491              	.LVL40:
+ 492 0000 38B5     		push	{r3, r4, r5, lr}
+ 493              	.LCFI10:
+ 494              		.cfi_def_cfa_offset 16
+ 495              		.cfi_offset 3, -16
+ 496              		.cfi_offset 4, -12
+ 497              		.cfi_offset 5, -8
+ 498              		.cfi_offset 14, -4
+ 222:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 499              		.loc 1 222 0
+ 500 0002 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ARM GAS  /tmp/ccSho242.s 			page 14
+
+
+ 501 0004 FF2B     		cmp	r3, #255
+ 502 0006 01D1     		bne	.L56
+ 223:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 224:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+ 225:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return UartUsbGetChar( obj, data );
+ 226:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #else
+ 227:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 255; // Not supported
+ 503              		.loc 1 227 0
+ 504 0008 FF20     		movs	r0, #255
+ 505              	.LVL41:
+ 228:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+ 229:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 230:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     else
+ 231:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 232:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         BoardDisableIrq( );
+ 233:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 234:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( IsFifoEmpty( &obj->FifoRx ) == false )
+ 235:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 236:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             *data = FifoPop( &obj->FifoRx );
+ 237:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             BoardEnableIrq( );
+ 238:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             return 0;
+ 239:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 240:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         BoardEnableIrq( );
+ 241:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 1;
+ 242:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 243:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 506              		.loc 1 243 0
+ 507 000a 38BD     		pop	{r3, r4, r5, pc}
+ 508              	.LVL42:
+ 509              	.L56:
+ 510 000c 0D46     		mov	r5, r1
+ 511 000e 0446     		mov	r4, r0
+ 232:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 512              		.loc 1 232 0
+ 513 0010 FFF7FEFF 		bl	BoardDisableIrq
+ 514              	.LVL43:
+ 234:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 515              		.loc 1 234 0
+ 516 0014 2834     		adds	r4, r4, #40
+ 517              	.LVL44:
+ 518 0016 2046     		mov	r0, r4
+ 519 0018 FFF7FEFF 		bl	IsFifoEmpty
+ 520              	.LVL45:
+ 521 001c 18B1     		cbz	r0, .L57
+ 240:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 1;
+ 522              		.loc 1 240 0
+ 523 001e FFF7FEFF 		bl	BoardEnableIrq
+ 524              	.LVL46:
+ 241:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 525              		.loc 1 241 0
+ 526 0022 0120     		movs	r0, #1
+ 527 0024 38BD     		pop	{r3, r4, r5, pc}
+ 528              	.LVL47:
+ 529              	.L57:
+ 236:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             BoardEnableIrq( );
+ 530              		.loc 1 236 0
+ 531 0026 2046     		mov	r0, r4
+ARM GAS  /tmp/ccSho242.s 			page 15
+
+
+ 532 0028 FFF7FEFF 		bl	FifoPop
+ 533              	.LVL48:
+ 534 002c 2870     		strb	r0, [r5]
+ 237:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             return 0;
+ 535              		.loc 1 237 0
+ 536 002e FFF7FEFF 		bl	BoardEnableIrq
+ 537              	.LVL49:
+ 238:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 538              		.loc 1 238 0
+ 539 0032 0020     		movs	r0, #0
+ 540 0034 38BD     		pop	{r3, r4, r5, pc}
+ 541              		.cfi_endproc
+ 542              	.LFE76:
+ 544              		.section	.text.UartMcuPutBuffer,"ax",%progbits
+ 545              		.align	1
+ 546              		.global	UartMcuPutBuffer
+ 547              		.syntax unified
+ 548              		.thumb
+ 549              		.thumb_func
+ 550              		.fpu softvfp
+ 552              	UartMcuPutBuffer:
+ 553              	.LFB77:
+ 244:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 245:..//Source/stm/board/board_stm32l151cd/uart-board.c **** uint8_t UartMcuPutBuffer( Uart_t *obj, uint8_t *buffer, uint16_t size )
+ 246:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 554              		.loc 1 246 0
+ 555              		.cfi_startproc
+ 556              		@ args = 0, pretend = 0, frame = 0
+ 557              		@ frame_needed = 0, uses_anonymous_args = 0
+ 558              	.LVL50:
+ 247:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 559              		.loc 1 247 0
+ 560 0000 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 561 0002 FF2B     		cmp	r3, #255
+ 562 0004 1AD0     		beq	.L63
+ 246:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( obj->UartId == UART_USB_CDC )
+ 563              		.loc 1 246 0
+ 564 0006 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 565              	.LCFI11:
+ 566              		.cfi_def_cfa_offset 24
+ 567              		.cfi_offset 4, -24
+ 568              		.cfi_offset 5, -20
+ 569              		.cfi_offset 6, -16
+ 570              		.cfi_offset 7, -12
+ 571              		.cfi_offset 8, -8
+ 572              		.cfi_offset 14, -4
+ 573 000a 9046     		mov	r8, r2
+ 574 000c 0F46     		mov	r7, r1
+ 575 000e 0546     		mov	r5, r0
+ 576 0010 0026     		movs	r6, #0
+ 577              	.LVL51:
+ 578              	.L60:
+ 579              	.LBB3:
+ 248:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 249:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #if defined( USE_USB_CDC )
+ 250:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return UartUsbPutBuffer( obj, buffer, size );
+ 251:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #else
+ARM GAS  /tmp/ccSho242.s 			page 16
+
+
+ 252:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 255; // Not supported
+ 253:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+ 254:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 255:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     else
+ 256:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 257:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         uint8_t retryCount;
+ 258:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         uint16_t i;
+ 259:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 260:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         for( i = 0; i < size; i++ )
+ 580              		.loc 1 260 0 discriminator 1
+ 581 0012 4645     		cmp	r6, r8
+ 582 0014 0FD2     		bcs	.L70
+ 583 0016 0024     		movs	r4, #0
+ 584              	.L62:
+ 585              	.LVL52:
+ 261:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 262:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             retryCount = 0;
+ 263:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             while( UartPutChar( obj, buffer[i] ) != 0 )
+ 586              		.loc 1 263 0
+ 587 0018 B95D     		ldrb	r1, [r7, r6]	@ zero_extendqisi2
+ 588 001a 2846     		mov	r0, r5
+ 589 001c FFF7FEFF 		bl	UartPutChar
+ 590              	.LVL53:
+ 591 0020 30B1     		cbz	r0, .L71
+ 264:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             {
+ 265:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 retryCount++;
+ 592              		.loc 1 265 0
+ 593 0022 0134     		adds	r4, r4, #1
+ 594              	.LVL54:
+ 595 0024 E4B2     		uxtb	r4, r4
+ 596              	.LVL55:
+ 266:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 267:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 // Exit if something goes terribly wrong
+ 268:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 if( retryCount > TX_BUFFER_RETRY_COUNT )
+ 597              		.loc 1 268 0
+ 598 0026 0A2C     		cmp	r4, #10
+ 599 0028 F6D9     		bls	.L62
+ 269:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 {
+ 270:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                     return 1; // Error
+ 600              		.loc 1 270 0
+ 601 002a 0120     		movs	r0, #1
+ 602              	.LBE3:
+ 271:..//Source/stm/board/board_stm32l151cd/uart-board.c ****                 }
+ 272:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             }
+ 273:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 274:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 0; // OK
+ 275:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 276:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 603              		.loc 1 276 0
+ 604 002c BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 605              	.LVL56:
+ 606              	.L71:
+ 607              	.LBB4:
+ 260:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 608              		.loc 1 260 0 discriminator 2
+ 609 0030 0136     		adds	r6, r6, #1
+ 610              	.LVL57:
+ARM GAS  /tmp/ccSho242.s 			page 17
+
+
+ 611 0032 B6B2     		uxth	r6, r6
+ 612              	.LVL58:
+ 613 0034 EDE7     		b	.L60
+ 614              	.LVL59:
+ 615              	.L70:
+ 274:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 616              		.loc 1 274 0
+ 617 0036 0020     		movs	r0, #0
+ 618 0038 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 619              	.LVL60:
+ 620              	.L63:
+ 621              	.LCFI12:
+ 622              		.cfi_def_cfa_offset 0
+ 623              		.cfi_restore 4
+ 624              		.cfi_restore 5
+ 625              		.cfi_restore 6
+ 626              		.cfi_restore 7
+ 627              		.cfi_restore 8
+ 628              		.cfi_restore 14
+ 629              	.LBE4:
+ 252:..//Source/stm/board/board_stm32l151cd/uart-board.c **** #endif
+ 630              		.loc 1 252 0
+ 631 003c FF20     		movs	r0, #255
+ 632              	.LVL61:
+ 633 003e 7047     		bx	lr
+ 634              		.cfi_endproc
+ 635              	.LFE77:
+ 637              		.section	.text.UartMcuGetBuffer,"ax",%progbits
+ 638              		.align	1
+ 639              		.global	UartMcuGetBuffer
+ 640              		.syntax unified
+ 641              		.thumb
+ 642              		.thumb_func
+ 643              		.fpu softvfp
+ 645              	UartMcuGetBuffer:
+ 646              	.LFB78:
+ 277:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 278:..//Source/stm/board/board_stm32l151cd/uart-board.c **** uint8_t UartMcuGetBuffer( Uart_t *obj, uint8_t *buffer, uint16_t size, uint16_t *nbReadBytes )
+ 279:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 647              		.loc 1 279 0
+ 648              		.cfi_startproc
+ 649              		@ args = 0, pretend = 0, frame = 0
+ 650              		@ frame_needed = 0, uses_anonymous_args = 0
+ 651              	.LVL62:
+ 652 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 653              	.LCFI13:
+ 654              		.cfi_def_cfa_offset 24
+ 655              		.cfi_offset 4, -24
+ 656              		.cfi_offset 5, -20
+ 657              		.cfi_offset 6, -16
+ 658              		.cfi_offset 7, -12
+ 659              		.cfi_offset 8, -8
+ 660              		.cfi_offset 14, -4
+ 661 0004 0746     		mov	r7, r0
+ 662 0006 0E46     		mov	r6, r1
+ 663 0008 1546     		mov	r5, r2
+ 664 000a 9846     		mov	r8, r3
+ARM GAS  /tmp/ccSho242.s 			page 18
+
+
+ 665              	.LVL63:
+ 280:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     uint16_t localSize = 0;
+ 666              		.loc 1 280 0
+ 667 000c 0024     		movs	r4, #0
+ 668              	.LVL64:
+ 669              	.L73:
+ 281:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 282:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     while( localSize < size )
+ 670              		.loc 1 282 0
+ 671 000e AC42     		cmp	r4, r5
+ 672 0010 07D2     		bcs	.L74
+ 283:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 284:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         if( UartGetChar( obj, buffer + localSize ) == 0 )
+ 673              		.loc 1 284 0
+ 674 0012 3119     		adds	r1, r6, r4
+ 675 0014 3846     		mov	r0, r7
+ 676 0016 FFF7FEFF 		bl	UartGetChar
+ 677              	.LVL65:
+ 678 001a 10B9     		cbnz	r0, .L74
+ 285:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 286:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             localSize++;
+ 679              		.loc 1 286 0
+ 680 001c 0134     		adds	r4, r4, #1
+ 681              	.LVL66:
+ 682 001e A4B2     		uxth	r4, r4
+ 683              	.LVL67:
+ 684 0020 F5E7     		b	.L73
+ 685              	.L74:
+ 287:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 288:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         else
+ 289:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         {
+ 290:..//Source/stm/board/board_stm32l151cd/uart-board.c ****             break;
+ 291:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         }
+ 292:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 293:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 294:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     *nbReadBytes = localSize;
+ 686              		.loc 1 294 0
+ 687 0022 A8F80040 		strh	r4, [r8]	@ movhi
+ 295:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 296:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( localSize == 0 )
+ 688              		.loc 1 296 0
+ 689 0026 14B1     		cbz	r4, .L79
+ 297:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 298:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         return 1; // Empty
+ 299:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 300:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     return 0; // OK
+ 690              		.loc 1 300 0
+ 691 0028 0020     		movs	r0, #0
+ 301:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 692              		.loc 1 301 0
+ 693 002a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 694              	.LVL68:
+ 695              	.L79:
+ 298:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 696              		.loc 1 298 0
+ 697 002e 0120     		movs	r0, #1
+ 698 0030 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ARM GAS  /tmp/ccSho242.s 			page 19
+
+
+ 699              		.cfi_endproc
+ 700              	.LFE78:
+ 702              		.section	.text.HAL_UART_TxCpltCallback,"ax",%progbits
+ 703              		.align	1
+ 704              		.global	HAL_UART_TxCpltCallback
+ 705              		.syntax unified
+ 706              		.thumb
+ 707              		.thumb_func
+ 708              		.fpu softvfp
+ 710              	HAL_UART_TxCpltCallback:
+ 711              	.LFB79:
+ 302:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 303:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void HAL_UART_TxCpltCallback( UART_HandleTypeDef *handle )
+ 304:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 712              		.loc 1 304 0
+ 713              		.cfi_startproc
+ 714              		@ args = 0, pretend = 0, frame = 0
+ 715              		@ frame_needed = 0, uses_anonymous_args = 0
+ 716              	.LVL69:
+ 717 0000 08B5     		push	{r3, lr}
+ 718              	.LCFI14:
+ 719              		.cfi_def_cfa_offset 8
+ 720              		.cfi_offset 3, -8
+ 721              		.cfi_offset 14, -4
+ 305:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( IsFifoEmpty( &Uart1.FifoTx ) == false )
+ 722              		.loc 1 305 0
+ 723 0002 0A48     		ldr	r0, .L85
+ 724              	.LVL70:
+ 725 0004 FFF7FEFF 		bl	IsFifoEmpty
+ 726              	.LVL71:
+ 727 0008 28B1     		cbz	r0, .L84
+ 728              	.L81:
+ 306:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 307:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         TxData = FifoPop( &Uart1.FifoTx );
+ 308:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         //  Write one byte to the transmit data register
+ 309:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         HAL_UART_Transmit_IT( &UartHandle, &TxData, 1 );
+ 310:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 311:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 312:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( Uart1.IrqNotify != NULL )
+ 729              		.loc 1 312 0
+ 730 000a 094B     		ldr	r3, .L85+4
+ 731 000c 5B6B     		ldr	r3, [r3, #52]
+ 732 000e 0BB1     		cbz	r3, .L80
+ 313:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 314:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         Uart1.IrqNotify( UART_NOTIFY_TX );
+ 733              		.loc 1 314 0
+ 734 0010 0020     		movs	r0, #0
+ 735 0012 9847     		blx	r3
+ 736              	.LVL72:
+ 737              	.L80:
+ 738 0014 08BD     		pop	{r3, pc}
+ 739              	.L84:
+ 307:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         //  Write one byte to the transmit data register
+ 740              		.loc 1 307 0
+ 741 0016 0548     		ldr	r0, .L85
+ 742 0018 FFF7FEFF 		bl	FifoPop
+ 743              	.LVL73:
+ARM GAS  /tmp/ccSho242.s 			page 20
+
+
+ 744 001c 0549     		ldr	r1, .L85+8
+ 745 001e 0870     		strb	r0, [r1]
+ 309:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 746              		.loc 1 309 0
+ 747 0020 0122     		movs	r2, #1
+ 748 0022 0548     		ldr	r0, .L85+12
+ 749 0024 FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 750              	.LVL74:
+ 751 0028 EFE7     		b	.L81
+ 752              	.L86:
+ 753 002a 00BF     		.align	2
+ 754              	.L85:
+ 755 002c 1C000000 		.word	Uart1+28
+ 756 0030 00000000 		.word	Uart1
+ 757 0034 00000000 		.word	.LANCHOR2
+ 758 0038 00000000 		.word	.LANCHOR0
+ 759              		.cfi_endproc
+ 760              	.LFE79:
+ 762              		.section	.text.HAL_UART_RxCpltCallback,"ax",%progbits
+ 763              		.align	1
+ 764              		.global	HAL_UART_RxCpltCallback
+ 765              		.syntax unified
+ 766              		.thumb
+ 767              		.thumb_func
+ 768              		.fpu softvfp
+ 770              	HAL_UART_RxCpltCallback:
+ 771              	.LFB80:
+ 315:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 316:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 317:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 318:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void HAL_UART_RxCpltCallback( UART_HandleTypeDef *handle )
+ 319:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 772              		.loc 1 319 0
+ 773              		.cfi_startproc
+ 774              		@ args = 0, pretend = 0, frame = 0
+ 775              		@ frame_needed = 0, uses_anonymous_args = 0
+ 776              	.LVL75:
+ 777 0000 08B5     		push	{r3, lr}
+ 778              	.LCFI15:
+ 779              		.cfi_def_cfa_offset 8
+ 780              		.cfi_offset 3, -8
+ 781              		.cfi_offset 14, -4
+ 320:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( IsFifoFull( &Uart1.FifoRx ) == false )
+ 782              		.loc 1 320 0
+ 783 0002 0A48     		ldr	r0, .L92
+ 784              	.LVL76:
+ 785 0004 FFF7FEFF 		bl	IsFifoFull
+ 786              	.LVL77:
+ 787 0008 50B1     		cbz	r0, .L91
+ 788              	.L88:
+ 321:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 322:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         // Read one byte from the receive data register
+ 323:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         FifoPush( &Uart1.FifoRx, RxData );
+ 324:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 325:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 326:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     if( Uart1.IrqNotify != NULL )
+ 789              		.loc 1 326 0
+ARM GAS  /tmp/ccSho242.s 			page 21
+
+
+ 790 000a 094B     		ldr	r3, .L92+4
+ 791 000c 5B6B     		ldr	r3, [r3, #52]
+ 792 000e 0BB1     		cbz	r3, .L89
+ 327:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     {
+ 328:..//Source/stm/board/board_stm32l151cd/uart-board.c ****         Uart1.IrqNotify( UART_NOTIFY_RX );
+ 793              		.loc 1 328 0
+ 794 0010 0120     		movs	r0, #1
+ 795 0012 9847     		blx	r3
+ 796              	.LVL78:
+ 797              	.L89:
+ 329:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 330:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 331:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     HAL_UART_Receive_IT( &UartHandle, &RxData, 1 );
+ 798              		.loc 1 331 0
+ 799 0014 0122     		movs	r2, #1
+ 800 0016 0749     		ldr	r1, .L92+8
+ 801 0018 0748     		ldr	r0, .L92+12
+ 802 001a FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 803              	.LVL79:
+ 804 001e 08BD     		pop	{r3, pc}
+ 805              	.L91:
+ 323:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     }
+ 806              		.loc 1 323 0
+ 807 0020 044B     		ldr	r3, .L92+8
+ 808 0022 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 809 0024 0148     		ldr	r0, .L92
+ 810 0026 FFF7FEFF 		bl	FifoPush
+ 811              	.LVL80:
+ 812 002a EEE7     		b	.L88
+ 813              	.L93:
+ 814              		.align	2
+ 815              	.L92:
+ 816 002c 28000000 		.word	Uart1+40
+ 817 0030 00000000 		.word	Uart1
+ 818 0034 00000000 		.word	.LANCHOR1
+ 819 0038 00000000 		.word	.LANCHOR0
+ 820              		.cfi_endproc
+ 821              	.LFE80:
+ 823              		.section	.text.HAL_UART_ErrorCallback,"ax",%progbits
+ 824              		.align	1
+ 825              		.global	HAL_UART_ErrorCallback
+ 826              		.syntax unified
+ 827              		.thumb
+ 828              		.thumb_func
+ 829              		.fpu softvfp
+ 831              	HAL_UART_ErrorCallback:
+ 832              	.LFB81:
+ 332:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 333:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 334:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void HAL_UART_ErrorCallback( UART_HandleTypeDef *handle )
+ 335:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 833              		.loc 1 335 0
+ 834              		.cfi_startproc
+ 835              		@ args = 0, pretend = 0, frame = 0
+ 836              		@ frame_needed = 0, uses_anonymous_args = 0
+ 837              	.LVL81:
+ 838 0000 08B5     		push	{r3, lr}
+ARM GAS  /tmp/ccSho242.s 			page 22
+
+
+ 839              	.LCFI16:
+ 840              		.cfi_def_cfa_offset 8
+ 841              		.cfi_offset 3, -8
+ 842              		.cfi_offset 14, -4
+ 336:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     HAL_UART_Receive_IT( &UartHandle, &RxData, 1 );
+ 843              		.loc 1 336 0
+ 844 0002 0122     		movs	r2, #1
+ 845 0004 0249     		ldr	r1, .L96
+ 846 0006 0348     		ldr	r0, .L96+4
+ 847              	.LVL82:
+ 848 0008 FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 849              	.LVL83:
+ 850 000c 08BD     		pop	{r3, pc}
+ 851              	.L97:
+ 852 000e 00BF     		.align	2
+ 853              	.L96:
+ 854 0010 00000000 		.word	.LANCHOR1
+ 855 0014 00000000 		.word	.LANCHOR0
+ 856              		.cfi_endproc
+ 857              	.LFE81:
+ 859              		.section	.text.USART1_IRQHandler,"ax",%progbits
+ 860              		.align	1
+ 861              		.global	USART1_IRQHandler
+ 862              		.syntax unified
+ 863              		.thumb
+ 864              		.thumb_func
+ 865              		.fpu softvfp
+ 867              	USART1_IRQHandler:
+ 868              	.LFB82:
+ 337:..//Source/stm/board/board_stm32l151cd/uart-board.c **** }
+ 338:..//Source/stm/board/board_stm32l151cd/uart-board.c **** 
+ 339:..//Source/stm/board/board_stm32l151cd/uart-board.c **** void USART1_IRQHandler( void )
+ 340:..//Source/stm/board/board_stm32l151cd/uart-board.c **** {
+ 869              		.loc 1 340 0
+ 870              		.cfi_startproc
+ 871              		@ args = 0, pretend = 0, frame = 0
+ 872              		@ frame_needed = 0, uses_anonymous_args = 0
+ 873 0000 08B5     		push	{r3, lr}
+ 874              	.LCFI17:
+ 875              		.cfi_def_cfa_offset 8
+ 876              		.cfi_offset 3, -8
+ 877              		.cfi_offset 14, -4
+ 341:..//Source/stm/board/board_stm32l151cd/uart-board.c ****     HAL_UART_IRQHandler( &UartHandle );
+ 878              		.loc 1 341 0
+ 879 0002 0248     		ldr	r0, .L100
+ 880 0004 FFF7FEFF 		bl	HAL_UART_IRQHandler
+ 881              	.LVL84:
+ 882 0008 08BD     		pop	{r3, pc}
+ 883              	.L101:
+ 884 000a 00BF     		.align	2
+ 885              	.L100:
+ 886 000c 00000000 		.word	.LANCHOR0
+ 887              		.cfi_endproc
+ 888              	.LFE82:
+ 890              		.global	TxData
+ 891              		.global	RxData
+ 892              		.section	.bss.RxData,"aw",%nobits
+ARM GAS  /tmp/ccSho242.s 			page 23
+
+
+ 893              		.set	.LANCHOR1,. + 0
+ 896              	RxData:
+ 897 0000 00       		.space	1
+ 898              		.section	.bss.TxData,"aw",%nobits
+ 899              		.set	.LANCHOR2,. + 0
+ 902              	TxData:
+ 903 0000 00       		.space	1
+ 904              		.section	.bss.UartHandle,"aw",%nobits
+ 905              		.align	2
+ 906              		.set	.LANCHOR0,. + 0
+ 909              	UartHandle:
+ 910 0000 00000000 		.space	64
+ 910      00000000 
+ 910      00000000 
+ 910      00000000 
+ 910      00000000 
+ 911              		.text
+ 912              	.Letext0:
+ 913              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 914              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 915              		.file 4 "..//Source/stm/lib/CMSIS/Include/core_cm3.h"
+ 916              		.file 5 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/system_stm32l1xx.h"
+ 917              		.file 6 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/stm32l151xba.h"
+ 918              		.file 7 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_def.h"
+ 919              		.file 8 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_dma.h"
+ 920              		.file 9 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_uart.h"
+ 921              		.file 10 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal.h"
+ 922              		.file 11 "..//Source/stm/hal/fifo.h"
+ 923              		.file 12 "..//Source/stm/hal/gpio.h"
+ 924              		.file 13 "..//Source/stm/hal/uart.h"
+ 925              		.file 14 "..//Source/stm/board/board.h"
+ 926              		.file 15 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_cortex.h"
+ARM GAS  /tmp/ccSho242.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 uart-board.c
+     /tmp/ccSho242.s:16     .text.UartMcuInit:0000000000000000 $t
+     /tmp/ccSho242.s:23     .text.UartMcuInit:0000000000000000 UartMcuInit
+     /tmp/ccSho242.s:113    .text.UartMcuInit:0000000000000060 $d
+     /tmp/ccSho242.s:118    .text.UartMcuConfig:0000000000000000 $t
+     /tmp/ccSho242.s:125    .text.UartMcuConfig:0000000000000000 UartMcuConfig
+     /tmp/ccSho242.s:306    .text.UartMcuConfig:00000000000000e4 $d
+     /tmp/ccSho242.s:313    .text.UartMcuDeInit:0000000000000000 $t
+     /tmp/ccSho242.s:320    .text.UartMcuDeInit:0000000000000000 UartMcuDeInit
+     /tmp/ccSho242.s:391    .text.UartMcuDeInit:0000000000000050 $d
+     /tmp/ccSho242.s:396    .text.UartMcuPutChar:0000000000000000 $t
+     /tmp/ccSho242.s:403    .text.UartMcuPutChar:0000000000000000 UartMcuPutChar
+     /tmp/ccSho242.s:472    .text.UartMcuPutChar:0000000000000048 $d
+     /tmp/ccSho242.s:478    .text.UartMcuGetChar:0000000000000000 $t
+     /tmp/ccSho242.s:485    .text.UartMcuGetChar:0000000000000000 UartMcuGetChar
+     /tmp/ccSho242.s:545    .text.UartMcuPutBuffer:0000000000000000 $t
+     /tmp/ccSho242.s:552    .text.UartMcuPutBuffer:0000000000000000 UartMcuPutBuffer
+     /tmp/ccSho242.s:638    .text.UartMcuGetBuffer:0000000000000000 $t
+     /tmp/ccSho242.s:645    .text.UartMcuGetBuffer:0000000000000000 UartMcuGetBuffer
+     /tmp/ccSho242.s:703    .text.HAL_UART_TxCpltCallback:0000000000000000 $t
+     /tmp/ccSho242.s:710    .text.HAL_UART_TxCpltCallback:0000000000000000 HAL_UART_TxCpltCallback
+     /tmp/ccSho242.s:755    .text.HAL_UART_TxCpltCallback:000000000000002c $d
+     /tmp/ccSho242.s:763    .text.HAL_UART_RxCpltCallback:0000000000000000 $t
+     /tmp/ccSho242.s:770    .text.HAL_UART_RxCpltCallback:0000000000000000 HAL_UART_RxCpltCallback
+     /tmp/ccSho242.s:816    .text.HAL_UART_RxCpltCallback:000000000000002c $d
+     /tmp/ccSho242.s:824    .text.HAL_UART_ErrorCallback:0000000000000000 $t
+     /tmp/ccSho242.s:831    .text.HAL_UART_ErrorCallback:0000000000000000 HAL_UART_ErrorCallback
+     /tmp/ccSho242.s:854    .text.HAL_UART_ErrorCallback:0000000000000010 $d
+     /tmp/ccSho242.s:860    .text.USART1_IRQHandler:0000000000000000 $t
+     /tmp/ccSho242.s:867    .text.USART1_IRQHandler:0000000000000000 USART1_IRQHandler
+     /tmp/ccSho242.s:886    .text.USART1_IRQHandler:000000000000000c $d
+     /tmp/ccSho242.s:902    .bss.TxData:0000000000000000 TxData
+     /tmp/ccSho242.s:896    .bss.RxData:0000000000000000 RxData
+     /tmp/ccSho242.s:897    .bss.RxData:0000000000000000 $d
+     /tmp/ccSho242.s:903    .bss.TxData:0000000000000000 $d
+     /tmp/ccSho242.s:905    .bss.UartHandle:0000000000000000 $d
+     /tmp/ccSho242.s:909    .bss.UartHandle:0000000000000000 UartHandle
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+GpioInit
+HAL_UART_Init
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ
+HAL_UART_Receive_IT
+BoardDisableIrq
+IsFifoFull
+BoardEnableIrq
+FifoPush
+IsFifoEmpty
+FifoPop
+UartPutChar
+UartGetChar
+HAL_UART_Transmit_IT
+Uart1
+HAL_UART_IRQHandler
+ARM GAS  /tmp/ccSho242.s 			page 25
+
+

@@ -1,0 +1,1368 @@
+ARM GAS  /tmp/ccVu8IP7.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"sx1276-board.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.SX1276CheckRfFrequency,"ax",%progbits
+  16              		.align	1
+  17              		.global	SX1276CheckRfFrequency
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	SX1276CheckRfFrequency:
+  24              	.LFB12:
+  25              		.file 1 "..//Source/stm/board/board_stm32l151cd/sx1276-board.c"
+   1:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** /*!
+   2:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \file      sx1276-board.c
+   3:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+   4:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \brief     Target board SX1276 driver implementation
+   5:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+   6:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+   8:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \code
+   9:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *                ______                              _
+  10:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *               / _____)             _              | |
+  11:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+  17:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \endcode
+  18:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+  19:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+  21:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  */
+  23:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #include <stdlib.h>
+  24:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #include "utilities.h"
+  25:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #include "board-config.h"
+  26:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #include "delay.h"
+  27:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #include "radio.h"
+  28:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #include "sx1276-board.h"
+  29:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  30:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** /*!
+  31:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * Flag used to set the RF switch control pins in low power mode when the radio is not active.
+  32:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  */
+  33:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** static bool RadioIsActive = false;
+ARM GAS  /tmp/ccVu8IP7.s 			page 2
+
+
+  34:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  35:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** /*!
+  36:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * Radio driver structure initialization
+  37:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  */
+  38:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** const struct Radio_s Radio =
+  39:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+  40:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Init,
+  41:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276GetStatus,
+  42:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetModem,
+  43:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetChannel,
+  44:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276IsChannelFree,
+  45:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Random,
+  46:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetRxConfig,
+  47:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetTxConfig,
+  48:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276CheckRfFrequency,
+  49:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276GetTimeOnAir,
+  50:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Send,
+  51:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetSleep,
+  52:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetStby,
+  53:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetRx,
+  54:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276StartCad,
+  55:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetTxContinuousWave,
+  56:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276ReadRssi,
+  57:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Write,
+  58:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Read,
+  59:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276WriteBuffer,
+  60:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276ReadBuffer,
+  61:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetMaxPayloadLength,
+  62:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetPublicNetwork,
+  63:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276GetWakeupTime
+  64:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** };
+  65:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  66:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** /*!
+  67:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * Antenna switch GPIO pins objects
+  68:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  */
+  69:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** Gpio_t AntSwitchLf;
+  70:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** Gpio_t AntSwitchHf;
+  71:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  72:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276IoInit( void )
+  73:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+  74:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+  75:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  76:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  77:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  78:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  79:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  80:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  81:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  82:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+  83:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  84:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
+  85:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+  86:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[0] );
+  87:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[1] );
+  88:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[2] );
+  89:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
+  90:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[4] );
+ARM GAS  /tmp/ccVu8IP7.s 			page 3
+
+
+  91:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
+  92:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+  93:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  94:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276IoDeInit( void )
+  95:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+  96:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+  97:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  98:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+  99:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 100:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 101:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 102:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 103:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 104:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 105:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 106:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** /*!
+ 107:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \brief Enables/disables the TCXO if available on board design.
+ 108:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  *
+ 109:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  * \param [IN] state TCXO enabled when true and disabled when false.
+ 110:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****  */
+ 111:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** static void SX1276SetBoardTcxo( uint8_t state )
+ 112:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 113:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // No TCXO component available on this board design.
+ 114:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #if 0
+ 115:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     if( state == true )
+ 116:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 117:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         TCXO_ON( );
+ 118:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         DelayMs( BOARD_TCXO_WAKEUP_TIME );
+ 119:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 120:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     else
+ 121:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 122:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         TCXO_OFF( );
+ 123:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 124:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** #endif
+ 125:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 126:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 127:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** uint32_t SX1276GetBoardTcxoWakeupTime( void )
+ 128:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 129:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     return BOARD_TCXO_WAKEUP_TIME;
+ 130:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 131:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 132:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276Reset( void )
+ 133:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 134:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Enables the TCXO if available on the board design
+ 135:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276SetBoardTcxo( true );
+ 136:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 137:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Set RESET pin to 0
+ 138:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.Reset, RADIO_RESET, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 139:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 140:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Wait 1 ms
+ 141:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     DelayMs( 1 );
+ 142:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 143:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Configure RESET as input
+ 144:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.Reset, RADIO_RESET, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+ 145:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 146:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Wait 6 ms
+ 147:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     DelayMs( 6 );
+ARM GAS  /tmp/ccVu8IP7.s 			page 4
+
+
+ 148:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 149:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 150:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276SetRfTxPower( int8_t power )
+ 151:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 152:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     uint8_t paConfig = 0;
+ 153:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     uint8_t paDac = 0;
+ 154:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 155:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     paConfig = SX1276Read( REG_PACONFIG );
+ 156:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     paDac = SX1276Read( REG_PADAC );
+ 157:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 158:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     paConfig = ( paConfig & RF_PACONFIG_PASELECT_MASK ) | SX1276GetPaSelect( SX1276.Settings.Channe
+ 159:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     paConfig = ( paConfig & RF_PACONFIG_MAX_POWER_MASK ) | 0x70;
+ 160:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 161:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     if( ( paConfig & RF_PACONFIG_PASELECT_PABOOST ) == RF_PACONFIG_PASELECT_PABOOST )
+ 162:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 163:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         if( power > 17 )
+ 164:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 165:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             paDac = ( paDac & RF_PADAC_20DBM_MASK ) | RF_PADAC_20DBM_ON;
+ 166:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 167:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         else
+ 168:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 169:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             paDac = ( paDac & RF_PADAC_20DBM_MASK ) | RF_PADAC_20DBM_OFF;
+ 170:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 171:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         if( ( paDac & RF_PADAC_20DBM_ON ) == RF_PADAC_20DBM_ON )
+ 172:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 173:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             if( power < 5 )
+ 174:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 175:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****                 power = 5;
+ 176:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 177:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             if( power > 20 )
+ 178:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 179:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****                 power = 20;
+ 180:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 181:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             paConfig = ( paConfig & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( uint8_t )( ( uint16_t )( pow
+ 182:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 183:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         else
+ 184:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 185:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             if( power < 2 )
+ 186:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 187:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****                 power = 2;
+ 188:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 189:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             if( power > 17 )
+ 190:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 191:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****                 power = 17;
+ 192:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 193:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             paConfig = ( paConfig & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( uint8_t )( ( uint16_t )( pow
+ 194:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 195:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 196:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     else
+ 197:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 198:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         if( power < -1 )
+ 199:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 200:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             power = -1;
+ 201:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 202:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         if( power > 14 )
+ 203:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 204:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             power = 14;
+ARM GAS  /tmp/ccVu8IP7.s 			page 5
+
+
+ 205:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 206:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         paConfig = ( paConfig & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( uint8_t )( ( uint16_t )( power +
+ 207:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 208:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Write( REG_PACONFIG, paConfig );
+ 209:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Write( REG_PADAC, paDac );
+ 210:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 211:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 212:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** uint8_t SX1276GetPaSelect( uint32_t channel )
+ 213:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 214:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     if( channel < RF_MID_BAND_THRESH )
+ 215:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 216:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         return RF_PACONFIG_PASELECT_PABOOST;
+ 217:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 218:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     else
+ 219:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 220:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         return RF_PACONFIG_PASELECT_RFO;
+ 221:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 222:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 223:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 224:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276SetAntSwLowPower( bool status )
+ 225:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 226:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     if( RadioIsActive != status )
+ 227:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 228:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         RadioIsActive = status;
+ 229:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 230:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         if( status == false )
+ 231:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 232:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             SX1276SetBoardTcxo( true );
+ 233:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             SX1276AntSwInit( );
+ 234:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 235:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         else
+ 236:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 237:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             SX1276SetBoardTcxo( false );
+ 238:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             SX1276AntSwDeInit( );
+ 239:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 240:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 241:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 242:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 243:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276AntSwInit( void )
+ 244:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 245:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+ 246:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+ 247:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 248:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 249:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276AntSwDeInit( void )
+ 250:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 251:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+ 252:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+ 253:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 254:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 255:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** void SX1276SetAntSw( uint8_t opMode )
+ 256:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+ 257:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     switch( opMode )
+ 258:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 259:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     case RFLR_OPMODE_TRANSMITTER:
+ 260:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         GpioWrite( &AntSwitchLf, 0 );
+ 261:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         GpioWrite( &AntSwitchHf, 1 );
+ARM GAS  /tmp/ccVu8IP7.s 			page 6
+
+
+ 262:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         break;
+ 263:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     case RFLR_OPMODE_RECEIVER:
+ 264:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     case RFLR_OPMODE_RECEIVER_SINGLE:
+ 265:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     case RFLR_OPMODE_CAD:
+ 266:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     default:
+ 267:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         GpioWrite( &AntSwitchLf, 1 );
+ 268:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         GpioWrite( &AntSwitchHf, 0 );
+ 269:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         break;
+ 270:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 271:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 272:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 273:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** bool SX1276CheckRfFrequency( uint32_t frequency )
+ 274:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** {
+  26              		.loc 1 274 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  31              	.LVL0:
+ 275:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Implement check. Currently all frequencies are supported
+ 276:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     return true;
+ 277:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+  32              		.loc 1 277 0
+  33 0000 0120     		movs	r0, #1
+  34              	.LVL1:
+  35 0002 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE12:
+  39              		.section	.text.SX1276IoInit,"ax",%progbits
+  40              		.align	1
+  41              		.global	SX1276IoInit
+  42              		.syntax unified
+  43              		.thumb
+  44              		.thumb_func
+  45              		.fpu softvfp
+  47              	SX1276IoInit:
+  48              	.LFB0:
+  73:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+  49              		.loc 1 73 0
+  50              		.cfi_startproc
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53 0000 70B5     		push	{r4, r5, r6, lr}
+  54              	.LCFI0:
+  55              		.cfi_def_cfa_offset 16
+  56              		.cfi_offset 4, -16
+  57              		.cfi_offset 5, -12
+  58              		.cfi_offset 6, -8
+  59              		.cfi_offset 14, -4
+  60 0002 82B0     		sub	sp, sp, #8
+  61              	.LCFI1:
+  62              		.cfi_def_cfa_offset 24
+  74:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+  63              		.loc 1 74 0
+  64 0004 214E     		ldr	r6, .L4
+  65 0006 0125     		movs	r5, #1
+  66 0008 0195     		str	r5, [sp, #4]
+ARM GAS  /tmp/ccVu8IP7.s 			page 7
+
+
+  67 000a 0095     		str	r5, [sp]
+  68 000c 0023     		movs	r3, #0
+  69 000e 2A46     		mov	r2, r5
+  70 0010 0421     		movs	r1, #4
+  71 0012 3046     		mov	r0, r6
+  72 0014 FFF7FEFF 		bl	GpioInit
+  73              	.LVL2:
+  76:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  74              		.loc 1 76 0
+  75 0018 0024     		movs	r4, #0
+  76 001a 0194     		str	r4, [sp, #4]
+  77 001c 0095     		str	r5, [sp]
+  78 001e 2346     		mov	r3, r4
+  79 0020 2246     		mov	r2, r4
+  80 0022 1B21     		movs	r1, #27
+  81 0024 A6F17000 		sub	r0, r6, #112
+  82 0028 FFF7FEFF 		bl	GpioInit
+  83              	.LVL3:
+  77:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  84              		.loc 1 77 0
+  85 002c 0194     		str	r4, [sp, #4]
+  86 002e 0095     		str	r5, [sp]
+  87 0030 2346     		mov	r3, r4
+  88 0032 2246     		mov	r2, r4
+  89 0034 2D21     		movs	r1, #45
+  90 0036 A6F16400 		sub	r0, r6, #100
+  91 003a FFF7FEFF 		bl	GpioInit
+  92              	.LVL4:
+  78:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  93              		.loc 1 78 0
+  94 003e 0194     		str	r4, [sp, #4]
+  95 0040 0095     		str	r5, [sp]
+  96 0042 2346     		mov	r3, r4
+  97 0044 2246     		mov	r2, r4
+  98 0046 1921     		movs	r1, #25
+  99 0048 A6F15800 		sub	r0, r6, #88
+ 100 004c FFF7FEFF 		bl	GpioInit
+ 101              	.LVL5:
+  79:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+ 102              		.loc 1 79 0
+ 103 0050 0194     		str	r4, [sp, #4]
+ 104 0052 0095     		str	r5, [sp]
+ 105 0054 2346     		mov	r3, r4
+ 106 0056 2246     		mov	r2, r4
+ 107 0058 1421     		movs	r1, #20
+ 108 005a A6F14C00 		sub	r0, r6, #76
+ 109 005e FFF7FEFF 		bl	GpioInit
+ 110              	.LVL6:
+  80:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+ 111              		.loc 1 80 0
+ 112 0062 0194     		str	r4, [sp, #4]
+ 113 0064 0095     		str	r5, [sp]
+ 114 0066 2346     		mov	r3, r4
+ 115 0068 2246     		mov	r2, r4
+ 116 006a 1321     		movs	r1, #19
+ 117 006c A6F14000 		sub	r0, r6, #64
+ 118 0070 FFF7FEFF 		bl	GpioInit
+ARM GAS  /tmp/ccVu8IP7.s 			page 8
+
+
+ 119              	.LVL7:
+  81:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 120              		.loc 1 81 0
+ 121 0074 0194     		str	r4, [sp, #4]
+ 122 0076 0095     		str	r5, [sp]
+ 123 0078 2346     		mov	r3, r4
+ 124 007a 2246     		mov	r2, r4
+ 125 007c 0F21     		movs	r1, #15
+ 126 007e A6F13400 		sub	r0, r6, #52
+ 127 0082 FFF7FEFF 		bl	GpioInit
+ 128              	.LVL8:
+  82:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 129              		.loc 1 82 0
+ 130 0086 02B0     		add	sp, sp, #8
+ 131              	.LCFI2:
+ 132              		.cfi_def_cfa_offset 16
+ 133              		@ sp needed
+ 134 0088 70BD     		pop	{r4, r5, r6, pc}
+ 135              	.L5:
+ 136 008a 00BF     		.align	2
+ 137              	.L4:
+ 138 008c 7C000000 		.word	SX1276+124
+ 139              		.cfi_endproc
+ 140              	.LFE0:
+ 142              		.section	.text.SX1276IoIrqInit,"ax",%progbits
+ 143              		.align	1
+ 144              		.global	SX1276IoIrqInit
+ 145              		.syntax unified
+ 146              		.thumb
+ 147              		.thumb_func
+ 148              		.fpu softvfp
+ 150              	SX1276IoIrqInit:
+ 151              	.LFB1:
+  85:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[0] );
+ 152              		.loc 1 85 0
+ 153              		.cfi_startproc
+ 154              		@ args = 0, pretend = 0, frame = 0
+ 155              		@ frame_needed = 0, uses_anonymous_args = 0
+ 156              	.LVL9:
+ 157 0000 38B5     		push	{r3, r4, r5, lr}
+ 158              	.LCFI3:
+ 159              		.cfi_def_cfa_offset 16
+ 160              		.cfi_offset 3, -16
+ 161              		.cfi_offset 4, -12
+ 162              		.cfi_offset 5, -8
+ 163              		.cfi_offset 14, -4
+ 164 0002 0546     		mov	r5, r0
+  86:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[1] );
+ 165              		.loc 1 86 0
+ 166 0004 154C     		ldr	r4, .L8
+ 167 0006 0368     		ldr	r3, [r0]
+ 168 0008 0322     		movs	r2, #3
+ 169 000a 0121     		movs	r1, #1
+ 170 000c 2046     		mov	r0, r4
+ 171              	.LVL10:
+ 172 000e FFF7FEFF 		bl	GpioSetInterrupt
+ 173              	.LVL11:
+ARM GAS  /tmp/ccVu8IP7.s 			page 9
+
+
+  87:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[2] );
+ 174              		.loc 1 87 0
+ 175 0012 6B68     		ldr	r3, [r5, #4]
+ 176 0014 0322     		movs	r2, #3
+ 177 0016 0121     		movs	r1, #1
+ 178 0018 04F10C00 		add	r0, r4, #12
+ 179 001c FFF7FEFF 		bl	GpioSetInterrupt
+ 180              	.LVL12:
+  88:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
+ 181              		.loc 1 88 0
+ 182 0020 AB68     		ldr	r3, [r5, #8]
+ 183 0022 0322     		movs	r2, #3
+ 184 0024 0121     		movs	r1, #1
+ 185 0026 04F11800 		add	r0, r4, #24
+ 186 002a FFF7FEFF 		bl	GpioSetInterrupt
+ 187              	.LVL13:
+  89:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[4] );
+ 188              		.loc 1 89 0
+ 189 002e EB68     		ldr	r3, [r5, #12]
+ 190 0030 0322     		movs	r2, #3
+ 191 0032 0121     		movs	r1, #1
+ 192 0034 04F12400 		add	r0, r4, #36
+ 193 0038 FFF7FEFF 		bl	GpioSetInterrupt
+ 194              	.LVL14:
+  90:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
+ 195              		.loc 1 90 0
+ 196 003c 2B69     		ldr	r3, [r5, #16]
+ 197 003e 0322     		movs	r2, #3
+ 198 0040 0121     		movs	r1, #1
+ 199 0042 04F13000 		add	r0, r4, #48
+ 200 0046 FFF7FEFF 		bl	GpioSetInterrupt
+ 201              	.LVL15:
+  91:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 202              		.loc 1 91 0
+ 203 004a 6B69     		ldr	r3, [r5, #20]
+ 204 004c 0322     		movs	r2, #3
+ 205 004e 0121     		movs	r1, #1
+ 206 0050 04F13C00 		add	r0, r4, #60
+ 207 0054 FFF7FEFF 		bl	GpioSetInterrupt
+ 208              	.LVL16:
+ 209 0058 38BD     		pop	{r3, r4, r5, pc}
+ 210              	.LVL17:
+ 211              	.L9:
+ 212 005a 00BF     		.align	2
+ 213              	.L8:
+ 214 005c 0C000000 		.word	SX1276+12
+ 215              		.cfi_endproc
+ 216              	.LFE1:
+ 218              		.section	.text.SX1276IoDeInit,"ax",%progbits
+ 219              		.align	1
+ 220              		.global	SX1276IoDeInit
+ 221              		.syntax unified
+ 222              		.thumb
+ 223              		.thumb_func
+ 224              		.fpu softvfp
+ 226              	SX1276IoDeInit:
+ 227              	.LFB2:
+ARM GAS  /tmp/ccVu8IP7.s 			page 10
+
+
+  95:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+ 228              		.loc 1 95 0
+ 229              		.cfi_startproc
+ 230              		@ args = 0, pretend = 0, frame = 0
+ 231              		@ frame_needed = 0, uses_anonymous_args = 0
+ 232 0000 30B5     		push	{r4, r5, lr}
+ 233              	.LCFI4:
+ 234              		.cfi_def_cfa_offset 12
+ 235              		.cfi_offset 4, -12
+ 236              		.cfi_offset 5, -8
+ 237              		.cfi_offset 14, -4
+ 238 0002 83B0     		sub	sp, sp, #12
+ 239              	.LCFI5:
+ 240              		.cfi_def_cfa_offset 24
+  96:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 241              		.loc 1 96 0
+ 242 0004 204D     		ldr	r5, .L12
+ 243 0006 0122     		movs	r2, #1
+ 244 0008 0192     		str	r2, [sp, #4]
+ 245 000a 0024     		movs	r4, #0
+ 246 000c 0094     		str	r4, [sp]
+ 247 000e 2346     		mov	r3, r4
+ 248 0010 0421     		movs	r1, #4
+ 249 0012 2846     		mov	r0, r5
+ 250 0014 FFF7FEFF 		bl	GpioInit
+ 251              	.LVL18:
+  98:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 252              		.loc 1 98 0
+ 253 0018 0194     		str	r4, [sp, #4]
+ 254 001a 0094     		str	r4, [sp]
+ 255 001c 2346     		mov	r3, r4
+ 256 001e 2246     		mov	r2, r4
+ 257 0020 1B21     		movs	r1, #27
+ 258 0022 A5F17000 		sub	r0, r5, #112
+ 259 0026 FFF7FEFF 		bl	GpioInit
+ 260              	.LVL19:
+  99:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 261              		.loc 1 99 0
+ 262 002a 0194     		str	r4, [sp, #4]
+ 263 002c 0094     		str	r4, [sp]
+ 264 002e 2346     		mov	r3, r4
+ 265 0030 2246     		mov	r2, r4
+ 266 0032 2D21     		movs	r1, #45
+ 267 0034 A5F16400 		sub	r0, r5, #100
+ 268 0038 FFF7FEFF 		bl	GpioInit
+ 269              	.LVL20:
+ 100:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 270              		.loc 1 100 0
+ 271 003c 0194     		str	r4, [sp, #4]
+ 272 003e 0094     		str	r4, [sp]
+ 273 0040 2346     		mov	r3, r4
+ 274 0042 2246     		mov	r2, r4
+ 275 0044 1921     		movs	r1, #25
+ 276 0046 A5F15800 		sub	r0, r5, #88
+ 277 004a FFF7FEFF 		bl	GpioInit
+ 278              	.LVL21:
+ 101:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ARM GAS  /tmp/ccVu8IP7.s 			page 11
+
+
+ 279              		.loc 1 101 0
+ 280 004e 0194     		str	r4, [sp, #4]
+ 281 0050 0094     		str	r4, [sp]
+ 282 0052 2346     		mov	r3, r4
+ 283 0054 2246     		mov	r2, r4
+ 284 0056 1421     		movs	r1, #20
+ 285 0058 A5F14C00 		sub	r0, r5, #76
+ 286 005c FFF7FEFF 		bl	GpioInit
+ 287              	.LVL22:
+ 102:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+ 288              		.loc 1 102 0
+ 289 0060 0194     		str	r4, [sp, #4]
+ 290 0062 0094     		str	r4, [sp]
+ 291 0064 2346     		mov	r3, r4
+ 292 0066 2246     		mov	r2, r4
+ 293 0068 1321     		movs	r1, #19
+ 294 006a A5F14000 		sub	r0, r5, #64
+ 295 006e FFF7FEFF 		bl	GpioInit
+ 296              	.LVL23:
+ 103:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 297              		.loc 1 103 0
+ 298 0072 0194     		str	r4, [sp, #4]
+ 299 0074 0094     		str	r4, [sp]
+ 300 0076 2346     		mov	r3, r4
+ 301 0078 2246     		mov	r2, r4
+ 302 007a 0F21     		movs	r1, #15
+ 303 007c A5F13400 		sub	r0, r5, #52
+ 304 0080 FFF7FEFF 		bl	GpioInit
+ 305              	.LVL24:
+ 104:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 306              		.loc 1 104 0
+ 307 0084 03B0     		add	sp, sp, #12
+ 308              	.LCFI6:
+ 309              		.cfi_def_cfa_offset 12
+ 310              		@ sp needed
+ 311 0086 30BD     		pop	{r4, r5, pc}
+ 312              	.L13:
+ 313              		.align	2
+ 314              	.L12:
+ 315 0088 7C000000 		.word	SX1276+124
+ 316              		.cfi_endproc
+ 317              	.LFE2:
+ 319              		.section	.text.SX1276GetBoardTcxoWakeupTime,"ax",%progbits
+ 320              		.align	1
+ 321              		.global	SX1276GetBoardTcxoWakeupTime
+ 322              		.syntax unified
+ 323              		.thumb
+ 324              		.thumb_func
+ 325              		.fpu softvfp
+ 327              	SX1276GetBoardTcxoWakeupTime:
+ 328              	.LFB4:
+ 128:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     return BOARD_TCXO_WAKEUP_TIME;
+ 329              		.loc 1 128 0
+ 330              		.cfi_startproc
+ 331              		@ args = 0, pretend = 0, frame = 0
+ 332              		@ frame_needed = 0, uses_anonymous_args = 0
+ 333              		@ link register save eliminated.
+ARM GAS  /tmp/ccVu8IP7.s 			page 12
+
+
+ 130:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 334              		.loc 1 130 0
+ 335 0000 0020     		movs	r0, #0
+ 336 0002 7047     		bx	lr
+ 337              		.cfi_endproc
+ 338              	.LFE4:
+ 340              		.section	.text.SX1276Reset,"ax",%progbits
+ 341              		.align	1
+ 342              		.global	SX1276Reset
+ 343              		.syntax unified
+ 344              		.thumb
+ 345              		.thumb_func
+ 346              		.fpu softvfp
+ 348              	SX1276Reset:
+ 349              	.LFB5:
+ 133:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     // Enables the TCXO if available on the board design
+ 350              		.loc 1 133 0
+ 351              		.cfi_startproc
+ 352              		@ args = 0, pretend = 0, frame = 0
+ 353              		@ frame_needed = 0, uses_anonymous_args = 0
+ 354 0000 30B5     		push	{r4, r5, lr}
+ 355              	.LCFI7:
+ 356              		.cfi_def_cfa_offset 12
+ 357              		.cfi_offset 4, -12
+ 358              		.cfi_offset 5, -8
+ 359              		.cfi_offset 14, -4
+ 360 0002 83B0     		sub	sp, sp, #12
+ 361              	.LCFI8:
+ 362              		.cfi_def_cfa_offset 24
+ 138:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 363              		.loc 1 138 0
+ 364 0004 0D4D     		ldr	r5, .L17
+ 365 0006 0024     		movs	r4, #0
+ 366 0008 0194     		str	r4, [sp, #4]
+ 367 000a 0094     		str	r4, [sp]
+ 368 000c 2346     		mov	r3, r4
+ 369 000e 0122     		movs	r2, #1
+ 370 0010 1A21     		movs	r1, #26
+ 371 0012 2846     		mov	r0, r5
+ 372 0014 FFF7FEFF 		bl	GpioInit
+ 373              	.LVL25:
+ 141:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 374              		.loc 1 141 0
+ 375 0018 0120     		movs	r0, #1
+ 376 001a FFF7FEFF 		bl	DelayMs
+ 377              	.LVL26:
+ 144:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 378              		.loc 1 144 0
+ 379 001e 0123     		movs	r3, #1
+ 380 0020 0193     		str	r3, [sp, #4]
+ 381 0022 0094     		str	r4, [sp]
+ 382 0024 2346     		mov	r3, r4
+ 383 0026 2246     		mov	r2, r4
+ 384 0028 1A21     		movs	r1, #26
+ 385 002a 2846     		mov	r0, r5
+ 386 002c FFF7FEFF 		bl	GpioInit
+ 387              	.LVL27:
+ARM GAS  /tmp/ccVu8IP7.s 			page 13
+
+
+ 147:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 388              		.loc 1 147 0
+ 389 0030 0620     		movs	r0, #6
+ 390 0032 FFF7FEFF 		bl	DelayMs
+ 391              	.LVL28:
+ 148:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 392              		.loc 1 148 0
+ 393 0036 03B0     		add	sp, sp, #12
+ 394              	.LCFI9:
+ 395              		.cfi_def_cfa_offset 12
+ 396              		@ sp needed
+ 397 0038 30BD     		pop	{r4, r5, pc}
+ 398              	.L18:
+ 399 003a 00BF     		.align	2
+ 400              	.L17:
+ 401 003c 00000000 		.word	SX1276
+ 402              		.cfi_endproc
+ 403              	.LFE5:
+ 405              		.section	.text.SX1276GetPaSelect,"ax",%progbits
+ 406              		.align	1
+ 407              		.global	SX1276GetPaSelect
+ 408              		.syntax unified
+ 409              		.thumb
+ 410              		.thumb_func
+ 411              		.fpu softvfp
+ 413              	SX1276GetPaSelect:
+ 414              	.LFB7:
+ 213:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     if( channel < RF_MID_BAND_THRESH )
+ 415              		.loc 1 213 0
+ 416              		.cfi_startproc
+ 417              		@ args = 0, pretend = 0, frame = 0
+ 418              		@ frame_needed = 0, uses_anonymous_args = 0
+ 419              		@ link register save eliminated.
+ 420              	.LVL29:
+ 214:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 421              		.loc 1 214 0
+ 422 0000 034B     		ldr	r3, .L22
+ 423 0002 9842     		cmp	r0, r3
+ 424 0004 01D8     		bhi	.L21
+ 216:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 425              		.loc 1 216 0
+ 426 0006 8020     		movs	r0, #128
+ 427              	.LVL30:
+ 428 0008 7047     		bx	lr
+ 429              	.LVL31:
+ 430              	.L21:
+ 220:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 431              		.loc 1 220 0
+ 432 000a 0020     		movs	r0, #0
+ 433              	.LVL32:
+ 222:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 434              		.loc 1 222 0
+ 435 000c 7047     		bx	lr
+ 436              	.L23:
+ 437 000e 00BF     		.align	2
+ 438              	.L22:
+ 439 0010 3FDD4A1F 		.word	524999999
+ARM GAS  /tmp/ccVu8IP7.s 			page 14
+
+
+ 440              		.cfi_endproc
+ 441              	.LFE7:
+ 443              		.section	.text.SX1276SetRfTxPower,"ax",%progbits
+ 444              		.align	1
+ 445              		.global	SX1276SetRfTxPower
+ 446              		.syntax unified
+ 447              		.thumb
+ 448              		.thumb_func
+ 449              		.fpu softvfp
+ 451              	SX1276SetRfTxPower:
+ 452              	.LFB6:
+ 151:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     uint8_t paConfig = 0;
+ 453              		.loc 1 151 0
+ 454              		.cfi_startproc
+ 455              		@ args = 0, pretend = 0, frame = 0
+ 456              		@ frame_needed = 0, uses_anonymous_args = 0
+ 457              	.LVL33:
+ 458 0000 70B5     		push	{r4, r5, r6, lr}
+ 459              	.LCFI10:
+ 460              		.cfi_def_cfa_offset 16
+ 461              		.cfi_offset 4, -16
+ 462              		.cfi_offset 5, -12
+ 463              		.cfi_offset 6, -8
+ 464              		.cfi_offset 14, -4
+ 465 0002 0646     		mov	r6, r0
+ 466              	.LVL34:
+ 155:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     paDac = SX1276Read( REG_PADAC );
+ 467              		.loc 1 155 0
+ 468 0004 0920     		movs	r0, #9
+ 469              	.LVL35:
+ 470 0006 FFF7FEFF 		bl	SX1276Read
+ 471              	.LVL36:
+ 472 000a 0446     		mov	r4, r0
+ 473              	.LVL37:
+ 156:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 474              		.loc 1 156 0
+ 475 000c 4D20     		movs	r0, #77
+ 476 000e FFF7FEFF 		bl	SX1276Read
+ 477              	.LVL38:
+ 478 0012 0546     		mov	r5, r0
+ 479              	.LVL39:
+ 158:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     paConfig = ( paConfig & RF_PACONFIG_MAX_POWER_MASK ) | 0x70;
+ 480              		.loc 1 158 0
+ 481 0014 04F07F04 		and	r4, r4, #127
+ 482              	.LVL40:
+ 483 0018 284B     		ldr	r3, .L47
+ 484 001a D3F88C00 		ldr	r0, [r3, #140]
+ 485 001e FFF7FEFF 		bl	SX1276GetPaSelect
+ 486              	.LVL41:
+ 487 0022 43B2     		sxtb	r3, r0
+ 488 0024 2343     		orrs	r3, r3, r4
+ 489 0026 DBB2     		uxtb	r3, r3
+ 490              	.LVL42:
+ 159:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 491              		.loc 1 159 0
+ 492 0028 43F07003 		orr	r3, r3, #112
+ 493              	.LVL43:
+ARM GAS  /tmp/ccVu8IP7.s 			page 15
+
+
+ 161:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 494              		.loc 1 161 0
+ 495 002c 5BB2     		sxtb	r3, r3
+ 496 002e 002B     		cmp	r3, #0
+ 497 0030 14DB     		blt	.L43
+ 198:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 498              		.loc 1 198 0
+ 499 0032 B6F1FF3F 		cmp	r6, #-1
+ 500 0036 3EDB     		blt	.L44
+ 501              	.L34:
+ 502              	.LVL44:
+ 202:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 503              		.loc 1 202 0
+ 504 0038 0E2E     		cmp	r6, #14
+ 505 003a 00DD     		ble	.L35
+ 204:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 506              		.loc 1 204 0
+ 507 003c 0E26     		movs	r6, #14
+ 508              	.LVL45:
+ 509              	.L35:
+ 206:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     }
+ 510              		.loc 1 206 0
+ 511 003e 23F00F01 		bic	r1, r3, #15
+ 512 0042 0136     		adds	r6, r6, #1
+ 513              	.LVL46:
+ 514 0044 06F00F03 		and	r3, r6, #15
+ 515              	.LVL47:
+ 516 0048 1943     		orrs	r1, r1, r3
+ 517 004a C9B2     		uxtb	r1, r1
+ 518              	.LVL48:
+ 519              	.L31:
+ 208:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     SX1276Write( REG_PADAC, paDac );
+ 520              		.loc 1 208 0
+ 521 004c 0920     		movs	r0, #9
+ 522 004e FFF7FEFF 		bl	SX1276Write
+ 523              	.LVL49:
+ 209:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 524              		.loc 1 209 0
+ 525 0052 2946     		mov	r1, r5
+ 526 0054 4D20     		movs	r0, #77
+ 527 0056 FFF7FEFF 		bl	SX1276Write
+ 528              	.LVL50:
+ 529 005a 70BD     		pop	{r4, r5, r6, pc}
+ 530              	.LVL51:
+ 531              	.L43:
+ 163:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 532              		.loc 1 163 0
+ 533 005c 112E     		cmp	r6, #17
+ 534 005e 13DD     		ble	.L26
+ 165:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 535              		.loc 1 165 0
+ 536 0060 45F00705 		orr	r5, r5, #7
+ 537              	.LVL52:
+ 538 0064 EDB2     		uxtb	r5, r5
+ 539              	.LVL53:
+ 540              	.L27:
+ 171:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ARM GAS  /tmp/ccVu8IP7.s 			page 16
+
+
+ 541              		.loc 1 171 0
+ 542 0066 05F00702 		and	r2, r5, #7
+ 543 006a 072A     		cmp	r2, #7
+ 544 006c 13D0     		beq	.L45
+ 185:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 545              		.loc 1 185 0
+ 546 006e 012E     		cmp	r6, #1
+ 547 0070 1FDD     		ble	.L46
+ 548              	.L32:
+ 549              	.LVL54:
+ 189:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 550              		.loc 1 189 0
+ 551 0072 112E     		cmp	r6, #17
+ 552 0074 00DD     		ble	.L33
+ 191:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 553              		.loc 1 191 0
+ 554 0076 1126     		movs	r6, #17
+ 555              	.LVL55:
+ 556              	.L33:
+ 193:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 557              		.loc 1 193 0
+ 558 0078 23F00F01 		bic	r1, r3, #15
+ 559 007c 023E     		subs	r6, r6, #2
+ 560              	.LVL56:
+ 561 007e 06F00F03 		and	r3, r6, #15
+ 562              	.LVL57:
+ 563 0082 1943     		orrs	r1, r1, r3
+ 564 0084 C9B2     		uxtb	r1, r1
+ 565              	.LVL58:
+ 566 0086 E1E7     		b	.L31
+ 567              	.LVL59:
+ 568              	.L26:
+ 169:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 569              		.loc 1 169 0
+ 570 0088 25F00705 		bic	r5, r5, #7
+ 571              	.LVL60:
+ 572 008c 6DB2     		sxtb	r5, r5
+ 573 008e 45F00405 		orr	r5, r5, #4
+ 574 0092 EDB2     		uxtb	r5, r5
+ 575              	.LVL61:
+ 576 0094 E7E7     		b	.L27
+ 577              	.L45:
+ 173:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 578              		.loc 1 173 0
+ 579 0096 042E     		cmp	r6, #4
+ 580 0098 00DC     		bgt	.L29
+ 175:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 581              		.loc 1 175 0
+ 582 009a 0526     		movs	r6, #5
+ 583              	.L29:
+ 584              	.LVL62:
+ 177:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             {
+ 585              		.loc 1 177 0
+ 586 009c 142E     		cmp	r6, #20
+ 587 009e 00DD     		ble	.L30
+ 179:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 588              		.loc 1 179 0
+ARM GAS  /tmp/ccVu8IP7.s 			page 17
+
+
+ 589 00a0 1426     		movs	r6, #20
+ 590              	.LVL63:
+ 591              	.L30:
+ 181:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 592              		.loc 1 181 0
+ 593 00a2 23F00F01 		bic	r1, r3, #15
+ 594 00a6 053E     		subs	r6, r6, #5
+ 595              	.LVL64:
+ 596 00a8 06F00F03 		and	r3, r6, #15
+ 597 00ac 1943     		orrs	r1, r1, r3
+ 598 00ae C9B2     		uxtb	r1, r1
+ 599              	.LVL65:
+ 600 00b0 CCE7     		b	.L31
+ 601              	.LVL66:
+ 602              	.L46:
+ 187:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****             }
+ 603              		.loc 1 187 0
+ 604 00b2 0226     		movs	r6, #2
+ 605 00b4 DDE7     		b	.L32
+ 606              	.L44:
+ 200:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 607              		.loc 1 200 0
+ 608 00b6 4FF0FF36 		mov	r6, #-1
+ 609 00ba BDE7     		b	.L34
+ 610              	.L48:
+ 611              		.align	2
+ 612              	.L47:
+ 613 00bc 00000000 		.word	SX1276
+ 614              		.cfi_endproc
+ 615              	.LFE6:
+ 617              		.section	.text.SX1276AntSwInit,"ax",%progbits
+ 618              		.align	1
+ 619              		.global	SX1276AntSwInit
+ 620              		.syntax unified
+ 621              		.thumb
+ 622              		.thumb_func
+ 623              		.fpu softvfp
+ 625              	SX1276AntSwInit:
+ 626              	.LFB9:
+ 244:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+ 627              		.loc 1 244 0
+ 628              		.cfi_startproc
+ 629              		@ args = 0, pretend = 0, frame = 0
+ 630              		@ frame_needed = 0, uses_anonymous_args = 0
+ 631 0000 10B5     		push	{r4, lr}
+ 632              	.LCFI11:
+ 633              		.cfi_def_cfa_offset 8
+ 634              		.cfi_offset 4, -8
+ 635              		.cfi_offset 14, -4
+ 636 0002 82B0     		sub	sp, sp, #8
+ 637              	.LCFI12:
+ 638              		.cfi_def_cfa_offset 16
+ 245:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+ 639              		.loc 1 245 0
+ 640 0004 0124     		movs	r4, #1
+ 641 0006 0194     		str	r4, [sp, #4]
+ 642 0008 0094     		str	r4, [sp]
+ARM GAS  /tmp/ccVu8IP7.s 			page 18
+
+
+ 643 000a 0023     		movs	r3, #0
+ 644 000c 2246     		mov	r2, r4
+ 645 000e 2146     		mov	r1, r4
+ 646 0010 0648     		ldr	r0, .L51
+ 647 0012 FFF7FEFF 		bl	GpioInit
+ 648              	.LVL67:
+ 246:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 649              		.loc 1 246 0
+ 650 0016 0021     		movs	r1, #0
+ 651 0018 0191     		str	r1, [sp, #4]
+ 652 001a 0094     		str	r4, [sp]
+ 653 001c 0B46     		mov	r3, r1
+ 654 001e 2246     		mov	r2, r4
+ 655 0020 0348     		ldr	r0, .L51+4
+ 656 0022 FFF7FEFF 		bl	GpioInit
+ 657              	.LVL68:
+ 247:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 658              		.loc 1 247 0
+ 659 0026 02B0     		add	sp, sp, #8
+ 660              	.LCFI13:
+ 661              		.cfi_def_cfa_offset 8
+ 662              		@ sp needed
+ 663 0028 10BD     		pop	{r4, pc}
+ 664              	.L52:
+ 665 002a 00BF     		.align	2
+ 666              	.L51:
+ 667 002c 00000000 		.word	AntSwitchLf
+ 668 0030 00000000 		.word	AntSwitchHf
+ 669              		.cfi_endproc
+ 670              	.LFE9:
+ 672              		.section	.text.SX1276AntSwDeInit,"ax",%progbits
+ 673              		.align	1
+ 674              		.global	SX1276AntSwDeInit
+ 675              		.syntax unified
+ 676              		.thumb
+ 677              		.thumb_func
+ 678              		.fpu softvfp
+ 680              	SX1276AntSwDeInit:
+ 681              	.LFB10:
+ 250:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+ 682              		.loc 1 250 0
+ 683              		.cfi_startproc
+ 684              		@ args = 0, pretend = 0, frame = 0
+ 685              		@ frame_needed = 0, uses_anonymous_args = 0
+ 686 0000 10B5     		push	{r4, lr}
+ 687              	.LCFI14:
+ 688              		.cfi_def_cfa_offset 8
+ 689              		.cfi_offset 4, -8
+ 690              		.cfi_offset 14, -4
+ 691 0002 82B0     		sub	sp, sp, #8
+ 692              	.LCFI15:
+ 693              		.cfi_def_cfa_offset 16
+ 251:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+ 694              		.loc 1 251 0
+ 695 0004 0024     		movs	r4, #0
+ 696 0006 0194     		str	r4, [sp, #4]
+ 697 0008 0094     		str	r4, [sp]
+ARM GAS  /tmp/ccVu8IP7.s 			page 19
+
+
+ 698 000a 0123     		movs	r3, #1
+ 699 000c 1A46     		mov	r2, r3
+ 700 000e 1946     		mov	r1, r3
+ 701 0010 0648     		ldr	r0, .L55
+ 702 0012 FFF7FEFF 		bl	GpioInit
+ 703              	.LVL69:
+ 252:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** }
+ 704              		.loc 1 252 0
+ 705 0016 0194     		str	r4, [sp, #4]
+ 706 0018 0094     		str	r4, [sp]
+ 707 001a 0123     		movs	r3, #1
+ 708 001c 1A46     		mov	r2, r3
+ 709 001e 2146     		mov	r1, r4
+ 710 0020 0348     		ldr	r0, .L55+4
+ 711 0022 FFF7FEFF 		bl	GpioInit
+ 712              	.LVL70:
+ 253:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ 713              		.loc 1 253 0
+ 714 0026 02B0     		add	sp, sp, #8
+ 715              	.LCFI16:
+ 716              		.cfi_def_cfa_offset 8
+ 717              		@ sp needed
+ 718 0028 10BD     		pop	{r4, pc}
+ 719              	.L56:
+ 720 002a 00BF     		.align	2
+ 721              	.L55:
+ 722 002c 00000000 		.word	AntSwitchLf
+ 723 0030 00000000 		.word	AntSwitchHf
+ 724              		.cfi_endproc
+ 725              	.LFE10:
+ 727              		.section	.text.SX1276SetAntSwLowPower,"ax",%progbits
+ 728              		.align	1
+ 729              		.global	SX1276SetAntSwLowPower
+ 730              		.syntax unified
+ 731              		.thumb
+ 732              		.thumb_func
+ 733              		.fpu softvfp
+ 735              	SX1276SetAntSwLowPower:
+ 736              	.LFB8:
+ 225:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     if( RadioIsActive != status )
+ 737              		.loc 1 225 0
+ 738              		.cfi_startproc
+ 739              		@ args = 0, pretend = 0, frame = 0
+ 740              		@ frame_needed = 0, uses_anonymous_args = 0
+ 741              	.LVL71:
+ 742 0000 08B5     		push	{r3, lr}
+ 743              	.LCFI17:
+ 744              		.cfi_def_cfa_offset 8
+ 745              		.cfi_offset 3, -8
+ 746              		.cfi_offset 14, -4
+ 226:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 747              		.loc 1 226 0
+ 748 0002 064B     		ldr	r3, .L62
+ 749 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 750 0006 8342     		cmp	r3, r0
+ 751 0008 04D0     		beq	.L57
+ 228:..//Source/stm/board/board_stm32l151cd/sx1276-board.c **** 
+ARM GAS  /tmp/ccVu8IP7.s 			page 20
+
+
+ 752              		.loc 1 228 0
+ 753 000a 044B     		ldr	r3, .L62
+ 754 000c 1870     		strb	r0, [r3]
+ 230:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         {
+ 755              		.loc 1 230 0
+ 756 000e 10B1     		cbz	r0, .L61
+ 238:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 757              		.loc 1 238 0
+ 758 0010 FFF7FEFF 		bl	SX1276AntSwDeInit
+ 759              	.LVL72:
+ 760              	.L57:
+ 761 0014 08BD     		pop	{r3, pc}
+ 762              	.LVL73:
+ 763              	.L61:
+ 233:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         }
+ 764              		.loc 1 233 0
+ 765 0016 FFF7FEFF 		bl	SX1276AntSwInit
+ 766              	.LVL74:
+ 767 001a 08BD     		pop	{r3, pc}
+ 768              	.L63:
+ 769              		.align	2
+ 770              	.L62:
+ 771 001c 00000000 		.word	.LANCHOR0
+ 772              		.cfi_endproc
+ 773              	.LFE8:
+ 775              		.section	.text.SX1276SetAntSw,"ax",%progbits
+ 776              		.align	1
+ 777              		.global	SX1276SetAntSw
+ 778              		.syntax unified
+ 779              		.thumb
+ 780              		.thumb_func
+ 781              		.fpu softvfp
+ 783              	SX1276SetAntSw:
+ 784              	.LFB11:
+ 256:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     switch( opMode )
+ 785              		.loc 1 256 0
+ 786              		.cfi_startproc
+ 787              		@ args = 0, pretend = 0, frame = 0
+ 788              		@ frame_needed = 0, uses_anonymous_args = 0
+ 789              	.LVL75:
+ 790 0000 08B5     		push	{r3, lr}
+ 791              	.LCFI18:
+ 792              		.cfi_def_cfa_offset 8
+ 793              		.cfi_offset 3, -8
+ 794              		.cfi_offset 14, -4
+ 257:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     {
+ 795              		.loc 1 257 0
+ 796 0002 0328     		cmp	r0, #3
+ 797 0004 08D0     		beq	.L70
+ 267:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         GpioWrite( &AntSwitchHf, 0 );
+ 798              		.loc 1 267 0
+ 799 0006 0121     		movs	r1, #1
+ 800 0008 0848     		ldr	r0, .L71
+ 801              	.LVL76:
+ 802 000a FFF7FEFF 		bl	GpioWrite
+ 803              	.LVL77:
+ 268:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         break;
+ARM GAS  /tmp/ccVu8IP7.s 			page 21
+
+
+ 804              		.loc 1 268 0
+ 805 000e 0021     		movs	r1, #0
+ 806 0010 0748     		ldr	r0, .L71+4
+ 807 0012 FFF7FEFF 		bl	GpioWrite
+ 808              	.LVL78:
+ 809 0016 08BD     		pop	{r3, pc}
+ 810              	.LVL79:
+ 811              	.L70:
+ 260:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         GpioWrite( &AntSwitchHf, 1 );
+ 812              		.loc 1 260 0
+ 813 0018 0021     		movs	r1, #0
+ 814 001a 0448     		ldr	r0, .L71
+ 815              	.LVL80:
+ 816 001c FFF7FEFF 		bl	GpioWrite
+ 817              	.LVL81:
+ 261:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****         break;
+ 818              		.loc 1 261 0
+ 819 0020 0121     		movs	r1, #1
+ 820 0022 0348     		ldr	r0, .L71+4
+ 821 0024 FFF7FEFF 		bl	GpioWrite
+ 822              	.LVL82:
+ 262:..//Source/stm/board/board_stm32l151cd/sx1276-board.c ****     case RFLR_OPMODE_RECEIVER:
+ 823              		.loc 1 262 0
+ 824 0028 08BD     		pop	{r3, pc}
+ 825              	.L72:
+ 826 002a 00BF     		.align	2
+ 827              	.L71:
+ 828 002c 00000000 		.word	AntSwitchLf
+ 829 0030 00000000 		.word	AntSwitchHf
+ 830              		.cfi_endproc
+ 831              	.LFE11:
+ 833              		.comm	AntSwitchHf,12,4
+ 834              		.comm	AntSwitchLf,12,4
+ 835              		.global	Radio
+ 836              		.section	.bss.RadioIsActive,"aw",%nobits
+ 837              		.set	.LANCHOR0,. + 0
+ 840              	RadioIsActive:
+ 841 0000 00       		.space	1
+ 842              		.section	.rodata.Radio,"a",%progbits
+ 843              		.align	2
+ 846              	Radio:
+ 847 0000 00000000 		.word	SX1276Init
+ 848 0004 00000000 		.word	SX1276GetStatus
+ 849 0008 00000000 		.word	SX1276SetModem
+ 850 000c 00000000 		.word	SX1276SetChannel
+ 851 0010 00000000 		.word	SX1276IsChannelFree
+ 852 0014 00000000 		.word	SX1276Random
+ 853 0018 00000000 		.word	SX1276SetRxConfig
+ 854 001c 00000000 		.word	SX1276SetTxConfig
+ 855 0020 00000000 		.word	SX1276CheckRfFrequency
+ 856 0024 00000000 		.word	SX1276GetTimeOnAir
+ 857 0028 00000000 		.word	SX1276Send
+ 858 002c 00000000 		.word	SX1276SetSleep
+ 859 0030 00000000 		.word	SX1276SetStby
+ 860 0034 00000000 		.word	SX1276SetRx
+ 861 0038 00000000 		.word	SX1276StartCad
+ 862 003c 00000000 		.word	SX1276SetTxContinuousWave
+ARM GAS  /tmp/ccVu8IP7.s 			page 22
+
+
+ 863 0040 00000000 		.word	SX1276ReadRssi
+ 864 0044 00000000 		.word	SX1276Write
+ 865 0048 00000000 		.word	SX1276Read
+ 866 004c 00000000 		.word	SX1276WriteBuffer
+ 867 0050 00000000 		.word	SX1276ReadBuffer
+ 868 0054 00000000 		.word	SX1276SetMaxPayloadLength
+ 869 0058 00000000 		.word	SX1276SetPublicNetwork
+ 870 005c 00000000 		.word	SX1276GetWakeupTime
+ 871 0060 00000000 		.space	12
+ 871      00000000 
+ 871      00000000 
+ 872              		.text
+ 873              	.Letext0:
+ 874              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 875              		.file 3 "/usr/include/newlib/sys/lock.h"
+ 876              		.file 4 "/usr/include/newlib/sys/_types.h"
+ 877              		.file 5 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 878              		.file 6 "/usr/include/newlib/sys/reent.h"
+ 879              		.file 7 "/usr/include/newlib/stdlib.h"
+ 880              		.file 8 "/usr/include/newlib/sys/_stdint.h"
+ 881              		.file 9 "..//Source/external/LoRaMac-node/src/radio/radio.h"
+ 882              		.file 10 "..//Source/stm/hal/gpio.h"
+ 883              		.file 11 "..//Source/stm/hal/spi.h"
+ 884              		.file 12 "..//Source/external/LoRaMac-node/src/radio/sx1276/sx1276.h"
+ 885              		.file 13 "..//Source/stm/board/sx1276-board.h"
+ 886              		.file 14 "..//Source/stm/hal/delay.h"
+ARM GAS  /tmp/ccVu8IP7.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 sx1276-board.c
+     /tmp/ccVu8IP7.s:16     .text.SX1276CheckRfFrequency:0000000000000000 $t
+     /tmp/ccVu8IP7.s:23     .text.SX1276CheckRfFrequency:0000000000000000 SX1276CheckRfFrequency
+     /tmp/ccVu8IP7.s:40     .text.SX1276IoInit:0000000000000000 $t
+     /tmp/ccVu8IP7.s:47     .text.SX1276IoInit:0000000000000000 SX1276IoInit
+     /tmp/ccVu8IP7.s:138    .text.SX1276IoInit:000000000000008c $d
+     /tmp/ccVu8IP7.s:143    .text.SX1276IoIrqInit:0000000000000000 $t
+     /tmp/ccVu8IP7.s:150    .text.SX1276IoIrqInit:0000000000000000 SX1276IoIrqInit
+     /tmp/ccVu8IP7.s:214    .text.SX1276IoIrqInit:000000000000005c $d
+     /tmp/ccVu8IP7.s:219    .text.SX1276IoDeInit:0000000000000000 $t
+     /tmp/ccVu8IP7.s:226    .text.SX1276IoDeInit:0000000000000000 SX1276IoDeInit
+     /tmp/ccVu8IP7.s:315    .text.SX1276IoDeInit:0000000000000088 $d
+     /tmp/ccVu8IP7.s:320    .text.SX1276GetBoardTcxoWakeupTime:0000000000000000 $t
+     /tmp/ccVu8IP7.s:327    .text.SX1276GetBoardTcxoWakeupTime:0000000000000000 SX1276GetBoardTcxoWakeupTime
+     /tmp/ccVu8IP7.s:341    .text.SX1276Reset:0000000000000000 $t
+     /tmp/ccVu8IP7.s:348    .text.SX1276Reset:0000000000000000 SX1276Reset
+     /tmp/ccVu8IP7.s:401    .text.SX1276Reset:000000000000003c $d
+     /tmp/ccVu8IP7.s:406    .text.SX1276GetPaSelect:0000000000000000 $t
+     /tmp/ccVu8IP7.s:413    .text.SX1276GetPaSelect:0000000000000000 SX1276GetPaSelect
+     /tmp/ccVu8IP7.s:439    .text.SX1276GetPaSelect:0000000000000010 $d
+     /tmp/ccVu8IP7.s:444    .text.SX1276SetRfTxPower:0000000000000000 $t
+     /tmp/ccVu8IP7.s:451    .text.SX1276SetRfTxPower:0000000000000000 SX1276SetRfTxPower
+     /tmp/ccVu8IP7.s:613    .text.SX1276SetRfTxPower:00000000000000bc $d
+     /tmp/ccVu8IP7.s:618    .text.SX1276AntSwInit:0000000000000000 $t
+     /tmp/ccVu8IP7.s:625    .text.SX1276AntSwInit:0000000000000000 SX1276AntSwInit
+     /tmp/ccVu8IP7.s:667    .text.SX1276AntSwInit:000000000000002c $d
+                            *COM*:000000000000000c AntSwitchLf
+                            *COM*:000000000000000c AntSwitchHf
+     /tmp/ccVu8IP7.s:673    .text.SX1276AntSwDeInit:0000000000000000 $t
+     /tmp/ccVu8IP7.s:680    .text.SX1276AntSwDeInit:0000000000000000 SX1276AntSwDeInit
+     /tmp/ccVu8IP7.s:722    .text.SX1276AntSwDeInit:000000000000002c $d
+     /tmp/ccVu8IP7.s:728    .text.SX1276SetAntSwLowPower:0000000000000000 $t
+     /tmp/ccVu8IP7.s:735    .text.SX1276SetAntSwLowPower:0000000000000000 SX1276SetAntSwLowPower
+     /tmp/ccVu8IP7.s:771    .text.SX1276SetAntSwLowPower:000000000000001c $d
+     /tmp/ccVu8IP7.s:776    .text.SX1276SetAntSw:0000000000000000 $t
+     /tmp/ccVu8IP7.s:783    .text.SX1276SetAntSw:0000000000000000 SX1276SetAntSw
+     /tmp/ccVu8IP7.s:828    .text.SX1276SetAntSw:000000000000002c $d
+     /tmp/ccVu8IP7.s:846    .rodata.Radio:0000000000000000 Radio
+     /tmp/ccVu8IP7.s:840    .bss.RadioIsActive:0000000000000000 RadioIsActive
+     /tmp/ccVu8IP7.s:841    .bss.RadioIsActive:0000000000000000 $d
+     /tmp/ccVu8IP7.s:843    .rodata.Radio:0000000000000000 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+GpioInit
+SX1276
+GpioSetInterrupt
+DelayMs
+SX1276Read
+SX1276Write
+GpioWrite
+SX1276Init
+SX1276GetStatus
+SX1276SetModem
+SX1276SetChannel
+SX1276IsChannelFree
+ARM GAS  /tmp/ccVu8IP7.s 			page 24
+
+
+SX1276Random
+SX1276SetRxConfig
+SX1276SetTxConfig
+SX1276GetTimeOnAir
+SX1276Send
+SX1276SetSleep
+SX1276SetStby
+SX1276SetRx
+SX1276StartCad
+SX1276SetTxContinuousWave
+SX1276ReadRssi
+SX1276WriteBuffer
+SX1276ReadBuffer
+SX1276SetMaxPayloadLength
+SX1276SetPublicNetwork
+SX1276GetWakeupTime

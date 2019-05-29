@@ -1,0 +1,333 @@
+ARM GAS  /tmp/cc83n8dn.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"fifo.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.FifoNext,"ax",%progbits
+  16              		.align	1
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	FifoNext:
+  23              	.LFB0:
+  24              		.file 1 "..//Source/stm/hal/fifo.c"
+   1:..//Source/stm/hal/fifo.c **** /*!
+   2:..//Source/stm/hal/fifo.c ****  * \file      fifo.h
+   3:..//Source/stm/hal/fifo.c ****  *
+   4:..//Source/stm/hal/fifo.c ****  * \brief     FIFO buffer implementation
+   5:..//Source/stm/hal/fifo.c ****  *
+   6:..//Source/stm/hal/fifo.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/hal/fifo.c ****  *
+   8:..//Source/stm/hal/fifo.c ****  * \code
+   9:..//Source/stm/hal/fifo.c ****  *                ______                              _
+  10:..//Source/stm/hal/fifo.c ****  *               / _____)             _              | |
+  11:..//Source/stm/hal/fifo.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/hal/fifo.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/hal/fifo.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/hal/fifo.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/hal/fifo.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/hal/fifo.c ****  *
+  17:..//Source/stm/hal/fifo.c ****  * \endcode
+  18:..//Source/stm/hal/fifo.c ****  *
+  19:..//Source/stm/hal/fifo.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/hal/fifo.c ****  *
+  21:..//Source/stm/hal/fifo.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/hal/fifo.c ****  */
+  23:..//Source/stm/hal/fifo.c **** #include "fifo.h"
+  24:..//Source/stm/hal/fifo.c **** 
+  25:..//Source/stm/hal/fifo.c **** static uint16_t FifoNext( Fifo_t *fifo, uint16_t index )
+  26:..//Source/stm/hal/fifo.c **** {
+  25              		.loc 1 26 0
+  26              		.cfi_startproc
+  27              		@ args = 0, pretend = 0, frame = 0
+  28              		@ frame_needed = 0, uses_anonymous_args = 0
+  29              		@ link register save eliminated.
+  30              	.LVL0:
+  27:..//Source/stm/hal/fifo.c ****     return ( index + 1 ) % fifo->Size;
+  31              		.loc 1 27 0
+ARM GAS  /tmp/cc83n8dn.s 			page 2
+
+
+  32 0000 0131     		adds	r1, r1, #1
+  33              	.LVL1:
+  34 0002 0389     		ldrh	r3, [r0, #8]
+  35 0004 91FBF3F0 		sdiv	r0, r1, r3
+  36              	.LVL2:
+  37 0008 03FB1010 		mls	r0, r3, r0, r1
+  28:..//Source/stm/hal/fifo.c **** }
+  38              		.loc 1 28 0
+  39 000c 80B2     		uxth	r0, r0
+  40 000e 7047     		bx	lr
+  41              		.cfi_endproc
+  42              	.LFE0:
+  44              		.section	.text.FifoInit,"ax",%progbits
+  45              		.align	1
+  46              		.global	FifoInit
+  47              		.syntax unified
+  48              		.thumb
+  49              		.thumb_func
+  50              		.fpu softvfp
+  52              	FifoInit:
+  53              	.LFB1:
+  29:..//Source/stm/hal/fifo.c **** 
+  30:..//Source/stm/hal/fifo.c **** void FifoInit( Fifo_t *fifo, uint8_t *buffer, uint16_t size )
+  31:..//Source/stm/hal/fifo.c **** {
+  54              		.loc 1 31 0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58              		@ link register save eliminated.
+  59              	.LVL3:
+  32:..//Source/stm/hal/fifo.c ****     fifo->Begin = 0;
+  60              		.loc 1 32 0
+  61 0000 0023     		movs	r3, #0
+  62 0002 0380     		strh	r3, [r0]	@ movhi
+  33:..//Source/stm/hal/fifo.c ****     fifo->End = 0;
+  63              		.loc 1 33 0
+  64 0004 4380     		strh	r3, [r0, #2]	@ movhi
+  34:..//Source/stm/hal/fifo.c ****     fifo->Data = buffer;
+  65              		.loc 1 34 0
+  66 0006 4160     		str	r1, [r0, #4]
+  35:..//Source/stm/hal/fifo.c ****     fifo->Size = size;
+  67              		.loc 1 35 0
+  68 0008 0281     		strh	r2, [r0, #8]	@ movhi
+  69 000a 7047     		bx	lr
+  70              		.cfi_endproc
+  71              	.LFE1:
+  73              		.section	.text.FifoPush,"ax",%progbits
+  74              		.align	1
+  75              		.global	FifoPush
+  76              		.syntax unified
+  77              		.thumb
+  78              		.thumb_func
+  79              		.fpu softvfp
+  81              	FifoPush:
+  82              	.LFB2:
+  36:..//Source/stm/hal/fifo.c **** }
+  37:..//Source/stm/hal/fifo.c **** 
+ARM GAS  /tmp/cc83n8dn.s 			page 3
+
+
+  38:..//Source/stm/hal/fifo.c **** void FifoPush( Fifo_t *fifo, uint8_t data )
+  39:..//Source/stm/hal/fifo.c **** {
+  83              		.loc 1 39 0
+  84              		.cfi_startproc
+  85              		@ args = 0, pretend = 0, frame = 0
+  86              		@ frame_needed = 0, uses_anonymous_args = 0
+  87              	.LVL4:
+  88 0000 38B5     		push	{r3, r4, r5, lr}
+  89              	.LCFI0:
+  90              		.cfi_def_cfa_offset 16
+  91              		.cfi_offset 3, -16
+  92              		.cfi_offset 4, -12
+  93              		.cfi_offset 5, -8
+  94              		.cfi_offset 14, -4
+  95 0002 0446     		mov	r4, r0
+  96 0004 0D46     		mov	r5, r1
+  40:..//Source/stm/hal/fifo.c ****     fifo->End = FifoNext( fifo, fifo->End );
+  97              		.loc 1 40 0
+  98 0006 4188     		ldrh	r1, [r0, #2]
+  99              	.LVL5:
+ 100 0008 FFF7FEFF 		bl	FifoNext
+ 101              	.LVL6:
+ 102 000c 6080     		strh	r0, [r4, #2]	@ movhi
+  41:..//Source/stm/hal/fifo.c ****     fifo->Data[fifo->End] = data;
+ 103              		.loc 1 41 0
+ 104 000e 6368     		ldr	r3, [r4, #4]
+ 105 0010 1D54     		strb	r5, [r3, r0]
+ 106 0012 38BD     		pop	{r3, r4, r5, pc}
+ 107              		.cfi_endproc
+ 108              	.LFE2:
+ 110              		.section	.text.FifoPop,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	FifoPop
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 116              		.fpu softvfp
+ 118              	FifoPop:
+ 119              	.LFB3:
+  42:..//Source/stm/hal/fifo.c **** }
+  43:..//Source/stm/hal/fifo.c **** 
+  44:..//Source/stm/hal/fifo.c **** uint8_t FifoPop( Fifo_t *fifo )
+  45:..//Source/stm/hal/fifo.c **** {
+ 120              		.loc 1 45 0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 124              	.LVL7:
+ 125 0000 38B5     		push	{r3, r4, r5, lr}
+ 126              	.LCFI1:
+ 127              		.cfi_def_cfa_offset 16
+ 128              		.cfi_offset 3, -16
+ 129              		.cfi_offset 4, -12
+ 130              		.cfi_offset 5, -8
+ 131              		.cfi_offset 14, -4
+ 132 0002 0446     		mov	r4, r0
+  46:..//Source/stm/hal/fifo.c ****     uint8_t data = fifo->Data[FifoNext( fifo, fifo->Begin )];
+ARM GAS  /tmp/cc83n8dn.s 			page 4
+
+
+ 133              		.loc 1 46 0
+ 134 0004 4568     		ldr	r5, [r0, #4]
+ 135 0006 0188     		ldrh	r1, [r0]
+ 136 0008 FFF7FEFF 		bl	FifoNext
+ 137              	.LVL8:
+ 138 000c 0346     		mov	r3, r0
+ 139 000e 285C     		ldrb	r0, [r5, r0]	@ zero_extendqisi2
+ 140              	.LVL9:
+  47:..//Source/stm/hal/fifo.c **** 
+  48:..//Source/stm/hal/fifo.c ****     fifo->Begin = FifoNext( fifo, fifo->Begin );
+ 141              		.loc 1 48 0
+ 142 0010 2380     		strh	r3, [r4]	@ movhi
+  49:..//Source/stm/hal/fifo.c ****     return data;
+  50:..//Source/stm/hal/fifo.c **** }
+ 143              		.loc 1 50 0
+ 144 0012 38BD     		pop	{r3, r4, r5, pc}
+ 145              		.cfi_endproc
+ 146              	.LFE3:
+ 148              		.section	.text.FifoFlush,"ax",%progbits
+ 149              		.align	1
+ 150              		.global	FifoFlush
+ 151              		.syntax unified
+ 152              		.thumb
+ 153              		.thumb_func
+ 154              		.fpu softvfp
+ 156              	FifoFlush:
+ 157              	.LFB4:
+  51:..//Source/stm/hal/fifo.c **** 
+  52:..//Source/stm/hal/fifo.c **** void FifoFlush( Fifo_t *fifo )
+  53:..//Source/stm/hal/fifo.c **** {
+ 158              		.loc 1 53 0
+ 159              		.cfi_startproc
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162              		@ link register save eliminated.
+ 163              	.LVL10:
+  54:..//Source/stm/hal/fifo.c ****     fifo->Begin = 0;
+ 164              		.loc 1 54 0
+ 165 0000 0023     		movs	r3, #0
+ 166 0002 0380     		strh	r3, [r0]	@ movhi
+  55:..//Source/stm/hal/fifo.c ****     fifo->End = 0;
+ 167              		.loc 1 55 0
+ 168 0004 4380     		strh	r3, [r0, #2]	@ movhi
+ 169 0006 7047     		bx	lr
+ 170              		.cfi_endproc
+ 171              	.LFE4:
+ 173              		.section	.text.IsFifoEmpty,"ax",%progbits
+ 174              		.align	1
+ 175              		.global	IsFifoEmpty
+ 176              		.syntax unified
+ 177              		.thumb
+ 178              		.thumb_func
+ 179              		.fpu softvfp
+ 181              	IsFifoEmpty:
+ 182              	.LFB5:
+  56:..//Source/stm/hal/fifo.c **** }
+  57:..//Source/stm/hal/fifo.c **** 
+ARM GAS  /tmp/cc83n8dn.s 			page 5
+
+
+  58:..//Source/stm/hal/fifo.c **** bool IsFifoEmpty( Fifo_t *fifo )
+  59:..//Source/stm/hal/fifo.c **** {
+ 183              		.loc 1 59 0
+ 184              		.cfi_startproc
+ 185              		@ args = 0, pretend = 0, frame = 0
+ 186              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187              		@ link register save eliminated.
+ 188              	.LVL11:
+  60:..//Source/stm/hal/fifo.c ****     return ( fifo->Begin == fifo->End );
+ 189              		.loc 1 60 0
+ 190 0000 0288     		ldrh	r2, [r0]
+ 191 0002 4088     		ldrh	r0, [r0, #2]
+ 192              	.LVL12:
+  61:..//Source/stm/hal/fifo.c **** }
+ 193              		.loc 1 61 0
+ 194 0004 8242     		cmp	r2, r0
+ 195 0006 14BF     		ite	ne
+ 196 0008 0020     		movne	r0, #0
+ 197 000a 0120     		moveq	r0, #1
+ 198 000c 7047     		bx	lr
+ 199              		.cfi_endproc
+ 200              	.LFE5:
+ 202              		.section	.text.IsFifoFull,"ax",%progbits
+ 203              		.align	1
+ 204              		.global	IsFifoFull
+ 205              		.syntax unified
+ 206              		.thumb
+ 207              		.thumb_func
+ 208              		.fpu softvfp
+ 210              	IsFifoFull:
+ 211              	.LFB6:
+  62:..//Source/stm/hal/fifo.c **** 
+  63:..//Source/stm/hal/fifo.c **** bool IsFifoFull( Fifo_t *fifo )
+  64:..//Source/stm/hal/fifo.c **** {
+ 212              		.loc 1 64 0
+ 213              		.cfi_startproc
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216              	.LVL13:
+ 217 0000 10B5     		push	{r4, lr}
+ 218              	.LCFI2:
+ 219              		.cfi_def_cfa_offset 8
+ 220              		.cfi_offset 4, -8
+ 221              		.cfi_offset 14, -4
+ 222 0002 0446     		mov	r4, r0
+  65:..//Source/stm/hal/fifo.c ****     return ( FifoNext( fifo, fifo->End ) == fifo->Begin );
+ 223              		.loc 1 65 0
+ 224 0004 4188     		ldrh	r1, [r0, #2]
+ 225 0006 FFF7FEFF 		bl	FifoNext
+ 226              	.LVL14:
+ 227 000a 2388     		ldrh	r3, [r4]
+  66:..//Source/stm/hal/fifo.c **** }
+ 228              		.loc 1 66 0
+ 229 000c 9842     		cmp	r0, r3
+ 230 000e 14BF     		ite	ne
+ 231 0010 0020     		movne	r0, #0
+ 232 0012 0120     		moveq	r0, #1
+ARM GAS  /tmp/cc83n8dn.s 			page 6
+
+
+ 233 0014 10BD     		pop	{r4, pc}
+ 234              		.cfi_endproc
+ 235              	.LFE6:
+ 237              		.text
+ 238              	.Letext0:
+ 239              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 240              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 241              		.file 4 "..//Source/stm/hal/fifo.h"
+ARM GAS  /tmp/cc83n8dn.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 fifo.c
+     /tmp/cc83n8dn.s:16     .text.FifoNext:0000000000000000 $t
+     /tmp/cc83n8dn.s:22     .text.FifoNext:0000000000000000 FifoNext
+     /tmp/cc83n8dn.s:45     .text.FifoInit:0000000000000000 $t
+     /tmp/cc83n8dn.s:52     .text.FifoInit:0000000000000000 FifoInit
+     /tmp/cc83n8dn.s:74     .text.FifoPush:0000000000000000 $t
+     /tmp/cc83n8dn.s:81     .text.FifoPush:0000000000000000 FifoPush
+     /tmp/cc83n8dn.s:111    .text.FifoPop:0000000000000000 $t
+     /tmp/cc83n8dn.s:118    .text.FifoPop:0000000000000000 FifoPop
+     /tmp/cc83n8dn.s:149    .text.FifoFlush:0000000000000000 $t
+     /tmp/cc83n8dn.s:156    .text.FifoFlush:0000000000000000 FifoFlush
+     /tmp/cc83n8dn.s:174    .text.IsFifoEmpty:0000000000000000 $t
+     /tmp/cc83n8dn.s:181    .text.IsFifoEmpty:0000000000000000 IsFifoEmpty
+     /tmp/cc83n8dn.s:203    .text.IsFifoFull:0000000000000000 $t
+     /tmp/cc83n8dn.s:210    .text.IsFifoFull:0000000000000000 IsFifoFull
+                     .debug_frame:0000000000000010 $d
+
+NO UNDEFINED SYMBOLS

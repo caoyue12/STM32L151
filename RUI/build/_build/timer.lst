@@ -1,0 +1,1633 @@
+ARM GAS  /tmp/ccucLmOp.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"timer.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.TimerInsertTimer,"ax",%progbits
+  16              		.align	1
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	TimerInsertTimer:
+  23              	.LFB2:
+  24              		.file 1 "..//Source/stm/hal/timer.c"
+   1:..//Source/stm/hal/timer.c **** /*!
+   2:..//Source/stm/hal/timer.c ****  * \file      timer.c
+   3:..//Source/stm/hal/timer.c ****  *
+   4:..//Source/stm/hal/timer.c ****  * \brief     Timer objects and scheduling management implementation
+   5:..//Source/stm/hal/timer.c ****  *
+   6:..//Source/stm/hal/timer.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/hal/timer.c ****  *
+   8:..//Source/stm/hal/timer.c ****  * \code
+   9:..//Source/stm/hal/timer.c ****  *                ______                              _
+  10:..//Source/stm/hal/timer.c ****  *               / _____)             _              | |
+  11:..//Source/stm/hal/timer.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/hal/timer.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/hal/timer.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/hal/timer.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/hal/timer.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/hal/timer.c ****  *
+  17:..//Source/stm/hal/timer.c ****  * \endcode
+  18:..//Source/stm/hal/timer.c ****  *
+  19:..//Source/stm/hal/timer.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/hal/timer.c ****  *
+  21:..//Source/stm/hal/timer.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/hal/timer.c ****  */
+  23:..//Source/stm/hal/timer.c **** #include "board.h"
+  24:..//Source/stm/hal/timer.c **** #include "rtc-board.h"
+  25:..//Source/stm/hal/timer.c **** #include "timer.h"
+  26:..//Source/stm/hal/timer.c **** 
+  27:..//Source/stm/hal/timer.c **** /*!
+  28:..//Source/stm/hal/timer.c ****  * This flag is used to loop through the main several times in order to be sure
+  29:..//Source/stm/hal/timer.c ****  * that all pending events have been processed.
+  30:..//Source/stm/hal/timer.c ****  */
+  31:..//Source/stm/hal/timer.c **** volatile uint8_t HasLoopedThroughMain = 0;
+  32:..//Source/stm/hal/timer.c **** 
+  33:..//Source/stm/hal/timer.c **** /*!
+  34:..//Source/stm/hal/timer.c ****  * Timers list head pointer
+ARM GAS  /tmp/ccucLmOp.s 			page 2
+
+
+  35:..//Source/stm/hal/timer.c ****  */
+  36:..//Source/stm/hal/timer.c **** static TimerEvent_t *TimerListHead = NULL;
+  37:..//Source/stm/hal/timer.c **** 
+  38:..//Source/stm/hal/timer.c **** /*!
+  39:..//Source/stm/hal/timer.c ****  * \brief Adds or replace the head timer of the list.
+  40:..//Source/stm/hal/timer.c ****  *
+  41:..//Source/stm/hal/timer.c ****  * \remark The list is automatically sorted. The list head always contains the
+  42:..//Source/stm/hal/timer.c ****  *         next timer to expire.
+  43:..//Source/stm/hal/timer.c ****  *
+  44:..//Source/stm/hal/timer.c ****  * \param [IN]  obj Timer object to be become the new head
+  45:..//Source/stm/hal/timer.c ****  * \param [IN]  remainingTime Remaining time of the previous head to be replaced
+  46:..//Source/stm/hal/timer.c ****  */
+  47:..//Source/stm/hal/timer.c **** static void TimerInsertNewHeadTimer( TimerEvent_t *obj, uint32_t remainingTime );
+  48:..//Source/stm/hal/timer.c **** 
+  49:..//Source/stm/hal/timer.c **** /*!
+  50:..//Source/stm/hal/timer.c ****  * \brief Adds a timer to the list.
+  51:..//Source/stm/hal/timer.c ****  *
+  52:..//Source/stm/hal/timer.c ****  * \remark The list is automatically sorted. The list head always contains the
+  53:..//Source/stm/hal/timer.c ****  *         next timer to expire.
+  54:..//Source/stm/hal/timer.c ****  *
+  55:..//Source/stm/hal/timer.c ****  * \param [IN]  obj Timer object to be added to the list
+  56:..//Source/stm/hal/timer.c ****  * \param [IN]  remainingTime Remaining time of the running head after which the object may be adde
+  57:..//Source/stm/hal/timer.c ****  */
+  58:..//Source/stm/hal/timer.c **** static void TimerInsertTimer( TimerEvent_t *obj, uint32_t remainingTime );
+  59:..//Source/stm/hal/timer.c **** 
+  60:..//Source/stm/hal/timer.c **** /*!
+  61:..//Source/stm/hal/timer.c ****  * \brief Sets a timeout with the duration "timestamp"
+  62:..//Source/stm/hal/timer.c ****  *
+  63:..//Source/stm/hal/timer.c ****  * \param [IN] timestamp Delay duration
+  64:..//Source/stm/hal/timer.c ****  */
+  65:..//Source/stm/hal/timer.c **** static void TimerSetTimeout( TimerEvent_t *obj );
+  66:..//Source/stm/hal/timer.c **** 
+  67:..//Source/stm/hal/timer.c **** /*!
+  68:..//Source/stm/hal/timer.c ****  * \brief Check if the Object to be added is not already in the list
+  69:..//Source/stm/hal/timer.c ****  *
+  70:..//Source/stm/hal/timer.c ****  * \param [IN] timestamp Delay duration
+  71:..//Source/stm/hal/timer.c ****  * \retval true (the object is already in the list) or false
+  72:..//Source/stm/hal/timer.c ****  */
+  73:..//Source/stm/hal/timer.c **** static bool TimerExists( TimerEvent_t *obj );
+  74:..//Source/stm/hal/timer.c **** 
+  75:..//Source/stm/hal/timer.c **** /*!
+  76:..//Source/stm/hal/timer.c ****  * \brief Read the timer value of the currently running timer
+  77:..//Source/stm/hal/timer.c ****  *
+  78:..//Source/stm/hal/timer.c ****  * \retval value current timer value
+  79:..//Source/stm/hal/timer.c ****  */
+  80:..//Source/stm/hal/timer.c **** TimerTime_t TimerGetValue( void );
+  81:..//Source/stm/hal/timer.c **** 
+  82:..//Source/stm/hal/timer.c **** void TimerInit( TimerEvent_t *obj, void ( *callback )( void ) )
+  83:..//Source/stm/hal/timer.c **** {
+  84:..//Source/stm/hal/timer.c ****     obj->Timestamp = 0;
+  85:..//Source/stm/hal/timer.c ****     obj->ReloadValue = 0;
+  86:..//Source/stm/hal/timer.c ****     obj->IsRunning = false;
+  87:..//Source/stm/hal/timer.c ****     obj->Callback = callback;
+  88:..//Source/stm/hal/timer.c ****     obj->Next = NULL;
+  89:..//Source/stm/hal/timer.c **** }
+  90:..//Source/stm/hal/timer.c **** 
+  91:..//Source/stm/hal/timer.c **** void TimerStart( TimerEvent_t *obj )
+ARM GAS  /tmp/ccucLmOp.s 			page 3
+
+
+  92:..//Source/stm/hal/timer.c **** {
+  93:..//Source/stm/hal/timer.c ****     uint32_t elapsedTime = 0;
+  94:..//Source/stm/hal/timer.c ****     uint32_t remainingTime = 0;
+  95:..//Source/stm/hal/timer.c **** 
+  96:..//Source/stm/hal/timer.c ****     BoardDisableIrq( );
+  97:..//Source/stm/hal/timer.c **** 
+  98:..//Source/stm/hal/timer.c ****     if( ( obj == NULL ) || ( TimerExists( obj ) == true ) )
+  99:..//Source/stm/hal/timer.c ****     {
+ 100:..//Source/stm/hal/timer.c ****         BoardEnableIrq( );
+ 101:..//Source/stm/hal/timer.c ****         return;
+ 102:..//Source/stm/hal/timer.c ****     }
+ 103:..//Source/stm/hal/timer.c **** 
+ 104:..//Source/stm/hal/timer.c ****     obj->Timestamp = obj->ReloadValue;
+ 105:..//Source/stm/hal/timer.c ****     obj->IsRunning = false;
+ 106:..//Source/stm/hal/timer.c **** 
+ 107:..//Source/stm/hal/timer.c ****     if( TimerListHead == NULL )
+ 108:..//Source/stm/hal/timer.c ****     {
+ 109:..//Source/stm/hal/timer.c ****         TimerInsertNewHeadTimer( obj, obj->Timestamp );
+ 110:..//Source/stm/hal/timer.c ****     }
+ 111:..//Source/stm/hal/timer.c ****     else
+ 112:..//Source/stm/hal/timer.c ****     {
+ 113:..//Source/stm/hal/timer.c ****         if( TimerListHead->IsRunning == true )
+ 114:..//Source/stm/hal/timer.c ****         {
+ 115:..//Source/stm/hal/timer.c ****             elapsedTime = TimerGetValue( );
+ 116:..//Source/stm/hal/timer.c ****             if( elapsedTime > TimerListHead->Timestamp )
+ 117:..//Source/stm/hal/timer.c ****             {
+ 118:..//Source/stm/hal/timer.c ****                 elapsedTime = TimerListHead->Timestamp; // security but should never occur
+ 119:..//Source/stm/hal/timer.c ****             }
+ 120:..//Source/stm/hal/timer.c ****             remainingTime = TimerListHead->Timestamp - elapsedTime;
+ 121:..//Source/stm/hal/timer.c ****         }
+ 122:..//Source/stm/hal/timer.c ****         else
+ 123:..//Source/stm/hal/timer.c ****         {
+ 124:..//Source/stm/hal/timer.c ****             remainingTime = TimerListHead->Timestamp;
+ 125:..//Source/stm/hal/timer.c ****         }
+ 126:..//Source/stm/hal/timer.c **** 
+ 127:..//Source/stm/hal/timer.c ****         if( obj->Timestamp < remainingTime )
+ 128:..//Source/stm/hal/timer.c ****         {
+ 129:..//Source/stm/hal/timer.c ****             TimerInsertNewHeadTimer( obj, remainingTime );
+ 130:..//Source/stm/hal/timer.c ****         }
+ 131:..//Source/stm/hal/timer.c ****         else
+ 132:..//Source/stm/hal/timer.c ****         {
+ 133:..//Source/stm/hal/timer.c ****              TimerInsertTimer( obj, remainingTime );
+ 134:..//Source/stm/hal/timer.c ****         }
+ 135:..//Source/stm/hal/timer.c ****     }
+ 136:..//Source/stm/hal/timer.c ****     BoardEnableIrq( );
+ 137:..//Source/stm/hal/timer.c **** }
+ 138:..//Source/stm/hal/timer.c **** 
+ 139:..//Source/stm/hal/timer.c **** static void TimerInsertTimer( TimerEvent_t *obj, uint32_t remainingTime )
+ 140:..//Source/stm/hal/timer.c **** {
+  25              		.loc 1 140 0
+  26              		.cfi_startproc
+  27              		@ args = 0, pretend = 0, frame = 0
+  28              		@ frame_needed = 0, uses_anonymous_args = 0
+  29              		@ link register save eliminated.
+  30              	.LVL0:
+  31 0000 F0B4     		push	{r4, r5, r6, r7}
+  32              	.LCFI0:
+ARM GAS  /tmp/ccucLmOp.s 			page 4
+
+
+  33              		.cfi_def_cfa_offset 16
+  34              		.cfi_offset 4, -16
+  35              		.cfi_offset 5, -12
+  36              		.cfi_offset 6, -8
+  37              		.cfi_offset 7, -4
+  38              	.LVL1:
+ 141:..//Source/stm/hal/timer.c ****     uint32_t aggregatedTimestamp = 0;      // hold the sum of timestamps
+ 142:..//Source/stm/hal/timer.c ****     uint32_t aggregatedTimestampNext = 0;  // hold the sum of timestamps up to the next event
+ 143:..//Source/stm/hal/timer.c **** 
+ 144:..//Source/stm/hal/timer.c ****     TimerEvent_t* prev = TimerListHead;
+  39              		.loc 1 144 0
+  40 0002 144B     		ldr	r3, .L13
+  41 0004 1D68     		ldr	r5, [r3]
+  42              	.LVL2:
+ 145:..//Source/stm/hal/timer.c ****     TimerEvent_t* cur = TimerListHead->Next;
+  43              		.loc 1 145 0
+  44 0006 2C69     		ldr	r4, [r5, #16]
+  45              	.LVL3:
+ 146:..//Source/stm/hal/timer.c **** 
+ 147:..//Source/stm/hal/timer.c ****     if( cur == NULL )
+  46              		.loc 1 147 0
+  47 0008 6CB1     		cbz	r4, .L10
+  48              	.LVL4:
+ 148:..//Source/stm/hal/timer.c ****     { // obj comes just after the head
+ 149:..//Source/stm/hal/timer.c ****         obj->Timestamp -= remainingTime;
+ 150:..//Source/stm/hal/timer.c ****         prev->Next = obj;
+ 151:..//Source/stm/hal/timer.c ****         obj->Next = NULL;
+ 152:..//Source/stm/hal/timer.c ****     }
+ 153:..//Source/stm/hal/timer.c ****     else
+ 154:..//Source/stm/hal/timer.c ****     {
+ 155:..//Source/stm/hal/timer.c ****         aggregatedTimestamp = remainingTime;
+ 156:..//Source/stm/hal/timer.c ****         aggregatedTimestampNext = remainingTime + cur->Timestamp;
+  49              		.loc 1 156 0
+  50 000a 2368     		ldr	r3, [r4]
+  51 000c 0B44     		add	r3, r3, r1
+  52              	.LVL5:
+  53              	.L4:
+ 157:..//Source/stm/hal/timer.c **** 
+ 158:..//Source/stm/hal/timer.c ****         while( prev != NULL )
+  54              		.loc 1 158 0
+  55 000e CDB1     		cbz	r5, .L1
+ 159:..//Source/stm/hal/timer.c ****         {
+ 160:..//Source/stm/hal/timer.c ****             if( aggregatedTimestampNext > obj->Timestamp )
+  56              		.loc 1 160 0
+  57 0010 0668     		ldr	r6, [r0]
+  58 0012 B342     		cmp	r3, r6
+  59 0014 0ED8     		bhi	.L11
+  60              	.LVL6:
+ 161:..//Source/stm/hal/timer.c ****             {
+ 162:..//Source/stm/hal/timer.c ****                 obj->Timestamp -= aggregatedTimestamp;
+ 163:..//Source/stm/hal/timer.c ****                 if( cur != NULL )
+ 164:..//Source/stm/hal/timer.c ****                 {
+ 165:..//Source/stm/hal/timer.c ****                     cur->Timestamp -= obj->Timestamp;
+ 166:..//Source/stm/hal/timer.c ****                 }
+ 167:..//Source/stm/hal/timer.c ****                 prev->Next = obj;
+ 168:..//Source/stm/hal/timer.c ****                 obj->Next = cur;
+ 169:..//Source/stm/hal/timer.c ****                 break;
+ARM GAS  /tmp/ccucLmOp.s 			page 5
+
+
+ 170:..//Source/stm/hal/timer.c ****             }
+ 171:..//Source/stm/hal/timer.c ****             else
+ 172:..//Source/stm/hal/timer.c ****             {
+ 173:..//Source/stm/hal/timer.c ****                 prev = cur;
+ 174:..//Source/stm/hal/timer.c ****                 cur = cur->Next;
+  61              		.loc 1 174 0
+  62 0016 2269     		ldr	r2, [r4, #16]
+  63              	.LVL7:
+ 175:..//Source/stm/hal/timer.c ****                 if( cur == NULL )
+  64              		.loc 1 175 0
+  65 0018 B2B1     		cbz	r2, .L12
+  66              	.LVL8:
+ 176:..//Source/stm/hal/timer.c ****                 { // obj comes at the end of the list
+ 177:..//Source/stm/hal/timer.c ****                     aggregatedTimestamp = aggregatedTimestampNext;
+ 178:..//Source/stm/hal/timer.c ****                     obj->Timestamp -= aggregatedTimestamp;
+ 179:..//Source/stm/hal/timer.c ****                     prev->Next = obj;
+ 180:..//Source/stm/hal/timer.c ****                     obj->Next = NULL;
+ 181:..//Source/stm/hal/timer.c ****                     break;
+ 182:..//Source/stm/hal/timer.c ****                 }
+ 183:..//Source/stm/hal/timer.c ****                 else
+ 184:..//Source/stm/hal/timer.c ****                 {
+ 185:..//Source/stm/hal/timer.c ****                     aggregatedTimestamp = aggregatedTimestampNext;
+ 186:..//Source/stm/hal/timer.c ****                     aggregatedTimestampNext = aggregatedTimestampNext + cur->Timestamp;
+  67              		.loc 1 186 0
+  68 001a 1768     		ldr	r7, [r2]
+  69              	.LVL9:
+ 173:..//Source/stm/hal/timer.c ****                 cur = cur->Next;
+  70              		.loc 1 173 0
+  71 001c 2546     		mov	r5, r4
+ 174:..//Source/stm/hal/timer.c ****                 if( cur == NULL )
+  72              		.loc 1 174 0
+  73 001e 1446     		mov	r4, r2
+  74              	.LVL10:
+ 185:..//Source/stm/hal/timer.c ****                     aggregatedTimestampNext = aggregatedTimestampNext + cur->Timestamp;
+  75              		.loc 1 185 0
+  76 0020 1946     		mov	r1, r3
+  77              		.loc 1 186 0
+  78 0022 3B44     		add	r3, r3, r7
+  79              	.LVL11:
+  80 0024 F3E7     		b	.L4
+  81              	.LVL12:
+  82              	.L10:
+ 149:..//Source/stm/hal/timer.c ****         prev->Next = obj;
+  83              		.loc 1 149 0
+  84 0026 0368     		ldr	r3, [r0]
+  85 0028 5B1A     		subs	r3, r3, r1
+  86 002a 0360     		str	r3, [r0]
+ 150:..//Source/stm/hal/timer.c ****         obj->Next = NULL;
+  87              		.loc 1 150 0
+  88 002c 2861     		str	r0, [r5, #16]
+ 151:..//Source/stm/hal/timer.c ****     }
+  89              		.loc 1 151 0
+  90 002e 0023     		movs	r3, #0
+  91 0030 0361     		str	r3, [r0, #16]
+  92 0032 07E0     		b	.L1
+  93              	.LVL13:
+  94              	.L11:
+ARM GAS  /tmp/ccucLmOp.s 			page 6
+
+
+ 162:..//Source/stm/hal/timer.c ****                 if( cur != NULL )
+  95              		.loc 1 162 0
+  96 0034 761A     		subs	r6, r6, r1
+  97 0036 0660     		str	r6, [r0]
+ 163:..//Source/stm/hal/timer.c ****                 {
+  98              		.loc 1 163 0
+  99 0038 14B1     		cbz	r4, .L6
+ 165:..//Source/stm/hal/timer.c ****                 }
+ 100              		.loc 1 165 0
+ 101 003a 2368     		ldr	r3, [r4]
+ 102              	.LVL14:
+ 103 003c 9E1B     		subs	r6, r3, r6
+ 104 003e 2660     		str	r6, [r4]
+ 105              	.L6:
+ 167:..//Source/stm/hal/timer.c ****                 obj->Next = cur;
+ 106              		.loc 1 167 0
+ 107 0040 2861     		str	r0, [r5, #16]
+ 168:..//Source/stm/hal/timer.c ****                 break;
+ 108              		.loc 1 168 0
+ 109 0042 0461     		str	r4, [r0, #16]
+ 110              	.LVL15:
+ 111              	.L1:
+ 187:..//Source/stm/hal/timer.c ****                 }
+ 188:..//Source/stm/hal/timer.c ****             }
+ 189:..//Source/stm/hal/timer.c ****         }
+ 190:..//Source/stm/hal/timer.c ****     }
+ 191:..//Source/stm/hal/timer.c **** }
+ 112              		.loc 1 191 0
+ 113 0044 F0BC     		pop	{r4, r5, r6, r7}
+ 114              	.LCFI1:
+ 115              		.cfi_remember_state
+ 116              		.cfi_restore 7
+ 117              		.cfi_restore 6
+ 118              		.cfi_restore 5
+ 119              		.cfi_restore 4
+ 120              		.cfi_def_cfa_offset 0
+ 121 0046 7047     		bx	lr
+ 122              	.LVL16:
+ 123              	.L12:
+ 124              	.LCFI2:
+ 125              		.cfi_restore_state
+ 178:..//Source/stm/hal/timer.c ****                     prev->Next = obj;
+ 126              		.loc 1 178 0
+ 127 0048 F31A     		subs	r3, r6, r3
+ 128              	.LVL17:
+ 129 004a 0360     		str	r3, [r0]
+ 179:..//Source/stm/hal/timer.c ****                     obj->Next = NULL;
+ 130              		.loc 1 179 0
+ 131 004c 2061     		str	r0, [r4, #16]
+ 180:..//Source/stm/hal/timer.c ****                     break;
+ 132              		.loc 1 180 0
+ 133 004e 0023     		movs	r3, #0
+ 134 0050 0361     		str	r3, [r0, #16]
+ 181:..//Source/stm/hal/timer.c ****                 }
+ 135              		.loc 1 181 0
+ 136 0052 F7E7     		b	.L1
+ 137              	.L14:
+ARM GAS  /tmp/ccucLmOp.s 			page 7
+
+
+ 138              		.align	2
+ 139              	.L13:
+ 140 0054 00000000 		.word	.LANCHOR0
+ 141              		.cfi_endproc
+ 142              	.LFE2:
+ 144              		.section	.text.TimerExists,"ax",%progbits
+ 145              		.align	1
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 149              		.fpu softvfp
+ 151              	TimerExists:
+ 152              	.LFB6:
+ 192:..//Source/stm/hal/timer.c **** 
+ 193:..//Source/stm/hal/timer.c **** static void TimerInsertNewHeadTimer( TimerEvent_t *obj, uint32_t remainingTime )
+ 194:..//Source/stm/hal/timer.c **** {
+ 195:..//Source/stm/hal/timer.c ****     TimerEvent_t* cur = TimerListHead;
+ 196:..//Source/stm/hal/timer.c **** 
+ 197:..//Source/stm/hal/timer.c ****     if( cur != NULL )
+ 198:..//Source/stm/hal/timer.c ****     {
+ 199:..//Source/stm/hal/timer.c ****         cur->Timestamp = remainingTime - obj->Timestamp;
+ 200:..//Source/stm/hal/timer.c ****         cur->IsRunning = false;
+ 201:..//Source/stm/hal/timer.c ****     }
+ 202:..//Source/stm/hal/timer.c **** 
+ 203:..//Source/stm/hal/timer.c ****     obj->Next = cur;
+ 204:..//Source/stm/hal/timer.c ****     obj->IsRunning = true;
+ 205:..//Source/stm/hal/timer.c ****     TimerListHead = obj;
+ 206:..//Source/stm/hal/timer.c ****     TimerSetTimeout( TimerListHead );
+ 207:..//Source/stm/hal/timer.c **** }
+ 208:..//Source/stm/hal/timer.c **** 
+ 209:..//Source/stm/hal/timer.c **** void TimerIrqHandler( void )
+ 210:..//Source/stm/hal/timer.c **** {
+ 211:..//Source/stm/hal/timer.c ****     uint32_t elapsedTime = 0;
+ 212:..//Source/stm/hal/timer.c **** 
+ 213:..//Source/stm/hal/timer.c ****     // Early out when TimerListHead is null to prevent null pointer
+ 214:..//Source/stm/hal/timer.c ****     if ( TimerListHead == NULL )
+ 215:..//Source/stm/hal/timer.c ****     {
+ 216:..//Source/stm/hal/timer.c ****         return;
+ 217:..//Source/stm/hal/timer.c ****     }
+ 218:..//Source/stm/hal/timer.c **** 
+ 219:..//Source/stm/hal/timer.c ****     elapsedTime = TimerGetValue( );
+ 220:..//Source/stm/hal/timer.c **** 
+ 221:..//Source/stm/hal/timer.c ****     if( elapsedTime >= TimerListHead->Timestamp )
+ 222:..//Source/stm/hal/timer.c ****     {
+ 223:..//Source/stm/hal/timer.c ****         TimerListHead->Timestamp = 0;
+ 224:..//Source/stm/hal/timer.c ****     }
+ 225:..//Source/stm/hal/timer.c ****     else
+ 226:..//Source/stm/hal/timer.c ****     {
+ 227:..//Source/stm/hal/timer.c ****         TimerListHead->Timestamp -= elapsedTime;
+ 228:..//Source/stm/hal/timer.c ****     }
+ 229:..//Source/stm/hal/timer.c **** 
+ 230:..//Source/stm/hal/timer.c ****     TimerListHead->IsRunning = false;
+ 231:..//Source/stm/hal/timer.c **** 
+ 232:..//Source/stm/hal/timer.c ****     while( ( TimerListHead != NULL ) && ( TimerListHead->Timestamp == 0 ) )
+ 233:..//Source/stm/hal/timer.c ****     {
+ 234:..//Source/stm/hal/timer.c ****         TimerEvent_t* elapsedTimer = TimerListHead;
+ 235:..//Source/stm/hal/timer.c ****         TimerListHead = TimerListHead->Next;
+ARM GAS  /tmp/ccucLmOp.s 			page 8
+
+
+ 236:..//Source/stm/hal/timer.c **** 
+ 237:..//Source/stm/hal/timer.c ****         if( elapsedTimer->Callback != NULL )
+ 238:..//Source/stm/hal/timer.c ****         {
+ 239:..//Source/stm/hal/timer.c ****             elapsedTimer->Callback( );
+ 240:..//Source/stm/hal/timer.c ****         }
+ 241:..//Source/stm/hal/timer.c ****     }
+ 242:..//Source/stm/hal/timer.c **** 
+ 243:..//Source/stm/hal/timer.c ****     // start the next TimerListHead if it exists
+ 244:..//Source/stm/hal/timer.c ****     if( TimerListHead != NULL )
+ 245:..//Source/stm/hal/timer.c ****     {
+ 246:..//Source/stm/hal/timer.c ****         if( TimerListHead->IsRunning != true )
+ 247:..//Source/stm/hal/timer.c ****         {
+ 248:..//Source/stm/hal/timer.c ****             TimerListHead->IsRunning = true;
+ 249:..//Source/stm/hal/timer.c ****             TimerSetTimeout( TimerListHead );
+ 250:..//Source/stm/hal/timer.c ****         }
+ 251:..//Source/stm/hal/timer.c ****     }
+ 252:..//Source/stm/hal/timer.c **** }
+ 253:..//Source/stm/hal/timer.c **** 
+ 254:..//Source/stm/hal/timer.c **** void TimerStop( TimerEvent_t *obj )
+ 255:..//Source/stm/hal/timer.c **** {
+ 256:..//Source/stm/hal/timer.c ****     BoardDisableIrq( );
+ 257:..//Source/stm/hal/timer.c **** 
+ 258:..//Source/stm/hal/timer.c ****     uint32_t elapsedTime = 0;
+ 259:..//Source/stm/hal/timer.c ****     uint32_t remainingTime = 0;
+ 260:..//Source/stm/hal/timer.c **** 
+ 261:..//Source/stm/hal/timer.c ****     TimerEvent_t* prev = TimerListHead;
+ 262:..//Source/stm/hal/timer.c ****     TimerEvent_t* cur = TimerListHead;
+ 263:..//Source/stm/hal/timer.c **** 
+ 264:..//Source/stm/hal/timer.c ****     // List is empty or the Obj to stop does not exist
+ 265:..//Source/stm/hal/timer.c ****     if( ( TimerListHead == NULL ) || ( obj == NULL ) )
+ 266:..//Source/stm/hal/timer.c ****     {
+ 267:..//Source/stm/hal/timer.c ****         BoardEnableIrq( );
+ 268:..//Source/stm/hal/timer.c ****         return;
+ 269:..//Source/stm/hal/timer.c ****     }
+ 270:..//Source/stm/hal/timer.c **** 
+ 271:..//Source/stm/hal/timer.c ****     if( TimerListHead == obj ) // Stop the Head
+ 272:..//Source/stm/hal/timer.c ****     {
+ 273:..//Source/stm/hal/timer.c ****         if( TimerListHead->IsRunning == true ) // The head is already running
+ 274:..//Source/stm/hal/timer.c ****         {
+ 275:..//Source/stm/hal/timer.c ****             elapsedTime = TimerGetValue( );
+ 276:..//Source/stm/hal/timer.c ****             if( elapsedTime > obj->Timestamp )
+ 277:..//Source/stm/hal/timer.c ****             {
+ 278:..//Source/stm/hal/timer.c ****                 elapsedTime = obj->Timestamp;
+ 279:..//Source/stm/hal/timer.c ****             }
+ 280:..//Source/stm/hal/timer.c **** 
+ 281:..//Source/stm/hal/timer.c ****             remainingTime = obj->Timestamp - elapsedTime;
+ 282:..//Source/stm/hal/timer.c **** 
+ 283:..//Source/stm/hal/timer.c ****             TimerListHead->IsRunning = false;
+ 284:..//Source/stm/hal/timer.c ****             if( TimerListHead->Next != NULL )
+ 285:..//Source/stm/hal/timer.c ****             {
+ 286:..//Source/stm/hal/timer.c ****                 TimerListHead = TimerListHead->Next;
+ 287:..//Source/stm/hal/timer.c ****                 TimerListHead->Timestamp += remainingTime;
+ 288:..//Source/stm/hal/timer.c ****                 TimerListHead->IsRunning = true;
+ 289:..//Source/stm/hal/timer.c ****                 TimerSetTimeout( TimerListHead );
+ 290:..//Source/stm/hal/timer.c ****             }
+ 291:..//Source/stm/hal/timer.c ****             else
+ 292:..//Source/stm/hal/timer.c ****             {
+ARM GAS  /tmp/ccucLmOp.s 			page 9
+
+
+ 293:..//Source/stm/hal/timer.c ****                 TimerListHead = NULL;
+ 294:..//Source/stm/hal/timer.c ****             }
+ 295:..//Source/stm/hal/timer.c ****         }
+ 296:..//Source/stm/hal/timer.c ****         else // Stop the head before it is started
+ 297:..//Source/stm/hal/timer.c ****         {
+ 298:..//Source/stm/hal/timer.c ****             if( TimerListHead->Next != NULL )
+ 299:..//Source/stm/hal/timer.c ****             {
+ 300:..//Source/stm/hal/timer.c ****                 remainingTime = obj->Timestamp;
+ 301:..//Source/stm/hal/timer.c ****                 TimerListHead = TimerListHead->Next;
+ 302:..//Source/stm/hal/timer.c ****                 TimerListHead->Timestamp += remainingTime;
+ 303:..//Source/stm/hal/timer.c ****             }
+ 304:..//Source/stm/hal/timer.c ****             else
+ 305:..//Source/stm/hal/timer.c ****             {
+ 306:..//Source/stm/hal/timer.c ****                 TimerListHead = NULL;
+ 307:..//Source/stm/hal/timer.c ****             }
+ 308:..//Source/stm/hal/timer.c ****         }
+ 309:..//Source/stm/hal/timer.c ****     }
+ 310:..//Source/stm/hal/timer.c ****     else // Stop an object within the list
+ 311:..//Source/stm/hal/timer.c ****     {
+ 312:..//Source/stm/hal/timer.c ****         remainingTime = obj->Timestamp;
+ 313:..//Source/stm/hal/timer.c **** 
+ 314:..//Source/stm/hal/timer.c ****         while( cur != NULL )
+ 315:..//Source/stm/hal/timer.c ****         {
+ 316:..//Source/stm/hal/timer.c ****             if( cur == obj )
+ 317:..//Source/stm/hal/timer.c ****             {
+ 318:..//Source/stm/hal/timer.c ****                 if( cur->Next != NULL )
+ 319:..//Source/stm/hal/timer.c ****                 {
+ 320:..//Source/stm/hal/timer.c ****                     cur = cur->Next;
+ 321:..//Source/stm/hal/timer.c ****                     prev->Next = cur;
+ 322:..//Source/stm/hal/timer.c ****                     cur->Timestamp += remainingTime;
+ 323:..//Source/stm/hal/timer.c ****                 }
+ 324:..//Source/stm/hal/timer.c ****                 else
+ 325:..//Source/stm/hal/timer.c ****                 {
+ 326:..//Source/stm/hal/timer.c ****                     cur = NULL;
+ 327:..//Source/stm/hal/timer.c ****                     prev->Next = cur;
+ 328:..//Source/stm/hal/timer.c ****                 }
+ 329:..//Source/stm/hal/timer.c ****                 break;
+ 330:..//Source/stm/hal/timer.c ****             }
+ 331:..//Source/stm/hal/timer.c ****             else
+ 332:..//Source/stm/hal/timer.c ****             {
+ 333:..//Source/stm/hal/timer.c ****                 prev = cur;
+ 334:..//Source/stm/hal/timer.c ****                 cur = cur->Next;
+ 335:..//Source/stm/hal/timer.c ****             }
+ 336:..//Source/stm/hal/timer.c ****         }
+ 337:..//Source/stm/hal/timer.c ****     }
+ 338:..//Source/stm/hal/timer.c ****     BoardEnableIrq( );
+ 339:..//Source/stm/hal/timer.c **** }
+ 340:..//Source/stm/hal/timer.c **** 
+ 341:..//Source/stm/hal/timer.c **** static bool TimerExists( TimerEvent_t *obj )
+ 342:..//Source/stm/hal/timer.c **** {
+ 153              		.loc 1 342 0
+ 154              		.cfi_startproc
+ 155              		@ args = 0, pretend = 0, frame = 0
+ 156              		@ frame_needed = 0, uses_anonymous_args = 0
+ 157              		@ link register save eliminated.
+ 158              	.LVL18:
+ 343:..//Source/stm/hal/timer.c ****     TimerEvent_t* cur = TimerListHead;
+ARM GAS  /tmp/ccucLmOp.s 			page 10
+
+
+ 159              		.loc 1 343 0
+ 160 0000 054B     		ldr	r3, .L21
+ 161 0002 1B68     		ldr	r3, [r3]
+ 162              	.LVL19:
+ 163              	.L16:
+ 344:..//Source/stm/hal/timer.c **** 
+ 345:..//Source/stm/hal/timer.c ****     while( cur != NULL )
+ 164              		.loc 1 345 0
+ 165 0004 1BB1     		cbz	r3, .L20
+ 346:..//Source/stm/hal/timer.c ****     {
+ 347:..//Source/stm/hal/timer.c ****         if( cur == obj )
+ 166              		.loc 1 347 0
+ 167 0006 8342     		cmp	r3, r0
+ 168 0008 03D0     		beq	.L19
+ 348:..//Source/stm/hal/timer.c ****         {
+ 349:..//Source/stm/hal/timer.c ****             return true;
+ 350:..//Source/stm/hal/timer.c ****         }
+ 351:..//Source/stm/hal/timer.c ****         cur = cur->Next;
+ 169              		.loc 1 351 0
+ 170 000a 1B69     		ldr	r3, [r3, #16]
+ 171              	.LVL20:
+ 172 000c FAE7     		b	.L16
+ 173              	.L20:
+ 352:..//Source/stm/hal/timer.c ****     }
+ 353:..//Source/stm/hal/timer.c ****     return false;
+ 174              		.loc 1 353 0
+ 175 000e 0020     		movs	r0, #0
+ 176              	.LVL21:
+ 177 0010 7047     		bx	lr
+ 178              	.LVL22:
+ 179              	.L19:
+ 349:..//Source/stm/hal/timer.c ****         }
+ 180              		.loc 1 349 0
+ 181 0012 0120     		movs	r0, #1
+ 182              	.LVL23:
+ 354:..//Source/stm/hal/timer.c **** }
+ 183              		.loc 1 354 0
+ 184 0014 7047     		bx	lr
+ 185              	.L22:
+ 186 0016 00BF     		.align	2
+ 187              	.L21:
+ 188 0018 00000000 		.word	.LANCHOR0
+ 189              		.cfi_endproc
+ 190              	.LFE6:
+ 192              		.section	.text.TimerSetTimeout,"ax",%progbits
+ 193              		.align	1
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.fpu softvfp
+ 199              	TimerSetTimeout:
+ 200              	.LFB13:
+ 355:..//Source/stm/hal/timer.c **** 
+ 356:..//Source/stm/hal/timer.c **** void TimerReset( TimerEvent_t *obj )
+ 357:..//Source/stm/hal/timer.c **** {
+ 358:..//Source/stm/hal/timer.c ****     TimerStop( obj );
+ 359:..//Source/stm/hal/timer.c ****     TimerStart( obj );
+ARM GAS  /tmp/ccucLmOp.s 			page 11
+
+
+ 360:..//Source/stm/hal/timer.c **** }
+ 361:..//Source/stm/hal/timer.c **** 
+ 362:..//Source/stm/hal/timer.c **** void TimerSetValue( TimerEvent_t *obj, uint32_t value )
+ 363:..//Source/stm/hal/timer.c **** {
+ 364:..//Source/stm/hal/timer.c ****     TimerStop( obj );
+ 365:..//Source/stm/hal/timer.c ****     obj->Timestamp = value;
+ 366:..//Source/stm/hal/timer.c ****     obj->ReloadValue = value;
+ 367:..//Source/stm/hal/timer.c **** }
+ 368:..//Source/stm/hal/timer.c **** 
+ 369:..//Source/stm/hal/timer.c **** TimerTime_t TimerGetValue( void )
+ 370:..//Source/stm/hal/timer.c **** {
+ 371:..//Source/stm/hal/timer.c ****     return RtcGetElapsedAlarmTime( );
+ 372:..//Source/stm/hal/timer.c **** }
+ 373:..//Source/stm/hal/timer.c **** 
+ 374:..//Source/stm/hal/timer.c **** TimerTime_t TimerGetCurrentTime( void )
+ 375:..//Source/stm/hal/timer.c **** {
+ 376:..//Source/stm/hal/timer.c ****     return RtcGetTimerValue( );
+ 377:..//Source/stm/hal/timer.c **** }
+ 378:..//Source/stm/hal/timer.c **** 
+ 379:..//Source/stm/hal/timer.c **** TimerTime_t TimerGetElapsedTime( TimerTime_t savedTime )
+ 380:..//Source/stm/hal/timer.c **** {
+ 381:..//Source/stm/hal/timer.c ****     return RtcComputeElapsedTime( savedTime );
+ 382:..//Source/stm/hal/timer.c **** }
+ 383:..//Source/stm/hal/timer.c **** 
+ 384:..//Source/stm/hal/timer.c **** TimerTime_t TimerGetFutureTime( TimerTime_t eventInFuture )
+ 385:..//Source/stm/hal/timer.c **** {
+ 386:..//Source/stm/hal/timer.c ****     return RtcComputeFutureEventTime( eventInFuture );
+ 387:..//Source/stm/hal/timer.c **** }
+ 388:..//Source/stm/hal/timer.c **** 
+ 389:..//Source/stm/hal/timer.c **** static void TimerSetTimeout( TimerEvent_t *obj )
+ 390:..//Source/stm/hal/timer.c **** {
+ 201              		.loc 1 390 0
+ 202              		.cfi_startproc
+ 203              		@ args = 0, pretend = 0, frame = 0
+ 204              		@ frame_needed = 0, uses_anonymous_args = 0
+ 205              	.LVL24:
+ 206 0000 10B5     		push	{r4, lr}
+ 207              	.LCFI3:
+ 208              		.cfi_def_cfa_offset 8
+ 209              		.cfi_offset 4, -8
+ 210              		.cfi_offset 14, -4
+ 211 0002 0446     		mov	r4, r0
+ 391:..//Source/stm/hal/timer.c ****     HasLoopedThroughMain = 0;
+ 212              		.loc 1 391 0
+ 213 0004 0022     		movs	r2, #0
+ 214 0006 044B     		ldr	r3, .L25
+ 215 0008 1A70     		strb	r2, [r3]
+ 392:..//Source/stm/hal/timer.c ****     obj->Timestamp = RtcGetAdjustedTimeoutValue( obj->Timestamp );
+ 216              		.loc 1 392 0
+ 217 000a 0068     		ldr	r0, [r0]
+ 218              	.LVL25:
+ 219 000c FFF7FEFF 		bl	RtcGetAdjustedTimeoutValue
+ 220              	.LVL26:
+ 221 0010 2060     		str	r0, [r4]
+ 393:..//Source/stm/hal/timer.c ****     RtcSetTimeout( obj->Timestamp );
+ 222              		.loc 1 393 0
+ 223 0012 FFF7FEFF 		bl	RtcSetTimeout
+ARM GAS  /tmp/ccucLmOp.s 			page 12
+
+
+ 224              	.LVL27:
+ 225 0016 10BD     		pop	{r4, pc}
+ 226              	.LVL28:
+ 227              	.L26:
+ 228              		.align	2
+ 229              	.L25:
+ 230 0018 00000000 		.word	.LANCHOR1
+ 231              		.cfi_endproc
+ 232              	.LFE13:
+ 234              		.section	.text.TimerInsertNewHeadTimer,"ax",%progbits
+ 235              		.align	1
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 239              		.fpu softvfp
+ 241              	TimerInsertNewHeadTimer:
+ 242              	.LFB3:
+ 194:..//Source/stm/hal/timer.c ****     TimerEvent_t* cur = TimerListHead;
+ 243              		.loc 1 194 0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 0
+ 246              		@ frame_needed = 0, uses_anonymous_args = 0
+ 247              	.LVL29:
+ 248 0000 08B5     		push	{r3, lr}
+ 249              	.LCFI4:
+ 250              		.cfi_def_cfa_offset 8
+ 251              		.cfi_offset 3, -8
+ 252              		.cfi_offset 14, -4
+ 195:..//Source/stm/hal/timer.c **** 
+ 253              		.loc 1 195 0
+ 254 0002 084B     		ldr	r3, .L30
+ 255 0004 1B68     		ldr	r3, [r3]
+ 256              	.LVL30:
+ 197:..//Source/stm/hal/timer.c ****     {
+ 257              		.loc 1 197 0
+ 258 0006 23B1     		cbz	r3, .L28
+ 199:..//Source/stm/hal/timer.c ****         cur->IsRunning = false;
+ 259              		.loc 1 199 0
+ 260 0008 0268     		ldr	r2, [r0]
+ 261 000a 891A     		subs	r1, r1, r2
+ 262              	.LVL31:
+ 263 000c 1960     		str	r1, [r3]
+ 200:..//Source/stm/hal/timer.c ****     }
+ 264              		.loc 1 200 0
+ 265 000e 0022     		movs	r2, #0
+ 266 0010 1A72     		strb	r2, [r3, #8]
+ 267              	.L28:
+ 203:..//Source/stm/hal/timer.c ****     obj->IsRunning = true;
+ 268              		.loc 1 203 0
+ 269 0012 0361     		str	r3, [r0, #16]
+ 204:..//Source/stm/hal/timer.c ****     TimerListHead = obj;
+ 270              		.loc 1 204 0
+ 271 0014 0123     		movs	r3, #1
+ 272              	.LVL32:
+ 273 0016 0372     		strb	r3, [r0, #8]
+ 205:..//Source/stm/hal/timer.c ****     TimerSetTimeout( TimerListHead );
+ 274              		.loc 1 205 0
+ARM GAS  /tmp/ccucLmOp.s 			page 13
+
+
+ 275 0018 024B     		ldr	r3, .L30
+ 276 001a 1860     		str	r0, [r3]
+ 277              	.LVL33:
+ 206:..//Source/stm/hal/timer.c **** }
+ 278              		.loc 1 206 0
+ 279 001c FFF7FEFF 		bl	TimerSetTimeout
+ 280              	.LVL34:
+ 281 0020 08BD     		pop	{r3, pc}
+ 282              	.L31:
+ 283 0022 00BF     		.align	2
+ 284              	.L30:
+ 285 0024 00000000 		.word	.LANCHOR0
+ 286              		.cfi_endproc
+ 287              	.LFE3:
+ 289              		.section	.text.TimerInit,"ax",%progbits
+ 290              		.align	1
+ 291              		.global	TimerInit
+ 292              		.syntax unified
+ 293              		.thumb
+ 294              		.thumb_func
+ 295              		.fpu softvfp
+ 297              	TimerInit:
+ 298              	.LFB0:
+  83:..//Source/stm/hal/timer.c ****     obj->Timestamp = 0;
+ 299              		.loc 1 83 0
+ 300              		.cfi_startproc
+ 301              		@ args = 0, pretend = 0, frame = 0
+ 302              		@ frame_needed = 0, uses_anonymous_args = 0
+ 303              		@ link register save eliminated.
+ 304              	.LVL35:
+  84:..//Source/stm/hal/timer.c ****     obj->ReloadValue = 0;
+ 305              		.loc 1 84 0
+ 306 0000 0023     		movs	r3, #0
+ 307 0002 0360     		str	r3, [r0]
+  85:..//Source/stm/hal/timer.c ****     obj->IsRunning = false;
+ 308              		.loc 1 85 0
+ 309 0004 4360     		str	r3, [r0, #4]
+  86:..//Source/stm/hal/timer.c ****     obj->Callback = callback;
+ 310              		.loc 1 86 0
+ 311 0006 0372     		strb	r3, [r0, #8]
+  87:..//Source/stm/hal/timer.c ****     obj->Next = NULL;
+ 312              		.loc 1 87 0
+ 313 0008 C160     		str	r1, [r0, #12]
+  88:..//Source/stm/hal/timer.c **** }
+ 314              		.loc 1 88 0
+ 315 000a 0361     		str	r3, [r0, #16]
+ 316 000c 7047     		bx	lr
+ 317              		.cfi_endproc
+ 318              	.LFE0:
+ 320              		.section	.text.TimerGetValue,"ax",%progbits
+ 321              		.align	1
+ 322              		.global	TimerGetValue
+ 323              		.syntax unified
+ 324              		.thumb
+ 325              		.thumb_func
+ 326              		.fpu softvfp
+ 328              	TimerGetValue:
+ARM GAS  /tmp/ccucLmOp.s 			page 14
+
+
+ 329              	.LFB9:
+ 370:..//Source/stm/hal/timer.c ****     return RtcGetElapsedAlarmTime( );
+ 330              		.loc 1 370 0
+ 331              		.cfi_startproc
+ 332              		@ args = 0, pretend = 0, frame = 0
+ 333              		@ frame_needed = 0, uses_anonymous_args = 0
+ 334 0000 08B5     		push	{r3, lr}
+ 335              	.LCFI5:
+ 336              		.cfi_def_cfa_offset 8
+ 337              		.cfi_offset 3, -8
+ 338              		.cfi_offset 14, -4
+ 371:..//Source/stm/hal/timer.c **** }
+ 339              		.loc 1 371 0
+ 340 0002 FFF7FEFF 		bl	RtcGetElapsedAlarmTime
+ 341              	.LVL36:
+ 372:..//Source/stm/hal/timer.c **** 
+ 342              		.loc 1 372 0
+ 343 0006 08BD     		pop	{r3, pc}
+ 344              		.cfi_endproc
+ 345              	.LFE9:
+ 347              		.section	.text.TimerStart,"ax",%progbits
+ 348              		.align	1
+ 349              		.global	TimerStart
+ 350              		.syntax unified
+ 351              		.thumb
+ 352              		.thumb_func
+ 353              		.fpu softvfp
+ 355              	TimerStart:
+ 356              	.LFB1:
+  92:..//Source/stm/hal/timer.c ****     uint32_t elapsedTime = 0;
+ 357              		.loc 1 92 0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 0
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 361              	.LVL37:
+ 362 0000 10B5     		push	{r4, lr}
+ 363              	.LCFI6:
+ 364              		.cfi_def_cfa_offset 8
+ 365              		.cfi_offset 4, -8
+ 366              		.cfi_offset 14, -4
+ 367 0002 0446     		mov	r4, r0
+ 368              	.LVL38:
+  96:..//Source/stm/hal/timer.c **** 
+ 369              		.loc 1 96 0
+ 370 0004 FFF7FEFF 		bl	BoardDisableIrq
+ 371              	.LVL39:
+  98:..//Source/stm/hal/timer.c ****     {
+ 372              		.loc 1 98 0
+ 373 0008 B4B1     		cbz	r4, .L36
+  98:..//Source/stm/hal/timer.c ****     {
+ 374              		.loc 1 98 0 is_stmt 0 discriminator 1
+ 375 000a 2046     		mov	r0, r4
+ 376 000c FFF7FEFF 		bl	TimerExists
+ 377              	.LVL40:
+ 378 0010 90B9     		cbnz	r0, .L36
+ 104:..//Source/stm/hal/timer.c ****     obj->IsRunning = false;
+ 379              		.loc 1 104 0 is_stmt 1
+ARM GAS  /tmp/ccucLmOp.s 			page 15
+
+
+ 380 0012 6168     		ldr	r1, [r4, #4]
+ 381 0014 2160     		str	r1, [r4]
+ 105:..//Source/stm/hal/timer.c **** 
+ 382              		.loc 1 105 0
+ 383 0016 0023     		movs	r3, #0
+ 384 0018 2372     		strb	r3, [r4, #8]
+ 107:..//Source/stm/hal/timer.c ****     {
+ 385              		.loc 1 107 0
+ 386 001a 124B     		ldr	r3, .L49
+ 387 001c 1B68     		ldr	r3, [r3]
+ 388 001e 73B1     		cbz	r3, .L47
+ 113:..//Source/stm/hal/timer.c ****         {
+ 389              		.loc 1 113 0
+ 390 0020 1A7A     		ldrb	r2, [r3, #8]	@ zero_extendqisi2
+ 391 0022 82B9     		cbnz	r2, .L48
+ 124:..//Source/stm/hal/timer.c ****         }
+ 392              		.loc 1 124 0
+ 393 0024 1968     		ldr	r1, [r3]
+ 394              	.LVL41:
+ 395              	.L43:
+ 127:..//Source/stm/hal/timer.c ****         {
+ 396              		.loc 1 127 0
+ 397 0026 2368     		ldr	r3, [r4]
+ 398 0028 9942     		cmp	r1, r3
+ 399 002a 16D9     		bls	.L44
+ 129:..//Source/stm/hal/timer.c ****         }
+ 400              		.loc 1 129 0
+ 401 002c 2046     		mov	r0, r4
+ 402 002e FFF7FEFF 		bl	TimerInsertNewHeadTimer
+ 403              	.LVL42:
+ 404              	.L40:
+ 136:..//Source/stm/hal/timer.c **** }
+ 405              		.loc 1 136 0
+ 406 0032 FFF7FEFF 		bl	BoardEnableIrq
+ 407              	.LVL43:
+ 408 0036 10BD     		pop	{r4, pc}
+ 409              	.LVL44:
+ 410              	.L36:
+ 100:..//Source/stm/hal/timer.c ****         return;
+ 411              		.loc 1 100 0
+ 412 0038 FFF7FEFF 		bl	BoardEnableIrq
+ 413              	.LVL45:
+ 101:..//Source/stm/hal/timer.c ****     }
+ 414              		.loc 1 101 0
+ 415 003c 10BD     		pop	{r4, pc}
+ 416              	.LVL46:
+ 417              	.L47:
+ 109:..//Source/stm/hal/timer.c ****     }
+ 418              		.loc 1 109 0
+ 419 003e 2046     		mov	r0, r4
+ 420 0040 FFF7FEFF 		bl	TimerInsertNewHeadTimer
+ 421              	.LVL47:
+ 422 0044 F5E7     		b	.L40
+ 423              	.L48:
+ 115:..//Source/stm/hal/timer.c ****             if( elapsedTime > TimerListHead->Timestamp )
+ 424              		.loc 1 115 0
+ 425 0046 FFF7FEFF 		bl	TimerGetValue
+ARM GAS  /tmp/ccucLmOp.s 			page 16
+
+
+ 426              	.LVL48:
+ 116:..//Source/stm/hal/timer.c ****             {
+ 427              		.loc 1 116 0
+ 428 004a 064B     		ldr	r3, .L49
+ 429 004c 1B68     		ldr	r3, [r3]
+ 430 004e 1968     		ldr	r1, [r3]
+ 431 0050 8842     		cmp	r0, r1
+ 432 0052 00D9     		bls	.L42
+ 118:..//Source/stm/hal/timer.c ****             }
+ 433              		.loc 1 118 0
+ 434 0054 0846     		mov	r0, r1
+ 435              	.LVL49:
+ 436              	.L42:
+ 120:..//Source/stm/hal/timer.c ****         }
+ 437              		.loc 1 120 0
+ 438 0056 091A     		subs	r1, r1, r0
+ 439              	.LVL50:
+ 440 0058 E5E7     		b	.L43
+ 441              	.LVL51:
+ 442              	.L44:
+ 133:..//Source/stm/hal/timer.c ****         }
+ 443              		.loc 1 133 0
+ 444 005a 2046     		mov	r0, r4
+ 445 005c FFF7FEFF 		bl	TimerInsertTimer
+ 446              	.LVL52:
+ 447 0060 E7E7     		b	.L40
+ 448              	.L50:
+ 449 0062 00BF     		.align	2
+ 450              	.L49:
+ 451 0064 00000000 		.word	.LANCHOR0
+ 452              		.cfi_endproc
+ 453              	.LFE1:
+ 455              		.section	.text.TimerIrqHandler,"ax",%progbits
+ 456              		.align	1
+ 457              		.global	TimerIrqHandler
+ 458              		.syntax unified
+ 459              		.thumb
+ 460              		.thumb_func
+ 461              		.fpu softvfp
+ 463              	TimerIrqHandler:
+ 464              	.LFB4:
+ 210:..//Source/stm/hal/timer.c ****     uint32_t elapsedTime = 0;
+ 465              		.loc 1 210 0
+ 466              		.cfi_startproc
+ 467              		@ args = 0, pretend = 0, frame = 0
+ 468              		@ frame_needed = 0, uses_anonymous_args = 0
+ 469 0000 08B5     		push	{r3, lr}
+ 470              	.LCFI7:
+ 471              		.cfi_def_cfa_offset 8
+ 472              		.cfi_offset 3, -8
+ 473              		.cfi_offset 14, -4
+ 474              	.LVL53:
+ 214:..//Source/stm/hal/timer.c ****     {
+ 475              		.loc 1 214 0
+ 476 0002 134B     		ldr	r3, .L61
+ 477 0004 1B68     		ldr	r3, [r3]
+ 478 0006 EBB1     		cbz	r3, .L51
+ARM GAS  /tmp/ccucLmOp.s 			page 17
+
+
+ 219:..//Source/stm/hal/timer.c **** 
+ 479              		.loc 1 219 0
+ 480 0008 FFF7FEFF 		bl	TimerGetValue
+ 481              	.LVL54:
+ 221:..//Source/stm/hal/timer.c ****     {
+ 482              		.loc 1 221 0
+ 483 000c 104B     		ldr	r3, .L61
+ 484 000e 1B68     		ldr	r3, [r3]
+ 485 0010 1A68     		ldr	r2, [r3]
+ 486 0012 9042     		cmp	r0, r2
+ 487 0014 10D3     		bcc	.L53
+ 223:..//Source/stm/hal/timer.c ****     }
+ 488              		.loc 1 223 0
+ 489 0016 0022     		movs	r2, #0
+ 490 0018 1A60     		str	r2, [r3]
+ 491              	.L54:
+ 230:..//Source/stm/hal/timer.c **** 
+ 492              		.loc 1 230 0
+ 493 001a 0022     		movs	r2, #0
+ 494 001c 1A72     		strb	r2, [r3, #8]
+ 495              	.LVL55:
+ 496              	.L56:
+ 232:..//Source/stm/hal/timer.c ****     {
+ 497              		.loc 1 232 0
+ 498 001e 0C4B     		ldr	r3, .L61
+ 499 0020 1868     		ldr	r0, [r3]
+ 500 0022 60B1     		cbz	r0, .L57
+ 232:..//Source/stm/hal/timer.c ****     {
+ 501              		.loc 1 232 0 is_stmt 0 discriminator 1
+ 502 0024 0368     		ldr	r3, [r0]
+ 503 0026 53B9     		cbnz	r3, .L57
+ 504              	.LVL56:
+ 505              	.LBB2:
+ 235:..//Source/stm/hal/timer.c **** 
+ 506              		.loc 1 235 0 is_stmt 1
+ 507 0028 0269     		ldr	r2, [r0, #16]
+ 508 002a 094B     		ldr	r3, .L61
+ 509 002c 1A60     		str	r2, [r3]
+ 237:..//Source/stm/hal/timer.c ****         {
+ 510              		.loc 1 237 0
+ 511 002e C368     		ldr	r3, [r0, #12]
+ 512 0030 002B     		cmp	r3, #0
+ 513 0032 F4D0     		beq	.L56
+ 239:..//Source/stm/hal/timer.c ****         }
+ 514              		.loc 1 239 0
+ 515 0034 9847     		blx	r3
+ 516              	.LVL57:
+ 517 0036 F2E7     		b	.L56
+ 518              	.LVL58:
+ 519              	.L53:
+ 520              	.LBE2:
+ 227:..//Source/stm/hal/timer.c ****     }
+ 521              		.loc 1 227 0
+ 522 0038 121A     		subs	r2, r2, r0
+ 523 003a 1A60     		str	r2, [r3]
+ 524 003c EDE7     		b	.L54
+ 525              	.LVL59:
+ARM GAS  /tmp/ccucLmOp.s 			page 18
+
+
+ 526              	.L57:
+ 244:..//Source/stm/hal/timer.c ****     {
+ 527              		.loc 1 244 0
+ 528 003e 08B1     		cbz	r0, .L51
+ 246:..//Source/stm/hal/timer.c ****         {
+ 529              		.loc 1 246 0
+ 530 0040 037A     		ldrb	r3, [r0, #8]	@ zero_extendqisi2
+ 531 0042 03B1     		cbz	r3, .L60
+ 532              	.L51:
+ 533 0044 08BD     		pop	{r3, pc}
+ 534              	.L60:
+ 248:..//Source/stm/hal/timer.c ****             TimerSetTimeout( TimerListHead );
+ 535              		.loc 1 248 0
+ 536 0046 0123     		movs	r3, #1
+ 537 0048 0372     		strb	r3, [r0, #8]
+ 249:..//Source/stm/hal/timer.c ****         }
+ 538              		.loc 1 249 0
+ 539 004a FFF7FEFF 		bl	TimerSetTimeout
+ 540              	.LVL60:
+ 541 004e F9E7     		b	.L51
+ 542              	.L62:
+ 543              		.align	2
+ 544              	.L61:
+ 545 0050 00000000 		.word	.LANCHOR0
+ 546              		.cfi_endproc
+ 547              	.LFE4:
+ 549              		.section	.text.TimerStop,"ax",%progbits
+ 550              		.align	1
+ 551              		.global	TimerStop
+ 552              		.syntax unified
+ 553              		.thumb
+ 554              		.thumb_func
+ 555              		.fpu softvfp
+ 557              	TimerStop:
+ 558              	.LFB5:
+ 255:..//Source/stm/hal/timer.c ****     BoardDisableIrq( );
+ 559              		.loc 1 255 0
+ 560              		.cfi_startproc
+ 561              		@ args = 0, pretend = 0, frame = 0
+ 562              		@ frame_needed = 0, uses_anonymous_args = 0
+ 563              	.LVL61:
+ 564 0000 10B5     		push	{r4, lr}
+ 565              	.LCFI8:
+ 566              		.cfi_def_cfa_offset 8
+ 567              		.cfi_offset 4, -8
+ 568              		.cfi_offset 14, -4
+ 569 0002 0446     		mov	r4, r0
+ 256:..//Source/stm/hal/timer.c **** 
+ 570              		.loc 1 256 0
+ 571 0004 FFF7FEFF 		bl	BoardDisableIrq
+ 572              	.LVL62:
+ 261:..//Source/stm/hal/timer.c ****     TimerEvent_t* cur = TimerListHead;
+ 573              		.loc 1 261 0
+ 574 0008 234B     		ldr	r3, .L82
+ 575 000a 1A68     		ldr	r2, [r3]
+ 576              	.LVL63:
+ 265:..//Source/stm/hal/timer.c ****     {
+ARM GAS  /tmp/ccucLmOp.s 			page 19
+
+
+ 577              		.loc 1 265 0
+ 578 000c 5AB1     		cbz	r2, .L64
+ 265:..//Source/stm/hal/timer.c ****     {
+ 579              		.loc 1 265 0 is_stmt 0 discriminator 1
+ 580 000e 54B1     		cbz	r4, .L64
+ 271:..//Source/stm/hal/timer.c ****     {
+ 581              		.loc 1 271 0 is_stmt 1
+ 582 0010 A242     		cmp	r2, r4
+ 583 0012 0BD0     		beq	.L79
+ 312:..//Source/stm/hal/timer.c **** 
+ 584              		.loc 1 312 0
+ 585 0014 2168     		ldr	r1, [r4]
+ 586              	.LVL64:
+ 262:..//Source/stm/hal/timer.c **** 
+ 587              		.loc 1 262 0
+ 588 0016 1346     		mov	r3, r2
+ 589              	.LVL65:
+ 590              	.L73:
+ 314:..//Source/stm/hal/timer.c ****         {
+ 591              		.loc 1 314 0
+ 592 0018 002B     		cmp	r3, #0
+ 593 001a 37D0     		beq	.L71
+ 316:..//Source/stm/hal/timer.c ****             {
+ 594              		.loc 1 316 0
+ 595 001c A342     		cmp	r3, r4
+ 596 001e 2FD0     		beq	.L80
+ 597              	.LVL66:
+ 333:..//Source/stm/hal/timer.c ****                 cur = cur->Next;
+ 598              		.loc 1 333 0
+ 599 0020 1A46     		mov	r2, r3
+ 334:..//Source/stm/hal/timer.c ****             }
+ 600              		.loc 1 334 0
+ 601 0022 1B69     		ldr	r3, [r3, #16]
+ 602              	.LVL67:
+ 603 0024 F8E7     		b	.L73
+ 604              	.LVL68:
+ 605              	.L64:
+ 267:..//Source/stm/hal/timer.c ****         return;
+ 606              		.loc 1 267 0
+ 607 0026 FFF7FEFF 		bl	BoardEnableIrq
+ 608              	.LVL69:
+ 268:..//Source/stm/hal/timer.c ****     }
+ 609              		.loc 1 268 0
+ 610 002a 10BD     		pop	{r4, pc}
+ 611              	.LVL70:
+ 612              	.L79:
+ 273:..//Source/stm/hal/timer.c ****         {
+ 613              		.loc 1 273 0
+ 614 002c 137A     		ldrb	r3, [r2, #8]	@ zero_extendqisi2
+ 615 002e 43B9     		cbnz	r3, .L81
+ 298:..//Source/stm/hal/timer.c ****             {
+ 616              		.loc 1 298 0
+ 617 0030 1369     		ldr	r3, [r2, #16]
+ 618 0032 0BB3     		cbz	r3, .L72
+ 300:..//Source/stm/hal/timer.c ****                 TimerListHead = TimerListHead->Next;
+ 619              		.loc 1 300 0
+ 620 0034 2168     		ldr	r1, [r4]
+ARM GAS  /tmp/ccucLmOp.s 			page 20
+
+
+ 621              	.LVL71:
+ 301:..//Source/stm/hal/timer.c ****                 TimerListHead->Timestamp += remainingTime;
+ 622              		.loc 1 301 0
+ 623 0036 184A     		ldr	r2, .L82
+ 624              	.LVL72:
+ 625 0038 1360     		str	r3, [r2]
+ 626              	.LVL73:
+ 302:..//Source/stm/hal/timer.c ****             }
+ 627              		.loc 1 302 0
+ 628 003a 1A68     		ldr	r2, [r3]
+ 629 003c 0A44     		add	r2, r2, r1
+ 630 003e 1A60     		str	r2, [r3]
+ 631 0040 24E0     		b	.L71
+ 632              	.LVL74:
+ 633              	.L81:
+ 275:..//Source/stm/hal/timer.c ****             if( elapsedTime > obj->Timestamp )
+ 634              		.loc 1 275 0
+ 635 0042 FFF7FEFF 		bl	TimerGetValue
+ 636              	.LVL75:
+ 276:..//Source/stm/hal/timer.c ****             {
+ 637              		.loc 1 276 0
+ 638 0046 2368     		ldr	r3, [r4]
+ 639 0048 9842     		cmp	r0, r3
+ 640 004a 00D9     		bls	.L69
+ 278:..//Source/stm/hal/timer.c ****             }
+ 641              		.loc 1 278 0
+ 642 004c 1846     		mov	r0, r3
+ 643              	.LVL76:
+ 644              	.L69:
+ 281:..//Source/stm/hal/timer.c **** 
+ 645              		.loc 1 281 0
+ 646 004e 1B1A     		subs	r3, r3, r0
+ 647              	.LVL77:
+ 283:..//Source/stm/hal/timer.c ****             if( TimerListHead->Next != NULL )
+ 648              		.loc 1 283 0
+ 649 0050 114A     		ldr	r2, .L82
+ 650 0052 1268     		ldr	r2, [r2]
+ 651 0054 0021     		movs	r1, #0
+ 652 0056 1172     		strb	r1, [r2, #8]
+ 284:..//Source/stm/hal/timer.c ****             {
+ 653              		.loc 1 284 0
+ 654 0058 1069     		ldr	r0, [r2, #16]
+ 655              	.LVL78:
+ 656 005a 48B1     		cbz	r0, .L70
+ 286:..//Source/stm/hal/timer.c ****                 TimerListHead->Timestamp += remainingTime;
+ 657              		.loc 1 286 0
+ 658 005c 0E4A     		ldr	r2, .L82
+ 659 005e 1060     		str	r0, [r2]
+ 287:..//Source/stm/hal/timer.c ****                 TimerListHead->IsRunning = true;
+ 660              		.loc 1 287 0
+ 661 0060 0268     		ldr	r2, [r0]
+ 662 0062 1344     		add	r3, r3, r2
+ 663              	.LVL79:
+ 664 0064 0360     		str	r3, [r0]
+ 288:..//Source/stm/hal/timer.c ****                 TimerSetTimeout( TimerListHead );
+ 665              		.loc 1 288 0
+ 666 0066 0123     		movs	r3, #1
+ARM GAS  /tmp/ccucLmOp.s 			page 21
+
+
+ 667 0068 0372     		strb	r3, [r0, #8]
+ 289:..//Source/stm/hal/timer.c ****             }
+ 668              		.loc 1 289 0
+ 669 006a FFF7FEFF 		bl	TimerSetTimeout
+ 670              	.LVL80:
+ 671 006e 0DE0     		b	.L71
+ 672              	.LVL81:
+ 673              	.L70:
+ 293:..//Source/stm/hal/timer.c ****             }
+ 674              		.loc 1 293 0
+ 675 0070 0022     		movs	r2, #0
+ 676 0072 094B     		ldr	r3, .L82
+ 677              	.LVL82:
+ 678 0074 1A60     		str	r2, [r3]
+ 679 0076 09E0     		b	.L71
+ 680              	.LVL83:
+ 681              	.L72:
+ 306:..//Source/stm/hal/timer.c ****             }
+ 682              		.loc 1 306 0
+ 683 0078 0022     		movs	r2, #0
+ 684              	.LVL84:
+ 685 007a 074B     		ldr	r3, .L82
+ 686 007c 1A60     		str	r2, [r3]
+ 687              	.LVL85:
+ 688 007e 05E0     		b	.L71
+ 689              	.LVL86:
+ 690              	.L80:
+ 318:..//Source/stm/hal/timer.c ****                 {
+ 691              		.loc 1 318 0
+ 692 0080 1B69     		ldr	r3, [r3, #16]
+ 693              	.LVL87:
+ 694 0082 33B1     		cbz	r3, .L75
+ 695              	.LVL88:
+ 321:..//Source/stm/hal/timer.c ****                     cur->Timestamp += remainingTime;
+ 696              		.loc 1 321 0
+ 697 0084 1361     		str	r3, [r2, #16]
+ 322:..//Source/stm/hal/timer.c ****                 }
+ 698              		.loc 1 322 0
+ 699 0086 1A68     		ldr	r2, [r3]
+ 700              	.LVL89:
+ 701 0088 0A44     		add	r2, r2, r1
+ 702 008a 1A60     		str	r2, [r3]
+ 703              	.LVL90:
+ 704              	.L71:
+ 338:..//Source/stm/hal/timer.c **** }
+ 705              		.loc 1 338 0
+ 706 008c FFF7FEFF 		bl	BoardEnableIrq
+ 707              	.LVL91:
+ 708 0090 10BD     		pop	{r4, pc}
+ 709              	.LVL92:
+ 710              	.L75:
+ 327:..//Source/stm/hal/timer.c ****                 }
+ 711              		.loc 1 327 0
+ 712 0092 0023     		movs	r3, #0
+ 713 0094 1361     		str	r3, [r2, #16]
+ 714 0096 F9E7     		b	.L71
+ 715              	.L83:
+ARM GAS  /tmp/ccucLmOp.s 			page 22
+
+
+ 716              		.align	2
+ 717              	.L82:
+ 718 0098 00000000 		.word	.LANCHOR0
+ 719              		.cfi_endproc
+ 720              	.LFE5:
+ 722              		.section	.text.TimerReset,"ax",%progbits
+ 723              		.align	1
+ 724              		.global	TimerReset
+ 725              		.syntax unified
+ 726              		.thumb
+ 727              		.thumb_func
+ 728              		.fpu softvfp
+ 730              	TimerReset:
+ 731              	.LFB7:
+ 357:..//Source/stm/hal/timer.c ****     TimerStop( obj );
+ 732              		.loc 1 357 0
+ 733              		.cfi_startproc
+ 734              		@ args = 0, pretend = 0, frame = 0
+ 735              		@ frame_needed = 0, uses_anonymous_args = 0
+ 736              	.LVL93:
+ 737 0000 10B5     		push	{r4, lr}
+ 738              	.LCFI9:
+ 739              		.cfi_def_cfa_offset 8
+ 740              		.cfi_offset 4, -8
+ 741              		.cfi_offset 14, -4
+ 742 0002 0446     		mov	r4, r0
+ 358:..//Source/stm/hal/timer.c ****     TimerStart( obj );
+ 743              		.loc 1 358 0
+ 744 0004 FFF7FEFF 		bl	TimerStop
+ 745              	.LVL94:
+ 359:..//Source/stm/hal/timer.c **** }
+ 746              		.loc 1 359 0
+ 747 0008 2046     		mov	r0, r4
+ 748 000a FFF7FEFF 		bl	TimerStart
+ 749              	.LVL95:
+ 750 000e 10BD     		pop	{r4, pc}
+ 751              		.cfi_endproc
+ 752              	.LFE7:
+ 754              		.section	.text.TimerSetValue,"ax",%progbits
+ 755              		.align	1
+ 756              		.global	TimerSetValue
+ 757              		.syntax unified
+ 758              		.thumb
+ 759              		.thumb_func
+ 760              		.fpu softvfp
+ 762              	TimerSetValue:
+ 763              	.LFB8:
+ 363:..//Source/stm/hal/timer.c ****     TimerStop( obj );
+ 764              		.loc 1 363 0
+ 765              		.cfi_startproc
+ 766              		@ args = 0, pretend = 0, frame = 0
+ 767              		@ frame_needed = 0, uses_anonymous_args = 0
+ 768              	.LVL96:
+ 769 0000 38B5     		push	{r3, r4, r5, lr}
+ 770              	.LCFI10:
+ 771              		.cfi_def_cfa_offset 16
+ 772              		.cfi_offset 3, -16
+ARM GAS  /tmp/ccucLmOp.s 			page 23
+
+
+ 773              		.cfi_offset 4, -12
+ 774              		.cfi_offset 5, -8
+ 775              		.cfi_offset 14, -4
+ 776 0002 0446     		mov	r4, r0
+ 777 0004 0D46     		mov	r5, r1
+ 364:..//Source/stm/hal/timer.c ****     obj->Timestamp = value;
+ 778              		.loc 1 364 0
+ 779 0006 FFF7FEFF 		bl	TimerStop
+ 780              	.LVL97:
+ 365:..//Source/stm/hal/timer.c ****     obj->ReloadValue = value;
+ 781              		.loc 1 365 0
+ 782 000a 2560     		str	r5, [r4]
+ 366:..//Source/stm/hal/timer.c **** }
+ 783              		.loc 1 366 0
+ 784 000c 6560     		str	r5, [r4, #4]
+ 785 000e 38BD     		pop	{r3, r4, r5, pc}
+ 786              		.cfi_endproc
+ 787              	.LFE8:
+ 789              		.section	.text.TimerGetCurrentTime,"ax",%progbits
+ 790              		.align	1
+ 791              		.global	TimerGetCurrentTime
+ 792              		.syntax unified
+ 793              		.thumb
+ 794              		.thumb_func
+ 795              		.fpu softvfp
+ 797              	TimerGetCurrentTime:
+ 798              	.LFB10:
+ 375:..//Source/stm/hal/timer.c ****     return RtcGetTimerValue( );
+ 799              		.loc 1 375 0
+ 800              		.cfi_startproc
+ 801              		@ args = 0, pretend = 0, frame = 0
+ 802              		@ frame_needed = 0, uses_anonymous_args = 0
+ 803 0000 08B5     		push	{r3, lr}
+ 804              	.LCFI11:
+ 805              		.cfi_def_cfa_offset 8
+ 806              		.cfi_offset 3, -8
+ 807              		.cfi_offset 14, -4
+ 376:..//Source/stm/hal/timer.c **** }
+ 808              		.loc 1 376 0
+ 809 0002 FFF7FEFF 		bl	RtcGetTimerValue
+ 810              	.LVL98:
+ 377:..//Source/stm/hal/timer.c **** 
+ 811              		.loc 1 377 0
+ 812 0006 08BD     		pop	{r3, pc}
+ 813              		.cfi_endproc
+ 814              	.LFE10:
+ 816              		.section	.text.TimerGetElapsedTime,"ax",%progbits
+ 817              		.align	1
+ 818              		.global	TimerGetElapsedTime
+ 819              		.syntax unified
+ 820              		.thumb
+ 821              		.thumb_func
+ 822              		.fpu softvfp
+ 824              	TimerGetElapsedTime:
+ 825              	.LFB11:
+ 380:..//Source/stm/hal/timer.c ****     return RtcComputeElapsedTime( savedTime );
+ 826              		.loc 1 380 0
+ARM GAS  /tmp/ccucLmOp.s 			page 24
+
+
+ 827              		.cfi_startproc
+ 828              		@ args = 0, pretend = 0, frame = 0
+ 829              		@ frame_needed = 0, uses_anonymous_args = 0
+ 830              	.LVL99:
+ 831 0000 08B5     		push	{r3, lr}
+ 832              	.LCFI12:
+ 833              		.cfi_def_cfa_offset 8
+ 834              		.cfi_offset 3, -8
+ 835              		.cfi_offset 14, -4
+ 381:..//Source/stm/hal/timer.c **** }
+ 836              		.loc 1 381 0
+ 837 0002 FFF7FEFF 		bl	RtcComputeElapsedTime
+ 838              	.LVL100:
+ 382:..//Source/stm/hal/timer.c **** 
+ 839              		.loc 1 382 0
+ 840 0006 08BD     		pop	{r3, pc}
+ 841              		.cfi_endproc
+ 842              	.LFE11:
+ 844              		.section	.text.TimerGetFutureTime,"ax",%progbits
+ 845              		.align	1
+ 846              		.global	TimerGetFutureTime
+ 847              		.syntax unified
+ 848              		.thumb
+ 849              		.thumb_func
+ 850              		.fpu softvfp
+ 852              	TimerGetFutureTime:
+ 853              	.LFB12:
+ 385:..//Source/stm/hal/timer.c ****     return RtcComputeFutureEventTime( eventInFuture );
+ 854              		.loc 1 385 0
+ 855              		.cfi_startproc
+ 856              		@ args = 0, pretend = 0, frame = 0
+ 857              		@ frame_needed = 0, uses_anonymous_args = 0
+ 858              	.LVL101:
+ 859 0000 08B5     		push	{r3, lr}
+ 860              	.LCFI13:
+ 861              		.cfi_def_cfa_offset 8
+ 862              		.cfi_offset 3, -8
+ 863              		.cfi_offset 14, -4
+ 386:..//Source/stm/hal/timer.c **** }
+ 864              		.loc 1 386 0
+ 865 0002 FFF7FEFF 		bl	RtcComputeFutureEventTime
+ 866              	.LVL102:
+ 387:..//Source/stm/hal/timer.c **** 
+ 867              		.loc 1 387 0
+ 868 0006 08BD     		pop	{r3, pc}
+ 869              		.cfi_endproc
+ 870              	.LFE12:
+ 872              		.section	.text.TimerLowPowerHandler,"ax",%progbits
+ 873              		.align	1
+ 874              		.global	TimerLowPowerHandler
+ 875              		.syntax unified
+ 876              		.thumb
+ 877              		.thumb_func
+ 878              		.fpu softvfp
+ 880              	TimerLowPowerHandler:
+ 881              	.LFB14:
+ 394:..//Source/stm/hal/timer.c **** }
+ARM GAS  /tmp/ccucLmOp.s 			page 25
+
+
+ 395:..//Source/stm/hal/timer.c **** 
+ 396:..//Source/stm/hal/timer.c **** void TimerLowPowerHandler( void )
+ 397:..//Source/stm/hal/timer.c **** {
+ 882              		.loc 1 397 0
+ 883              		.cfi_startproc
+ 884              		@ args = 0, pretend = 0, frame = 0
+ 885              		@ frame_needed = 0, uses_anonymous_args = 0
+ 886 0000 08B5     		push	{r3, lr}
+ 887              	.LCFI14:
+ 888              		.cfi_def_cfa_offset 8
+ 889              		.cfi_offset 3, -8
+ 890              		.cfi_offset 14, -4
+ 398:..//Source/stm/hal/timer.c ****     if( ( TimerListHead != NULL ) && ( TimerListHead->IsRunning == true ) )
+ 891              		.loc 1 398 0
+ 892 0002 0D4B     		ldr	r3, .L99
+ 893 0004 1B68     		ldr	r3, [r3]
+ 894 0006 9BB1     		cbz	r3, .L94
+ 895              		.loc 1 398 0 is_stmt 0 discriminator 1
+ 896 0008 1B7A     		ldrb	r3, [r3, #8]	@ zero_extendqisi2
+ 897 000a 8BB1     		cbz	r3, .L94
+ 399:..//Source/stm/hal/timer.c ****     {
+ 400:..//Source/stm/hal/timer.c ****         if( HasLoopedThroughMain < 5 )
+ 898              		.loc 1 400 0 is_stmt 1
+ 899 000c 0B4B     		ldr	r3, .L99+4
+ 900 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 901 0010 DBB2     		uxtb	r3, r3
+ 902 0012 042B     		cmp	r3, #4
+ 903 0014 05D8     		bhi	.L96
+ 401:..//Source/stm/hal/timer.c ****         {
+ 402:..//Source/stm/hal/timer.c ****             HasLoopedThroughMain++;
+ 904              		.loc 1 402 0
+ 905 0016 094A     		ldr	r2, .L99+4
+ 906 0018 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 907 001a 0133     		adds	r3, r3, #1
+ 908 001c DBB2     		uxtb	r3, r3
+ 909 001e 1370     		strb	r3, [r2]
+ 910 0020 08BD     		pop	{r3, pc}
+ 911              	.L96:
+ 403:..//Source/stm/hal/timer.c ****         }
+ 404:..//Source/stm/hal/timer.c ****         else
+ 405:..//Source/stm/hal/timer.c ****         {
+ 406:..//Source/stm/hal/timer.c ****             HasLoopedThroughMain = 0;
+ 912              		.loc 1 406 0
+ 913 0022 0022     		movs	r2, #0
+ 914 0024 054B     		ldr	r3, .L99+4
+ 915 0026 1A70     		strb	r2, [r3]
+ 407:..//Source/stm/hal/timer.c ****             if( GetBoardPowerSource( ) == BATTERY_POWER )
+ 916              		.loc 1 407 0
+ 917 0028 FFF7FEFF 		bl	GetBoardPowerSource
+ 918              	.LVL103:
+ 919 002c 0128     		cmp	r0, #1
+ 920 002e 00D0     		beq	.L98
+ 921              	.L94:
+ 922 0030 08BD     		pop	{r3, pc}
+ 923              	.L98:
+ 408:..//Source/stm/hal/timer.c ****             {
+ 409:..//Source/stm/hal/timer.c ****                 RtcEnterLowPowerStopMode( );
+ARM GAS  /tmp/ccucLmOp.s 			page 26
+
+
+ 924              		.loc 1 409 0
+ 925 0032 FFF7FEFF 		bl	RtcEnterLowPowerStopMode
+ 926              	.LVL104:
+ 410:..//Source/stm/hal/timer.c ****             }
+ 411:..//Source/stm/hal/timer.c ****         }
+ 412:..//Source/stm/hal/timer.c ****     }
+ 413:..//Source/stm/hal/timer.c **** }
+ 927              		.loc 1 413 0
+ 928 0036 FBE7     		b	.L94
+ 929              	.L100:
+ 930              		.align	2
+ 931              	.L99:
+ 932 0038 00000000 		.word	.LANCHOR0
+ 933 003c 00000000 		.word	.LANCHOR1
+ 934              		.cfi_endproc
+ 935              	.LFE14:
+ 937              		.section	.text.TimerProcess,"ax",%progbits
+ 938              		.align	1
+ 939              		.global	TimerProcess
+ 940              		.syntax unified
+ 941              		.thumb
+ 942              		.thumb_func
+ 943              		.fpu softvfp
+ 945              	TimerProcess:
+ 946              	.LFB15:
+ 414:..//Source/stm/hal/timer.c **** 
+ 415:..//Source/stm/hal/timer.c **** void TimerProcess( void )
+ 416:..//Source/stm/hal/timer.c **** {
+ 947              		.loc 1 416 0
+ 948              		.cfi_startproc
+ 949              		@ args = 0, pretend = 0, frame = 0
+ 950              		@ frame_needed = 0, uses_anonymous_args = 0
+ 951 0000 08B5     		push	{r3, lr}
+ 952              	.LCFI15:
+ 953              		.cfi_def_cfa_offset 8
+ 954              		.cfi_offset 3, -8
+ 955              		.cfi_offset 14, -4
+ 417:..//Source/stm/hal/timer.c ****     RtcProcess( );
+ 956              		.loc 1 417 0
+ 957 0002 FFF7FEFF 		bl	RtcProcess
+ 958              	.LVL105:
+ 959 0006 08BD     		pop	{r3, pc}
+ 960              		.cfi_endproc
+ 961              	.LFE15:
+ 963              		.global	HasLoopedThroughMain
+ 964              		.section	.bss.HasLoopedThroughMain,"aw",%nobits
+ 965              		.set	.LANCHOR1,. + 0
+ 968              	HasLoopedThroughMain:
+ 969 0000 00       		.space	1
+ 970              		.section	.bss.TimerListHead,"aw",%nobits
+ 971              		.align	2
+ 972              		.set	.LANCHOR0,. + 0
+ 975              	TimerListHead:
+ 976 0000 00000000 		.space	4
+ 977              		.text
+ 978              	.Letext0:
+ 979              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ARM GAS  /tmp/ccucLmOp.s 			page 27
+
+
+ 980              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 981              		.file 4 "..//Source/stm/board/rtc-board.h"
+ 982              		.file 5 "..//Source/stm/hal/timer.h"
+ 983              		.file 6 "..//Source/stm/board/board.h"
+ARM GAS  /tmp/ccucLmOp.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 timer.c
+     /tmp/ccucLmOp.s:16     .text.TimerInsertTimer:0000000000000000 $t
+     /tmp/ccucLmOp.s:22     .text.TimerInsertTimer:0000000000000000 TimerInsertTimer
+     /tmp/ccucLmOp.s:140    .text.TimerInsertTimer:0000000000000054 $d
+     /tmp/ccucLmOp.s:145    .text.TimerExists:0000000000000000 $t
+     /tmp/ccucLmOp.s:151    .text.TimerExists:0000000000000000 TimerExists
+     /tmp/ccucLmOp.s:188    .text.TimerExists:0000000000000018 $d
+     /tmp/ccucLmOp.s:193    .text.TimerSetTimeout:0000000000000000 $t
+     /tmp/ccucLmOp.s:199    .text.TimerSetTimeout:0000000000000000 TimerSetTimeout
+     /tmp/ccucLmOp.s:230    .text.TimerSetTimeout:0000000000000018 $d
+     /tmp/ccucLmOp.s:235    .text.TimerInsertNewHeadTimer:0000000000000000 $t
+     /tmp/ccucLmOp.s:241    .text.TimerInsertNewHeadTimer:0000000000000000 TimerInsertNewHeadTimer
+     /tmp/ccucLmOp.s:285    .text.TimerInsertNewHeadTimer:0000000000000024 $d
+     /tmp/ccucLmOp.s:290    .text.TimerInit:0000000000000000 $t
+     /tmp/ccucLmOp.s:297    .text.TimerInit:0000000000000000 TimerInit
+     /tmp/ccucLmOp.s:321    .text.TimerGetValue:0000000000000000 $t
+     /tmp/ccucLmOp.s:328    .text.TimerGetValue:0000000000000000 TimerGetValue
+     /tmp/ccucLmOp.s:348    .text.TimerStart:0000000000000000 $t
+     /tmp/ccucLmOp.s:355    .text.TimerStart:0000000000000000 TimerStart
+     /tmp/ccucLmOp.s:451    .text.TimerStart:0000000000000064 $d
+     /tmp/ccucLmOp.s:456    .text.TimerIrqHandler:0000000000000000 $t
+     /tmp/ccucLmOp.s:463    .text.TimerIrqHandler:0000000000000000 TimerIrqHandler
+     /tmp/ccucLmOp.s:545    .text.TimerIrqHandler:0000000000000050 $d
+     /tmp/ccucLmOp.s:550    .text.TimerStop:0000000000000000 $t
+     /tmp/ccucLmOp.s:557    .text.TimerStop:0000000000000000 TimerStop
+     /tmp/ccucLmOp.s:718    .text.TimerStop:0000000000000098 $d
+     /tmp/ccucLmOp.s:723    .text.TimerReset:0000000000000000 $t
+     /tmp/ccucLmOp.s:730    .text.TimerReset:0000000000000000 TimerReset
+     /tmp/ccucLmOp.s:755    .text.TimerSetValue:0000000000000000 $t
+     /tmp/ccucLmOp.s:762    .text.TimerSetValue:0000000000000000 TimerSetValue
+     /tmp/ccucLmOp.s:790    .text.TimerGetCurrentTime:0000000000000000 $t
+     /tmp/ccucLmOp.s:797    .text.TimerGetCurrentTime:0000000000000000 TimerGetCurrentTime
+     /tmp/ccucLmOp.s:817    .text.TimerGetElapsedTime:0000000000000000 $t
+     /tmp/ccucLmOp.s:824    .text.TimerGetElapsedTime:0000000000000000 TimerGetElapsedTime
+     /tmp/ccucLmOp.s:845    .text.TimerGetFutureTime:0000000000000000 $t
+     /tmp/ccucLmOp.s:852    .text.TimerGetFutureTime:0000000000000000 TimerGetFutureTime
+     /tmp/ccucLmOp.s:873    .text.TimerLowPowerHandler:0000000000000000 $t
+     /tmp/ccucLmOp.s:880    .text.TimerLowPowerHandler:0000000000000000 TimerLowPowerHandler
+     /tmp/ccucLmOp.s:932    .text.TimerLowPowerHandler:0000000000000038 $d
+     /tmp/ccucLmOp.s:938    .text.TimerProcess:0000000000000000 $t
+     /tmp/ccucLmOp.s:945    .text.TimerProcess:0000000000000000 TimerProcess
+     /tmp/ccucLmOp.s:968    .bss.HasLoopedThroughMain:0000000000000000 HasLoopedThroughMain
+     /tmp/ccucLmOp.s:969    .bss.HasLoopedThroughMain:0000000000000000 $d
+     /tmp/ccucLmOp.s:971    .bss.TimerListHead:0000000000000000 $d
+     /tmp/ccucLmOp.s:975    .bss.TimerListHead:0000000000000000 TimerListHead
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+RtcGetAdjustedTimeoutValue
+RtcSetTimeout
+RtcGetElapsedAlarmTime
+BoardDisableIrq
+BoardEnableIrq
+RtcGetTimerValue
+RtcComputeElapsedTime
+RtcComputeFutureEventTime
+ARM GAS  /tmp/ccucLmOp.s 			page 29
+
+
+GetBoardPowerSource
+RtcEnterLowPowerStopMode
+RtcProcess

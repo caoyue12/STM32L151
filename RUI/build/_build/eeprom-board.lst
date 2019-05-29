@@ -1,0 +1,1009 @@
+ARM GAS  /tmp/ccT83oWC.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"eeprom-board.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.EepromMcuWriteBuffer,"ax",%progbits
+  16              		.align	1
+  17              		.global	EepromMcuWriteBuffer
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	EepromMcuWriteBuffer:
+  24              	.LFB0:
+  25              		.file 1 "..//Source/stm/board/board_stm32l151cd/eeprom-board.c"
+   1:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** /*!
+   2:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \file      eeprom-board.c
+   3:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *
+   4:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \brief     Target board EEPROM driver implementation
+   5:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *
+   6:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *
+   8:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \code
+   9:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *                ______                              _
+  10:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *               / _____)             _              | |
+  11:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *
+  17:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \endcode
+  18:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *
+  19:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  *
+  21:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****  */
+  23:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** #include "utilities.h"
+  24:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** #include "i2c-board.h"
+  25:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** #include "eeprom-board.h"
+  26:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  27:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** #define DEVICE_I2C_ADDRESS                          0xA8
+  28:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  29:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** static uint8_t I2cDeviceAddr = DEVICE_I2C_ADDRESS;
+  30:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  31:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** #define EE_PAGE_SIZE                                64
+  32:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  33:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** extern I2c_t I2c;
+ARM GAS  /tmp/ccT83oWC.s 			page 2
+
+
+  34:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  35:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** uint8_t EepromMcuWriteBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
+  36:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** {
+  26              		.loc 1 36 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 32
+  34              		.cfi_offset 4, -32
+  35              		.cfi_offset 5, -28
+  36              		.cfi_offset 6, -24
+  37              		.cfi_offset 7, -20
+  38              		.cfi_offset 8, -16
+  39              		.cfi_offset 9, -12
+  40              		.cfi_offset 10, -8
+  41              		.cfi_offset 14, -4
+  42 0004 82B0     		sub	sp, sp, #8
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 40
+  45 0006 0446     		mov	r4, r0
+  46 0008 0D46     		mov	r5, r1
+  47 000a 1746     		mov	r7, r2
+  48              	.LVL1:
+  37:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     uint8_t nbPage = 0;
+  38:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     uint8_t nbBytes = 0;
+  39:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     uint8_t nbBytesRemaining = 0;
+  40:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     uint16_t lAddr = 0;
+  41:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  42:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     lAddr = addr % EE_PAGE_SIZE;
+  49              		.loc 1 42 0
+  50 000c 00F03F0A 		and	r10, r0, #63
+  51              	.LVL2:
+  43:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     nbBytesRemaining = EE_PAGE_SIZE - lAddr;
+  44:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     nbPage =  size / EE_PAGE_SIZE;
+  52              		.loc 1 44 0
+  53 0010 C2F38716 		ubfx	r6, r2, #6, #8
+  54              	.LVL3:
+  45:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     nbBytes = size % EE_PAGE_SIZE;
+  55              		.loc 1 45 0
+  56 0014 02F03F08 		and	r8, r2, #63
+  57              	.LVL4:
+  46:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  47:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_16 );
+  58              		.loc 1 47 0
+  59 0018 0121     		movs	r1, #1
+  60              	.LVL5:
+  61 001a A548     		ldr	r0, .L44
+  62              	.LVL6:
+  63 001c FFF7FEFF 		bl	I2cSetAddrSize
+  64              	.LVL7:
+  48:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     /*!< If lAddr is EE_PAGE_SIZE aligned  */
+  49:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     if( lAddr == 0 )
+  65              		.loc 1 49 0
+  66 0020 BAF1000F 		cmp	r10, #0
+ARM GAS  /tmp/ccT83oWC.s 			page 3
+
+
+  67 0024 69D1     		bne	.L2
+  50:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     {
+  51:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         /*!< If size < EE_PAGE_SIZE */
+  52:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         if( nbPage == 0 )
+  68              		.loc 1 52 0
+  69 0026 D6B1     		cbz	r6, .L26
+  70              	.LVL8:
+  71              	.L3:
+  53:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         {
+  54:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, size ) == FAIL )
+  55:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+  56:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+  57:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 return FAIL;
+  58:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+  59:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+  60:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+  61:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+  62:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 return FAIL;
+  63:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+  64:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         }
+  65:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         /*!< If size > EE_PAGE_SIZE */
+  66:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         else
+  67:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         {
+  68:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             while( nbPage-- )
+  72              		.loc 1 68 0
+  73 0028 731E     		subs	r3, r6, #1
+  74 002a DFB2     		uxtb	r7, r3
+  75              	.LVL9:
+  76 002c 002E     		cmp	r6, #0
+  77 002e 3BD0     		beq	.L27
+  69:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+  70:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, EE_PAGE_SIZE ) == FAIL )
+  78              		.loc 1 70 0
+  79 0030 A04B     		ldr	r3, .L44+4
+  80 0032 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+  81 0034 4023     		movs	r3, #64
+  82 0036 0093     		str	r3, [sp]
+  83 0038 2B46     		mov	r3, r5
+  84 003a 2246     		mov	r2, r4
+  85 003c 9C48     		ldr	r0, .L44
+  86 003e FFF7FEFF 		bl	I2cWriteBuffer
+  87              	.LVL10:
+  88 0042 0646     		mov	r6, r0
+  89 0044 30B3     		cbz	r0, .L28
+  71:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+  72:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+  73:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+  74:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+  75:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+  90              		.loc 1 75 0
+  91 0046 9B4B     		ldr	r3, .L44+4
+  92 0048 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+  93 004a 9948     		ldr	r0, .L44
+  94 004c FFF7FEFF 		bl	I2cMcuWaitStandbyState
+  95              	.LVL11:
+  96 0050 0646     		mov	r6, r0
+  97 0052 20B3     		cbz	r0, .L29
+ARM GAS  /tmp/ccT83oWC.s 			page 4
+
+
+  76:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+  77:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+  78:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+  79:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+  80:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 addr +=  EE_PAGE_SIZE;
+  98              		.loc 1 80 0
+  99 0054 4034     		adds	r4, r4, #64
+ 100              	.LVL12:
+ 101 0056 A4B2     		uxth	r4, r4
+ 102              	.LVL13:
+  81:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 buffer += EE_PAGE_SIZE;
+ 103              		.loc 1 81 0
+ 104 0058 4035     		adds	r5, r5, #64
+ 105              	.LVL14:
+  68:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 106              		.loc 1 68 0
+ 107 005a 3E46     		mov	r6, r7
+ 108 005c E4E7     		b	.L3
+ 109              	.LVL15:
+ 110              	.L26:
+  54:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 111              		.loc 1 54 0
+ 112 005e 954B     		ldr	r3, .L44+4
+ 113 0060 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 114 0062 0097     		str	r7, [sp]
+ 115 0064 2B46     		mov	r3, r5
+ 116 0066 2246     		mov	r2, r4
+ 117 0068 9148     		ldr	r0, .L44
+ 118 006a FFF7FEFF 		bl	I2cWriteBuffer
+ 119              	.LVL16:
+ 120 006e 0646     		mov	r6, r0
+ 121              	.LVL17:
+ 122 0070 58B1     		cbz	r0, .L30
+  59:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 123              		.loc 1 59 0
+ 124 0072 904B     		ldr	r3, .L44+4
+ 125 0074 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 126 0076 8E48     		ldr	r0, .L44
+ 127 0078 FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 128              	.LVL18:
+ 129 007c 0646     		mov	r6, r0
+ 130 007e B0B9     		cbnz	r0, .L6
+  61:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 return FAIL;
+ 131              		.loc 1 61 0
+ 132 0080 0021     		movs	r1, #0
+ 133 0082 8B48     		ldr	r0, .L44
+ 134 0084 FFF7FEFF 		bl	I2cSetAddrSize
+ 135              	.LVL19:
+  62:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 136              		.loc 1 62 0
+ 137 0088 16E0     		b	.L5
+ 138              	.L30:
+  56:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 return FAIL;
+ 139              		.loc 1 56 0
+ 140 008a 0021     		movs	r1, #0
+ 141 008c 8848     		ldr	r0, .L44
+ 142 008e FFF7FEFF 		bl	I2cSetAddrSize
+ARM GAS  /tmp/ccT83oWC.s 			page 5
+
+
+ 143              	.LVL20:
+  57:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 144              		.loc 1 57 0
+ 145 0092 11E0     		b	.L5
+ 146              	.LVL21:
+ 147              	.L28:
+  72:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 148              		.loc 1 72 0
+ 149 0094 0021     		movs	r1, #0
+ 150 0096 8648     		ldr	r0, .L44
+ 151 0098 FFF7FEFF 		bl	I2cSetAddrSize
+ 152              	.LVL22:
+  73:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 153              		.loc 1 73 0
+ 154 009c 0CE0     		b	.L5
+ 155              	.L29:
+  77:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 156              		.loc 1 77 0
+ 157 009e 0021     		movs	r1, #0
+ 158 00a0 8348     		ldr	r0, .L44
+ 159 00a2 FFF7FEFF 		bl	I2cSetAddrSize
+ 160              	.LVL23:
+  78:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 161              		.loc 1 78 0
+ 162 00a6 07E0     		b	.L5
+ 163              	.L27:
+  82:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+  83:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+  84:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             if( nbBytes != 0 )
+ 164              		.loc 1 84 0
+ 165 00a8 B8F1000F 		cmp	r8, #0
+ 166 00ac 08D1     		bne	.L31
+ 167              	.LVL24:
+ 168              	.L6:
+  85:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+  86:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, nbBytes ) == FAIL )
+  87:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+  88:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+  89:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+  90:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+  91:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+  92:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+  93:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+  94:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+  95:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+  96:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+  97:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         }
+  98:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     }
+  99:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     /*!< If addr is not EE_PAGE_SIZE aligned  */
+ 100:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     else
+ 101:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     {
+ 102:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         /*!< If size < EE_PAGE_SIZE */
+ 103:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         if( nbPage== 0 )
+ 104:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         {
+ 105:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             /*!< If the number of data to be written is more than the remaining space
+ 106:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             in the current page: */
+ 107:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             if ( size > nbBytesRemaining )
+ARM GAS  /tmp/ccT83oWC.s 			page 6
+
+
+ 108:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 109:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, nbBytesRemaining ) == FAIL )
+ 110:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 111:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 112:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 113:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 114:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+ 115:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 116:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 117:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 118:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 119:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 120:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, ( addr + nbBytesRemaining ),
+ 121:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                                                    ( uint8_t* )( buffer + nbBytesRemaining ),
+ 122:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                                                    ( size - nbBytesRemaining ) ) == FAIL )
+ 123:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 124:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 125:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 126:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 127:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+ 128:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 129:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 130:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 131:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 132:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 133:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             else
+ 134:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 135:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, nbBytes ) == FAIL )
+ 136:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 137:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 138:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 139:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 140:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+ 141:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 142:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 143:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 144:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 145:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 146:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         }
+ 147:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         /*!< If size > EE_PAGE_SIZE */
+ 148:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         else
+ 149:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         {
+ 150:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             size -= nbBytesRemaining;
+ 151:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             nbPage =  size / EE_PAGE_SIZE;
+ 152:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             nbBytes = size % EE_PAGE_SIZE;
+ 153:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 154:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             if( nbBytesRemaining != 0 )
+ 155:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 156:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, nbBytesRemaining ) == FAIL )
+ 157:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 158:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 159:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 160:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 161:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+ 162:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 163:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 164:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ARM GAS  /tmp/ccT83oWC.s 			page 7
+
+
+ 165:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 166:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 addr += nbBytesRemaining;
+ 167:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 buffer += nbBytesRemaining;
+ 168:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 169:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 170:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             while( nbPage-- )
+ 171:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 172:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, EE_PAGE_SIZE ) == FAIL )
+ 173:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 174:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 175:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 176:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 177:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+ 178:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 179:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 180:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 181:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 182:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 addr +=  EE_PAGE_SIZE;
+ 183:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 buffer += EE_PAGE_SIZE;
+ 184:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 185:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             if( nbBytes != 0 )
+ 186:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 187:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cWriteBuffer( &I2c, I2cDeviceAddr, addr, buffer, nbBytes ) == FAIL )
+ 188:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 189:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 190:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 191:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 192:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 if( I2cMcuWaitStandbyState( &I2c, I2cDeviceAddr ) == FAIL )
+ 193:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 194:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 195:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 196:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 197:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 198:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         }
+ 199:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     }
+ 200:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 169              		.loc 1 200 0
+ 170 00ae 0021     		movs	r1, #0
+ 171 00b0 7F48     		ldr	r0, .L44
+ 172 00b2 FFF7FEFF 		bl	I2cSetAddrSize
+ 173              	.LVL25:
+ 201:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     return SUCCESS;
+ 174              		.loc 1 201 0
+ 175 00b6 0126     		movs	r6, #1
+ 176              	.L5:
+ 202:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** }
+ 177              		.loc 1 202 0
+ 178 00b8 3046     		mov	r0, r6
+ 179 00ba 02B0     		add	sp, sp, #8
+ 180              	.LCFI2:
+ 181              		.cfi_remember_state
+ 182              		.cfi_def_cfa_offset 32
+ 183              		@ sp needed
+ 184 00bc BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 185              	.LVL26:
+ 186              	.L31:
+ 187              	.LCFI3:
+ARM GAS  /tmp/ccT83oWC.s 			page 8
+
+
+ 188              		.cfi_restore_state
+  86:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 189              		.loc 1 86 0
+ 190 00c0 7C4B     		ldr	r3, .L44+4
+ 191 00c2 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 192 00c4 CDF80080 		str	r8, [sp]
+ 193 00c8 2B46     		mov	r3, r5
+ 194 00ca 2246     		mov	r2, r4
+ 195 00cc 7848     		ldr	r0, .L44
+ 196 00ce FFF7FEFF 		bl	I2cWriteBuffer
+ 197              	.LVL27:
+ 198 00d2 0646     		mov	r6, r0
+ 199 00d4 60B1     		cbz	r0, .L32
+  91:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 200              		.loc 1 91 0
+ 201 00d6 774B     		ldr	r3, .L44+4
+ 202 00d8 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 203 00da 7548     		ldr	r0, .L44
+ 204 00dc FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 205              	.LVL28:
+ 206 00e0 0646     		mov	r6, r0
+ 207 00e2 0028     		cmp	r0, #0
+ 208 00e4 E3D1     		bne	.L6
+  93:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 209              		.loc 1 93 0
+ 210 00e6 0021     		movs	r1, #0
+ 211 00e8 7148     		ldr	r0, .L44
+ 212 00ea FFF7FEFF 		bl	I2cSetAddrSize
+ 213              	.LVL29:
+  94:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 214              		.loc 1 94 0
+ 215 00ee E3E7     		b	.L5
+ 216              	.L32:
+  88:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 217              		.loc 1 88 0
+ 218 00f0 0021     		movs	r1, #0
+ 219 00f2 6F48     		ldr	r0, .L44
+ 220 00f4 FFF7FEFF 		bl	I2cSetAddrSize
+ 221              	.LVL30:
+  89:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 222              		.loc 1 89 0
+ 223 00f8 DEE7     		b	.L5
+ 224              	.LVL31:
+ 225              	.L2:
+ 226 00fa CAF14009 		rsb	r9, r10, #64
+ 227 00fe 5FFA89F9 		uxtb	r9, r9
+ 103:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****         {
+ 228              		.loc 1 103 0
+ 229 0102 002E     		cmp	r6, #0
+ 230 0104 5FD1     		bne	.L11
+ 107:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 231              		.loc 1 107 0
+ 232 0106 1FFA89FA 		uxth	r10, r9
+ 233              	.LVL32:
+ 234 010a 5745     		cmp	r7, r10
+ 235 010c 3DD9     		bls	.L12
+ 109:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ARM GAS  /tmp/ccT83oWC.s 			page 9
+
+
+ 236              		.loc 1 109 0
+ 237 010e 694B     		ldr	r3, .L44+4
+ 238 0110 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 239 0112 CDF800A0 		str	r10, [sp]
+ 240 0116 2B46     		mov	r3, r5
+ 241 0118 2246     		mov	r2, r4
+ 242 011a 6548     		ldr	r0, .L44
+ 243 011c FFF7FEFF 		bl	I2cWriteBuffer
+ 244              	.LVL33:
+ 245 0120 0646     		mov	r6, r0
+ 246              	.LVL34:
+ 247 0122 18B3     		cbz	r0, .L33
+ 114:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 248              		.loc 1 114 0
+ 249 0124 634B     		ldr	r3, .L44+4
+ 250 0126 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 251 0128 6148     		ldr	r0, .L44
+ 252 012a FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 253              	.LVL35:
+ 254 012e 0646     		mov	r6, r0
+ 255 0130 08B3     		cbz	r0, .L34
+ 120:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                                                    ( uint8_t* )( buffer + nbBytesRemaining ),
+ 256              		.loc 1 120 0
+ 257 0132 04EB0A02 		add	r2, r4, r10
+ 258 0136 5F4B     		ldr	r3, .L44+4
+ 259 0138 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 260 013a A7EB0A03 		sub	r3, r7, r10
+ 261 013e 9BB2     		uxth	r3, r3
+ 262 0140 0093     		str	r3, [sp]
+ 263 0142 05EB0903 		add	r3, r5, r9
+ 264 0146 92B2     		uxth	r2, r2
+ 265 0148 5948     		ldr	r0, .L44
+ 266 014a FFF7FEFF 		bl	I2cWriteBuffer
+ 267              	.LVL36:
+ 268 014e 0646     		mov	r6, r0
+ 269 0150 B0B1     		cbz	r0, .L35
+ 127:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 270              		.loc 1 127 0
+ 271 0152 584B     		ldr	r3, .L44+4
+ 272 0154 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 273 0156 5648     		ldr	r0, .L44
+ 274 0158 FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 275              	.LVL37:
+ 276 015c 0646     		mov	r6, r0
+ 277 015e 0028     		cmp	r0, #0
+ 278 0160 A5D1     		bne	.L6
+ 129:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 279              		.loc 1 129 0
+ 280 0162 0021     		movs	r1, #0
+ 281 0164 5248     		ldr	r0, .L44
+ 282 0166 FFF7FEFF 		bl	I2cSetAddrSize
+ 283              	.LVL38:
+ 130:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 284              		.loc 1 130 0
+ 285 016a A5E7     		b	.L5
+ 286              	.L33:
+ 111:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ARM GAS  /tmp/ccT83oWC.s 			page 10
+
+
+ 287              		.loc 1 111 0
+ 288 016c 0021     		movs	r1, #0
+ 289 016e 5048     		ldr	r0, .L44
+ 290 0170 FFF7FEFF 		bl	I2cSetAddrSize
+ 291              	.LVL39:
+ 112:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 292              		.loc 1 112 0
+ 293 0174 A0E7     		b	.L5
+ 294              	.L34:
+ 116:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 295              		.loc 1 116 0
+ 296 0176 0021     		movs	r1, #0
+ 297 0178 4D48     		ldr	r0, .L44
+ 298 017a FFF7FEFF 		bl	I2cSetAddrSize
+ 299              	.LVL40:
+ 117:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 300              		.loc 1 117 0
+ 301 017e 9BE7     		b	.L5
+ 302              	.L35:
+ 124:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 303              		.loc 1 124 0
+ 304 0180 0021     		movs	r1, #0
+ 305 0182 4B48     		ldr	r0, .L44
+ 306 0184 FFF7FEFF 		bl	I2cSetAddrSize
+ 307              	.LVL41:
+ 125:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 308              		.loc 1 125 0
+ 309 0188 96E7     		b	.L5
+ 310              	.LVL42:
+ 311              	.L12:
+ 135:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 312              		.loc 1 135 0
+ 313 018a 4A4B     		ldr	r3, .L44+4
+ 314 018c 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 315 018e CDF80080 		str	r8, [sp]
+ 316 0192 2B46     		mov	r3, r5
+ 317 0194 2246     		mov	r2, r4
+ 318 0196 4648     		ldr	r0, .L44
+ 319 0198 FFF7FEFF 		bl	I2cWriteBuffer
+ 320              	.LVL43:
+ 321 019c 0646     		mov	r6, r0
+ 322              	.LVL44:
+ 323 019e 68B1     		cbz	r0, .L36
+ 140:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 324              		.loc 1 140 0
+ 325 01a0 444B     		ldr	r3, .L44+4
+ 326 01a2 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 327 01a4 4248     		ldr	r0, .L44
+ 328 01a6 FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 329              	.LVL45:
+ 330 01aa 0646     		mov	r6, r0
+ 331 01ac 0028     		cmp	r0, #0
+ 332 01ae 7FF47EAF 		bne	.L6
+ 142:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 333              		.loc 1 142 0
+ 334 01b2 0021     		movs	r1, #0
+ 335 01b4 3E48     		ldr	r0, .L44
+ARM GAS  /tmp/ccT83oWC.s 			page 11
+
+
+ 336 01b6 FFF7FEFF 		bl	I2cSetAddrSize
+ 337              	.LVL46:
+ 143:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 338              		.loc 1 143 0
+ 339 01ba 7DE7     		b	.L5
+ 340              	.L36:
+ 137:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 341              		.loc 1 137 0
+ 342 01bc 0021     		movs	r1, #0
+ 343 01be 3C48     		ldr	r0, .L44
+ 344 01c0 FFF7FEFF 		bl	I2cSetAddrSize
+ 345              	.LVL47:
+ 138:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 346              		.loc 1 138 0
+ 347 01c4 78E7     		b	.L5
+ 348              	.LVL48:
+ 349              	.L11:
+ 150:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             nbPage =  size / EE_PAGE_SIZE;
+ 350              		.loc 1 150 0
+ 351 01c6 1FFA89F8 		uxth	r8, r9
+ 352              	.LVL49:
+ 353 01ca A7EB0807 		sub	r7, r7, r8
+ 354              	.LVL50:
+ 355 01ce BFB2     		uxth	r7, r7
+ 356              	.LVL51:
+ 151:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             nbBytes = size % EE_PAGE_SIZE;
+ 357              		.loc 1 151 0
+ 358 01d0 C7F3871A 		ubfx	r10, r7, #6, #8
+ 359              	.LVL52:
+ 152:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 360              		.loc 1 152 0
+ 361 01d4 07F03F07 		and	r7, r7, #63
+ 362              	.LVL53:
+ 154:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 363              		.loc 1 154 0
+ 364 01d8 B9F1000F 		cmp	r9, #0
+ 365 01dc 1DD1     		bne	.L37
+ 366              	.LVL54:
+ 367              	.L20:
+ 170:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 368              		.loc 1 170 0
+ 369 01de 0AF1FF33 		add	r3, r10, #-1
+ 370 01e2 5FFA83F8 		uxtb	r8, r3
+ 371              	.LVL55:
+ 372 01e6 BAF1000F 		cmp	r10, #0
+ 373 01ea 40D0     		beq	.L38
+ 172:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 374              		.loc 1 172 0
+ 375 01ec 314B     		ldr	r3, .L44+4
+ 376 01ee 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 377 01f0 4023     		movs	r3, #64
+ 378 01f2 0093     		str	r3, [sp]
+ 379 01f4 2B46     		mov	r3, r5
+ 380 01f6 2246     		mov	r2, r4
+ 381 01f8 2D48     		ldr	r0, .L44
+ 382 01fa FFF7FEFF 		bl	I2cWriteBuffer
+ 383              	.LVL56:
+ARM GAS  /tmp/ccT83oWC.s 			page 12
+
+
+ 384 01fe 0646     		mov	r6, r0
+ 385 0200 58B3     		cbz	r0, .L39
+ 177:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 386              		.loc 1 177 0
+ 387 0202 2C4B     		ldr	r3, .L44+4
+ 388 0204 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 389 0206 2A48     		ldr	r0, .L44
+ 390 0208 FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 391              	.LVL57:
+ 392 020c 0646     		mov	r6, r0
+ 393 020e 48B3     		cbz	r0, .L40
+ 182:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 buffer += EE_PAGE_SIZE;
+ 394              		.loc 1 182 0
+ 395 0210 4034     		adds	r4, r4, #64
+ 396              	.LVL58:
+ 397 0212 A4B2     		uxth	r4, r4
+ 398              	.LVL59:
+ 183:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 399              		.loc 1 183 0
+ 400 0214 4035     		adds	r5, r5, #64
+ 401              	.LVL60:
+ 170:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 402              		.loc 1 170 0
+ 403 0216 C246     		mov	r10, r8
+ 404 0218 E1E7     		b	.L20
+ 405              	.LVL61:
+ 406              	.L37:
+ 156:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 407              		.loc 1 156 0
+ 408 021a 264B     		ldr	r3, .L44+4
+ 409 021c 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 410 021e CDF80080 		str	r8, [sp]
+ 411 0222 2B46     		mov	r3, r5
+ 412 0224 2246     		mov	r2, r4
+ 413 0226 2248     		ldr	r0, .L44
+ 414 0228 FFF7FEFF 		bl	I2cWriteBuffer
+ 415              	.LVL62:
+ 416 022c 0646     		mov	r6, r0
+ 417 022e 50B1     		cbz	r0, .L41
+ 161:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 418              		.loc 1 161 0
+ 419 0230 204B     		ldr	r3, .L44+4
+ 420 0232 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 421 0234 1E48     		ldr	r0, .L44
+ 422 0236 FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 423              	.LVL63:
+ 424 023a 0646     		mov	r6, r0
+ 425 023c 40B1     		cbz	r0, .L42
+ 166:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 buffer += nbBytesRemaining;
+ 426              		.loc 1 166 0
+ 427 023e 4444     		add	r4, r4, r8
+ 428              	.LVL64:
+ 429 0240 A4B2     		uxth	r4, r4
+ 430              	.LVL65:
+ 167:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             }
+ 431              		.loc 1 167 0
+ 432 0242 4D44     		add	r5, r5, r9
+ARM GAS  /tmp/ccT83oWC.s 			page 13
+
+
+ 433              	.LVL66:
+ 434 0244 CBE7     		b	.L20
+ 435              	.LVL67:
+ 436              	.L41:
+ 158:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 437              		.loc 1 158 0
+ 438 0246 0021     		movs	r1, #0
+ 439 0248 1948     		ldr	r0, .L44
+ 440 024a FFF7FEFF 		bl	I2cSetAddrSize
+ 441              	.LVL68:
+ 159:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 442              		.loc 1 159 0
+ 443 024e 33E7     		b	.L5
+ 444              	.L42:
+ 163:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 445              		.loc 1 163 0
+ 446 0250 0021     		movs	r1, #0
+ 447 0252 1748     		ldr	r0, .L44
+ 448 0254 FFF7FEFF 		bl	I2cSetAddrSize
+ 449              	.LVL69:
+ 164:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 450              		.loc 1 164 0
+ 451 0258 2EE7     		b	.L5
+ 452              	.LVL70:
+ 453              	.L39:
+ 174:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 454              		.loc 1 174 0
+ 455 025a 0021     		movs	r1, #0
+ 456 025c 1448     		ldr	r0, .L44
+ 457 025e FFF7FEFF 		bl	I2cSetAddrSize
+ 458              	.LVL71:
+ 175:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 459              		.loc 1 175 0
+ 460 0262 29E7     		b	.L5
+ 461              	.L40:
+ 179:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 462              		.loc 1 179 0
+ 463 0264 0021     		movs	r1, #0
+ 464 0266 1248     		ldr	r0, .L44
+ 465 0268 FFF7FEFF 		bl	I2cSetAddrSize
+ 466              	.LVL72:
+ 180:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 467              		.loc 1 180 0
+ 468 026c 24E7     		b	.L5
+ 469              	.L38:
+ 185:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****             {
+ 470              		.loc 1 185 0
+ 471 026e 002F     		cmp	r7, #0
+ 472 0270 3FF41DAF 		beq	.L6
+ 187:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 473              		.loc 1 187 0
+ 474 0274 0F4B     		ldr	r3, .L44+4
+ 475 0276 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 476 0278 0097     		str	r7, [sp]
+ 477 027a 2B46     		mov	r3, r5
+ 478 027c 2246     		mov	r2, r4
+ 479 027e 0C48     		ldr	r0, .L44
+ARM GAS  /tmp/ccT83oWC.s 			page 14
+
+
+ 480 0280 FFF7FEFF 		bl	I2cWriteBuffer
+ 481              	.LVL73:
+ 482 0284 0646     		mov	r6, r0
+ 483 0286 68B1     		cbz	r0, .L43
+ 192:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 {
+ 484              		.loc 1 192 0
+ 485 0288 0A4B     		ldr	r3, .L44+4
+ 486 028a 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 487 028c 0848     		ldr	r0, .L44
+ 488 028e FFF7FEFF 		bl	I2cMcuWaitStandbyState
+ 489              	.LVL74:
+ 490 0292 0646     		mov	r6, r0
+ 491 0294 0028     		cmp	r0, #0
+ 492 0296 7FF40AAF 		bne	.L6
+ 194:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 493              		.loc 1 194 0
+ 494 029a 0021     		movs	r1, #0
+ 495 029c 0448     		ldr	r0, .L44
+ 496 029e FFF7FEFF 		bl	I2cSetAddrSize
+ 497              	.LVL75:
+ 195:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 498              		.loc 1 195 0
+ 499 02a2 09E7     		b	.L5
+ 500              	.L43:
+ 189:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                     return FAIL;
+ 501              		.loc 1 189 0
+ 502 02a4 0021     		movs	r1, #0
+ 503 02a6 0248     		ldr	r0, .L44
+ 504 02a8 FFF7FEFF 		bl	I2cSetAddrSize
+ 505              	.LVL76:
+ 190:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****                 }
+ 506              		.loc 1 190 0
+ 507 02ac 04E7     		b	.L5
+ 508              	.L45:
+ 509 02ae 00BF     		.align	2
+ 510              	.L44:
+ 511 02b0 00000000 		.word	I2c
+ 512 02b4 00000000 		.word	.LANCHOR0
+ 513              		.cfi_endproc
+ 514              	.LFE0:
+ 516              		.section	.text.EepromMcuReadBuffer,"ax",%progbits
+ 517              		.align	1
+ 518              		.global	EepromMcuReadBuffer
+ 519              		.syntax unified
+ 520              		.thumb
+ 521              		.thumb_func
+ 522              		.fpu softvfp
+ 524              	EepromMcuReadBuffer:
+ 525              	.LFB1:
+ 203:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 204:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** uint8_t EepromMcuReadBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
+ 205:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** {
+ 526              		.loc 1 205 0
+ 527              		.cfi_startproc
+ 528              		@ args = 0, pretend = 0, frame = 0
+ 529              		@ frame_needed = 0, uses_anonymous_args = 0
+ 530              	.LVL77:
+ARM GAS  /tmp/ccT83oWC.s 			page 15
+
+
+ 531 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 532              	.LCFI4:
+ 533              		.cfi_def_cfa_offset 20
+ 534              		.cfi_offset 4, -20
+ 535              		.cfi_offset 5, -16
+ 536              		.cfi_offset 6, -12
+ 537              		.cfi_offset 7, -8
+ 538              		.cfi_offset 14, -4
+ 539 0002 83B0     		sub	sp, sp, #12
+ 540              	.LCFI5:
+ 541              		.cfi_def_cfa_offset 32
+ 542 0004 0546     		mov	r5, r0
+ 543 0006 0E46     		mov	r6, r1
+ 544 0008 1746     		mov	r7, r2
+ 545              	.LVL78:
+ 206:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     uint8_t status = FAIL;
+ 207:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 208:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_16 );
+ 546              		.loc 1 208 0
+ 547 000a 0A4C     		ldr	r4, .L48
+ 548 000c 0121     		movs	r1, #1
+ 549              	.LVL79:
+ 550 000e 2046     		mov	r0, r4
+ 551              	.LVL80:
+ 552 0010 FFF7FEFF 		bl	I2cSetAddrSize
+ 553              	.LVL81:
+ 209:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 210:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     status = I2cReadBuffer( &I2c, I2cDeviceAddr, addr, buffer, size );
+ 554              		.loc 1 210 0
+ 555 0014 084B     		ldr	r3, .L48+4
+ 556 0016 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 557 0018 0097     		str	r7, [sp]
+ 558 001a 3346     		mov	r3, r6
+ 559 001c 2A46     		mov	r2, r5
+ 560 001e 2046     		mov	r0, r4
+ 561 0020 FFF7FEFF 		bl	I2cReadBuffer
+ 562              	.LVL82:
+ 563 0024 0546     		mov	r5, r0
+ 564              	.LVL83:
+ 211:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 212:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     I2cSetAddrSize( &I2c, I2C_ADDR_SIZE_8 );
+ 565              		.loc 1 212 0
+ 566 0026 0021     		movs	r1, #0
+ 567 0028 2046     		mov	r0, r4
+ 568 002a FFF7FEFF 		bl	I2cSetAddrSize
+ 569              	.LVL84:
+ 213:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 214:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     return status;
+ 215:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** }
+ 570              		.loc 1 215 0
+ 571 002e 2846     		mov	r0, r5
+ 572 0030 03B0     		add	sp, sp, #12
+ 573              	.LCFI6:
+ 574              		.cfi_def_cfa_offset 20
+ 575              		@ sp needed
+ 576 0032 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 577              	.LVL85:
+ARM GAS  /tmp/ccT83oWC.s 			page 16
+
+
+ 578              	.L49:
+ 579              		.align	2
+ 580              	.L48:
+ 581 0034 00000000 		.word	I2c
+ 582 0038 00000000 		.word	.LANCHOR0
+ 583              		.cfi_endproc
+ 584              	.LFE1:
+ 586              		.section	.text.EepromMcuSetDeviceAddr,"ax",%progbits
+ 587              		.align	1
+ 588              		.global	EepromMcuSetDeviceAddr
+ 589              		.syntax unified
+ 590              		.thumb
+ 591              		.thumb_func
+ 592              		.fpu softvfp
+ 594              	EepromMcuSetDeviceAddr:
+ 595              	.LFB2:
+ 216:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 217:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** void EepromMcuSetDeviceAddr( uint8_t addr )
+ 218:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** {
+ 596              		.loc 1 218 0
+ 597              		.cfi_startproc
+ 598              		@ args = 0, pretend = 0, frame = 0
+ 599              		@ frame_needed = 0, uses_anonymous_args = 0
+ 600              		@ link register save eliminated.
+ 601              	.LVL86:
+ 219:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     I2cDeviceAddr = addr;
+ 602              		.loc 1 219 0
+ 603 0000 014B     		ldr	r3, .L51
+ 604 0002 1870     		strb	r0, [r3]
+ 605 0004 7047     		bx	lr
+ 606              	.L52:
+ 607 0006 00BF     		.align	2
+ 608              	.L51:
+ 609 0008 00000000 		.word	.LANCHOR0
+ 610              		.cfi_endproc
+ 611              	.LFE2:
+ 613              		.section	.text.EepromMcuGetDeviceAddr,"ax",%progbits
+ 614              		.align	1
+ 615              		.global	EepromMcuGetDeviceAddr
+ 616              		.syntax unified
+ 617              		.thumb
+ 618              		.thumb_func
+ 619              		.fpu softvfp
+ 621              	EepromMcuGetDeviceAddr:
+ 622              	.LFB3:
+ 220:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** }
+ 221:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** 
+ 222:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** uint8_t EepromMcuGetDeviceAddr( void )
+ 223:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** {
+ 623              		.loc 1 223 0
+ 624              		.cfi_startproc
+ 625              		@ args = 0, pretend = 0, frame = 0
+ 626              		@ frame_needed = 0, uses_anonymous_args = 0
+ 627              		@ link register save eliminated.
+ 224:..//Source/stm/board/board_stm32l151cd/eeprom-board.c ****     return I2cDeviceAddr;
+ 225:..//Source/stm/board/board_stm32l151cd/eeprom-board.c **** }
+ 628              		.loc 1 225 0
+ARM GAS  /tmp/ccT83oWC.s 			page 17
+
+
+ 629 0000 014B     		ldr	r3, .L54
+ 630 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 631 0004 7047     		bx	lr
+ 632              	.L55:
+ 633 0006 00BF     		.align	2
+ 634              	.L54:
+ 635 0008 00000000 		.word	.LANCHOR0
+ 636              		.cfi_endproc
+ 637              	.LFE3:
+ 639              		.section	.data.I2cDeviceAddr,"aw",%progbits
+ 640              		.set	.LANCHOR0,. + 0
+ 643              	I2cDeviceAddr:
+ 644 0000 A8       		.byte	-88
+ 645              		.text
+ 646              	.Letext0:
+ 647              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 648              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 649              		.file 4 "..//Source/stm/hal/gpio.h"
+ 650              		.file 5 "..//Source/stm/hal/i2c.h"
+ 651              		.file 6 "..//Source/stm/board/i2c-board.h"
+ARM GAS  /tmp/ccT83oWC.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 eeprom-board.c
+     /tmp/ccT83oWC.s:16     .text.EepromMcuWriteBuffer:0000000000000000 $t
+     /tmp/ccT83oWC.s:23     .text.EepromMcuWriteBuffer:0000000000000000 EepromMcuWriteBuffer
+     /tmp/ccT83oWC.s:511    .text.EepromMcuWriteBuffer:00000000000002b0 $d
+     /tmp/ccT83oWC.s:517    .text.EepromMcuReadBuffer:0000000000000000 $t
+     /tmp/ccT83oWC.s:524    .text.EepromMcuReadBuffer:0000000000000000 EepromMcuReadBuffer
+     /tmp/ccT83oWC.s:581    .text.EepromMcuReadBuffer:0000000000000034 $d
+     /tmp/ccT83oWC.s:587    .text.EepromMcuSetDeviceAddr:0000000000000000 $t
+     /tmp/ccT83oWC.s:594    .text.EepromMcuSetDeviceAddr:0000000000000000 EepromMcuSetDeviceAddr
+     /tmp/ccT83oWC.s:609    .text.EepromMcuSetDeviceAddr:0000000000000008 $d
+     /tmp/ccT83oWC.s:614    .text.EepromMcuGetDeviceAddr:0000000000000000 $t
+     /tmp/ccT83oWC.s:621    .text.EepromMcuGetDeviceAddr:0000000000000000 EepromMcuGetDeviceAddr
+     /tmp/ccT83oWC.s:635    .text.EepromMcuGetDeviceAddr:0000000000000008 $d
+     /tmp/ccT83oWC.s:643    .data.I2cDeviceAddr:0000000000000000 I2cDeviceAddr
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+I2cSetAddrSize
+I2cWriteBuffer
+I2cMcuWaitStandbyState
+I2c
+I2cReadBuffer

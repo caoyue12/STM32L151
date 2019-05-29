@@ -14,7 +14,7 @@
 # target
 ######################################
 TARGET = STM32L151
-
+PWD = ../
 
 ######################################
 # building variables
@@ -32,37 +32,46 @@ endif
 # paths
 #######################################
 # Build path
-BUILD_DIR = build
+BUILD_DIR = _build
 
 ######################################
 # source
 ######################################
 # C sources
-C_SOURCES =  \
-Src/main.c \
-Src/stm32l1xx_it.c \
-Src/stm32l1xx_hal_msp.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_tim.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_tim_ex.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ex.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_gpio.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_dma.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_pwr.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_pwr_ex.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_cortex.c \
-Src/system_stm32l1xx.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rtc.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rtc_ex.c \
-Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_uart.c
+C_SOURCES :=  \
+$(PWD)/Source/stm/app/main.c \
+$(PWD)/Source/stm/board/board_stm32l151cd/cmsis/system_stm32l1xx.c \
+$(PWD)/Source/external/LoRaMac-node/src/radio/sx1276/sx1276.c
+#$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_tim.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_tim_ex.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ex.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_gpio.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_dma.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_pwr.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_pwr_ex.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_cortex.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rtc.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rtc_ex.c \
+$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_uart.c \
+$(PWD)/Source/stm/board/board_stm32l151cd/cmsis/system_stm32l1xx.c 
+
+LIB_PATH = $(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src
+HAL_PATH = $(PWD)/Source/stm/hal
+BOARD_PATH = $(PWD)/Source/stm/board/board_stm32l151cd
+C_SOURCES += $(wildcard $(LIB_PATH)/*.c)
+C_SOURCES += $(wildcard $(BOARD_PATH)/*.c)
+C_SOURCES += $(wildcard $(HAL_PATH)/*.c)
+
+
 
 # ASM sources
 ASM_SOURCES =  \
-startup_stm32l151xba.s
+$(PWD)/Source/stm/board/board_stm32l151cd/cmsis/startup_stm32l151xba.s
 
 
 #######################################
@@ -115,13 +124,17 @@ AS_INCLUDES =
 
 # C includes
 C_INCLUDES =  \
--IInc \
--IDrivers/STM32L1xx_HAL_Driver/Inc \
--IDrivers/STM32L1xx_HAL_Driver/Inc/Legacy \
--IDrivers/CMSIS/Device/ST/STM32L1xx/Include \
--IDrivers/CMSIS/Include\
--IDrivers/CMSIS/Include
-
+-I$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Inc \
+-I$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Inc/Legacy \
+-I$(PWD)/Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include \
+-I$(PWD)/Source/stm/board/board_stm32l151cd/cmsis \
+-I$(PWD)/Source/stm/lib/CMSIS/Include \
+-I$(PWD)/Source/stm/board \
+-I$(PWD)/Source/stm/hal \
+-I$(PWD)/Source/external/LoRaMac-node/src/radio \
+-I$(PWD)/Source/stm/board/board_stm32l151cd \
+-I$(PWD)/Source/external/LoRaMac-node/src/radio/sx1276\
+-I$(PWD)/Source/stm/app/
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -141,7 +154,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32L151CBUxA_FLASH.ld
+LDSCRIPT = $(PWD)/Source/stm/board/board_stm32l151cd/cmsis/STM32L151CBUxA_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
@@ -163,10 +176,11 @@ OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
-	@printf "  CC      $(*).c\n"
+	@printf "	CC	$(*).c\n"
 	$(Q) $(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
+	@printf "	AS	$(*).s\n"
 	$(Q) $(AS) -c $(CFLAGS) $< -o $@
 
 $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
@@ -185,8 +199,8 @@ $(BUILD_DIR):
 #######################################
 # clean up
 #######################################
-clean:
-	-rm -fR $(BUILD_DIR)
+#clean:
+#	-rm -fR $(BUILD_DIR)
   
 #######################################
 # dependencies

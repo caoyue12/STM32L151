@@ -1,0 +1,342 @@
+ARM GAS  /tmp/ccXMrhcY.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"uart.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.UartInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	UartInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	UartInit:
+  24              	.LFB0:
+  25              		.file 1 "..//Source/stm/hal/uart.c"
+   1:..//Source/stm/hal/uart.c **** /*!
+   2:..//Source/stm/hal/uart.c ****  * \file      uart.c
+   3:..//Source/stm/hal/uart.c ****  *
+   4:..//Source/stm/hal/uart.c ****  * \brief     UART driver implementation
+   5:..//Source/stm/hal/uart.c ****  *
+   6:..//Source/stm/hal/uart.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/hal/uart.c ****  *
+   8:..//Source/stm/hal/uart.c ****  * \code
+   9:..//Source/stm/hal/uart.c ****  *                ______                              _
+  10:..//Source/stm/hal/uart.c ****  *               / _____)             _              | |
+  11:..//Source/stm/hal/uart.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/hal/uart.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/hal/uart.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/hal/uart.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/hal/uart.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/hal/uart.c ****  *
+  17:..//Source/stm/hal/uart.c ****  * \endcode
+  18:..//Source/stm/hal/uart.c ****  *
+  19:..//Source/stm/hal/uart.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/hal/uart.c ****  *
+  21:..//Source/stm/hal/uart.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/hal/uart.c ****  */
+  23:..//Source/stm/hal/uart.c **** #include "uart-board.h"
+  24:..//Source/stm/hal/uart.c **** #include "uart.h"
+  25:..//Source/stm/hal/uart.c **** 
+  26:..//Source/stm/hal/uart.c **** void UartInit( Uart_t *obj, UartId_t uartId, PinNames tx, PinNames rx )
+  27:..//Source/stm/hal/uart.c **** {
+  26              		.loc 1 27 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 10B5     		push	{r4, lr}
+ARM GAS  /tmp/ccXMrhcY.s 			page 2
+
+
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  28:..//Source/stm/hal/uart.c ****     if( obj->IsInitialized == false )
+  36              		.loc 1 28 0
+  37 0002 4478     		ldrb	r4, [r0, #1]	@ zero_extendqisi2
+  38 0004 04B1     		cbz	r4, .L4
+  39              	.LVL1:
+  40              	.L1:
+  41 0006 10BD     		pop	{r4, pc}
+  42              	.LVL2:
+  43              	.L4:
+  29:..//Source/stm/hal/uart.c ****     {
+  30:..//Source/stm/hal/uart.c ****         obj->IsInitialized = true;
+  44              		.loc 1 30 0
+  45 0008 0124     		movs	r4, #1
+  46 000a 4470     		strb	r4, [r0, #1]
+  31:..//Source/stm/hal/uart.c ****         UartMcuInit( obj, uartId, tx, rx );
+  47              		.loc 1 31 0
+  48 000c FFF7FEFF 		bl	UartMcuInit
+  49              	.LVL3:
+  32:..//Source/stm/hal/uart.c ****     }
+  33:..//Source/stm/hal/uart.c **** }
+  50              		.loc 1 33 0
+  51 0010 F9E7     		b	.L1
+  52              		.cfi_endproc
+  53              	.LFE0:
+  55              		.section	.text.UartConfig,"ax",%progbits
+  56              		.align	1
+  57              		.global	UartConfig
+  58              		.syntax unified
+  59              		.thumb
+  60              		.thumb_func
+  61              		.fpu softvfp
+  63              	UartConfig:
+  64              	.LFB1:
+  34:..//Source/stm/hal/uart.c **** 
+  35:..//Source/stm/hal/uart.c **** void UartConfig( Uart_t *obj, UartMode_t mode, uint32_t baudrate, WordLength_t wordLength, StopBits
+  36:..//Source/stm/hal/uart.c **** {
+  65              		.loc 1 36 0
+  66              		.cfi_startproc
+  67              		@ args = 12, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69              	.LVL4:
+  70 0000 10B5     		push	{r4, lr}
+  71              	.LCFI1:
+  72              		.cfi_def_cfa_offset 8
+  73              		.cfi_offset 4, -8
+  74              		.cfi_offset 14, -4
+  75 0002 84B0     		sub	sp, sp, #16
+  76              	.LCFI2:
+  77              		.cfi_def_cfa_offset 24
+  37:..//Source/stm/hal/uart.c ****     UartMcuConfig( obj, mode, baudrate, wordLength, stopBits, parity, flowCtrl );
+  78              		.loc 1 37 0
+  79 0004 9DF82040 		ldrb	r4, [sp, #32]	@ zero_extendqisi2
+  80 0008 0294     		str	r4, [sp, #8]
+ARM GAS  /tmp/ccXMrhcY.s 			page 3
+
+
+  81 000a 9DF81C40 		ldrb	r4, [sp, #28]	@ zero_extendqisi2
+  82 000e 0194     		str	r4, [sp, #4]
+  83 0010 9DF81840 		ldrb	r4, [sp, #24]	@ zero_extendqisi2
+  84 0014 0094     		str	r4, [sp]
+  85 0016 FFF7FEFF 		bl	UartMcuConfig
+  86              	.LVL5:
+  38:..//Source/stm/hal/uart.c **** }
+  87              		.loc 1 38 0
+  88 001a 04B0     		add	sp, sp, #16
+  89              	.LCFI3:
+  90              		.cfi_def_cfa_offset 8
+  91              		@ sp needed
+  92 001c 10BD     		pop	{r4, pc}
+  93              		.cfi_endproc
+  94              	.LFE1:
+  96              		.section	.text.UartDeInit,"ax",%progbits
+  97              		.align	1
+  98              		.global	UartDeInit
+  99              		.syntax unified
+ 100              		.thumb
+ 101              		.thumb_func
+ 102              		.fpu softvfp
+ 104              	UartDeInit:
+ 105              	.LFB2:
+  39:..//Source/stm/hal/uart.c **** 
+  40:..//Source/stm/hal/uart.c **** void UartDeInit( Uart_t *obj )
+  41:..//Source/stm/hal/uart.c **** {
+ 106              		.loc 1 41 0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110              	.LVL6:
+ 111 0000 08B5     		push	{r3, lr}
+ 112              	.LCFI4:
+ 113              		.cfi_def_cfa_offset 8
+ 114              		.cfi_offset 3, -8
+ 115              		.cfi_offset 14, -4
+  42:..//Source/stm/hal/uart.c ****     obj->IsInitialized = false;
+ 116              		.loc 1 42 0
+ 117 0002 0022     		movs	r2, #0
+ 118 0004 4270     		strb	r2, [r0, #1]
+  43:..//Source/stm/hal/uart.c ****     UartMcuDeInit( obj );
+ 119              		.loc 1 43 0
+ 120 0006 FFF7FEFF 		bl	UartMcuDeInit
+ 121              	.LVL7:
+ 122 000a 08BD     		pop	{r3, pc}
+ 123              		.cfi_endproc
+ 124              	.LFE2:
+ 126              		.section	.text.UartPutChar,"ax",%progbits
+ 127              		.align	1
+ 128              		.global	UartPutChar
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 132              		.fpu softvfp
+ 134              	UartPutChar:
+ 135              	.LFB3:
+ARM GAS  /tmp/ccXMrhcY.s 			page 4
+
+
+  44:..//Source/stm/hal/uart.c **** }
+  45:..//Source/stm/hal/uart.c **** 
+  46:..//Source/stm/hal/uart.c **** uint8_t UartPutChar( Uart_t *obj, uint8_t data )
+  47:..//Source/stm/hal/uart.c **** {
+ 136              		.loc 1 47 0
+ 137              		.cfi_startproc
+ 138              		@ args = 0, pretend = 0, frame = 0
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+ 140              	.LVL8:
+ 141 0000 08B5     		push	{r3, lr}
+ 142              	.LCFI5:
+ 143              		.cfi_def_cfa_offset 8
+ 144              		.cfi_offset 3, -8
+ 145              		.cfi_offset 14, -4
+  48:..//Source/stm/hal/uart.c ****      return UartMcuPutChar( obj, data );
+ 146              		.loc 1 48 0
+ 147 0002 FFF7FEFF 		bl	UartMcuPutChar
+ 148              	.LVL9:
+  49:..//Source/stm/hal/uart.c **** }
+ 149              		.loc 1 49 0
+ 150 0006 08BD     		pop	{r3, pc}
+ 151              		.cfi_endproc
+ 152              	.LFE3:
+ 154              		.section	.text.UartGetChar,"ax",%progbits
+ 155              		.align	1
+ 156              		.global	UartGetChar
+ 157              		.syntax unified
+ 158              		.thumb
+ 159              		.thumb_func
+ 160              		.fpu softvfp
+ 162              	UartGetChar:
+ 163              	.LFB4:
+  50:..//Source/stm/hal/uart.c **** 
+  51:..//Source/stm/hal/uart.c **** uint8_t UartGetChar( Uart_t *obj, uint8_t *data )
+  52:..//Source/stm/hal/uart.c **** {
+ 164              		.loc 1 52 0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 0
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168              	.LVL10:
+ 169 0000 08B5     		push	{r3, lr}
+ 170              	.LCFI6:
+ 171              		.cfi_def_cfa_offset 8
+ 172              		.cfi_offset 3, -8
+ 173              		.cfi_offset 14, -4
+  53:..//Source/stm/hal/uart.c ****     return UartMcuGetChar( obj, data );
+ 174              		.loc 1 53 0
+ 175 0002 FFF7FEFF 		bl	UartMcuGetChar
+ 176              	.LVL11:
+  54:..//Source/stm/hal/uart.c **** }
+ 177              		.loc 1 54 0
+ 178 0006 08BD     		pop	{r3, pc}
+ 179              		.cfi_endproc
+ 180              	.LFE4:
+ 182              		.section	.text.UartPutBuffer,"ax",%progbits
+ 183              		.align	1
+ 184              		.global	UartPutBuffer
+ARM GAS  /tmp/ccXMrhcY.s 			page 5
+
+
+ 185              		.syntax unified
+ 186              		.thumb
+ 187              		.thumb_func
+ 188              		.fpu softvfp
+ 190              	UartPutBuffer:
+ 191              	.LFB5:
+  55:..//Source/stm/hal/uart.c **** 
+  56:..//Source/stm/hal/uart.c **** uint8_t UartPutBuffer( Uart_t *obj, uint8_t *buffer, uint16_t size )
+  57:..//Source/stm/hal/uart.c **** {
+ 192              		.loc 1 57 0
+ 193              		.cfi_startproc
+ 194              		@ args = 0, pretend = 0, frame = 0
+ 195              		@ frame_needed = 0, uses_anonymous_args = 0
+ 196              	.LVL12:
+ 197 0000 08B5     		push	{r3, lr}
+ 198              	.LCFI7:
+ 199              		.cfi_def_cfa_offset 8
+ 200              		.cfi_offset 3, -8
+ 201              		.cfi_offset 14, -4
+  58:..//Source/stm/hal/uart.c ****     return UartMcuPutBuffer( obj, buffer, size );
+ 202              		.loc 1 58 0
+ 203 0002 FFF7FEFF 		bl	UartMcuPutBuffer
+ 204              	.LVL13:
+  59:..//Source/stm/hal/uart.c **** }
+ 205              		.loc 1 59 0
+ 206 0006 08BD     		pop	{r3, pc}
+ 207              		.cfi_endproc
+ 208              	.LFE5:
+ 210              		.section	.text.UartGetBuffer,"ax",%progbits
+ 211              		.align	1
+ 212              		.global	UartGetBuffer
+ 213              		.syntax unified
+ 214              		.thumb
+ 215              		.thumb_func
+ 216              		.fpu softvfp
+ 218              	UartGetBuffer:
+ 219              	.LFB6:
+  60:..//Source/stm/hal/uart.c **** 
+  61:..//Source/stm/hal/uart.c **** uint8_t UartGetBuffer( Uart_t *obj, uint8_t *buffer, uint16_t size, uint16_t *nbReadBytes )
+  62:..//Source/stm/hal/uart.c **** {
+ 220              		.loc 1 62 0
+ 221              		.cfi_startproc
+ 222              		@ args = 0, pretend = 0, frame = 0
+ 223              		@ frame_needed = 0, uses_anonymous_args = 0
+ 224              	.LVL14:
+ 225 0000 08B5     		push	{r3, lr}
+ 226              	.LCFI8:
+ 227              		.cfi_def_cfa_offset 8
+ 228              		.cfi_offset 3, -8
+ 229              		.cfi_offset 14, -4
+  63:..//Source/stm/hal/uart.c ****     return UartMcuGetBuffer( obj, buffer, size, nbReadBytes );
+ 230              		.loc 1 63 0
+ 231 0002 FFF7FEFF 		bl	UartMcuGetBuffer
+ 232              	.LVL15:
+  64:..//Source/stm/hal/uart.c **** }
+ 233              		.loc 1 64 0
+ 234 0006 08BD     		pop	{r3, pc}
+ARM GAS  /tmp/ccXMrhcY.s 			page 6
+
+
+ 235              		.cfi_endproc
+ 236              	.LFE6:
+ 238              		.text
+ 239              	.Letext0:
+ 240              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 241              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 242              		.file 4 "..//Source/stm/hal/fifo.h"
+ 243              		.file 5 "..//Source/stm/hal/gpio.h"
+ 244              		.file 6 "..//Source/stm/hal/uart.h"
+ 245              		.file 7 "..//Source/stm/board/uart-board.h"
+ARM GAS  /tmp/ccXMrhcY.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 uart.c
+     /tmp/ccXMrhcY.s:16     .text.UartInit:0000000000000000 $t
+     /tmp/ccXMrhcY.s:23     .text.UartInit:0000000000000000 UartInit
+     /tmp/ccXMrhcY.s:56     .text.UartConfig:0000000000000000 $t
+     /tmp/ccXMrhcY.s:63     .text.UartConfig:0000000000000000 UartConfig
+     /tmp/ccXMrhcY.s:97     .text.UartDeInit:0000000000000000 $t
+     /tmp/ccXMrhcY.s:104    .text.UartDeInit:0000000000000000 UartDeInit
+     /tmp/ccXMrhcY.s:127    .text.UartPutChar:0000000000000000 $t
+     /tmp/ccXMrhcY.s:134    .text.UartPutChar:0000000000000000 UartPutChar
+     /tmp/ccXMrhcY.s:155    .text.UartGetChar:0000000000000000 $t
+     /tmp/ccXMrhcY.s:162    .text.UartGetChar:0000000000000000 UartGetChar
+     /tmp/ccXMrhcY.s:183    .text.UartPutBuffer:0000000000000000 $t
+     /tmp/ccXMrhcY.s:190    .text.UartPutBuffer:0000000000000000 UartPutBuffer
+     /tmp/ccXMrhcY.s:211    .text.UartGetBuffer:0000000000000000 $t
+     /tmp/ccXMrhcY.s:218    .text.UartGetBuffer:0000000000000000 UartGetBuffer
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+UartMcuInit
+UartMcuConfig
+UartMcuDeInit
+UartMcuPutChar
+UartMcuGetChar
+UartMcuPutBuffer
+UartMcuGetBuffer

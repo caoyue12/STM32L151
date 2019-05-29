@@ -1,0 +1,141 @@
+ARM GAS  /tmp/ccazhTYh.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"delay.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.DelayMs,"ax",%progbits
+  16              		.align	1
+  17              		.global	DelayMs
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	DelayMs:
+  24              	.LFB1:
+  25              		.file 1 "..//Source/stm/hal/delay.c"
+   1:..//Source/stm/hal/delay.c **** /*!
+   2:..//Source/stm/hal/delay.c ****  * \file      delay.c
+   3:..//Source/stm/hal/delay.c ****  *
+   4:..//Source/stm/hal/delay.c ****  * \brief     Delay implementation
+   5:..//Source/stm/hal/delay.c ****  *
+   6:..//Source/stm/hal/delay.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/hal/delay.c ****  *
+   8:..//Source/stm/hal/delay.c ****  * \code
+   9:..//Source/stm/hal/delay.c ****  *                ______                              _
+  10:..//Source/stm/hal/delay.c ****  *               / _____)             _              | |
+  11:..//Source/stm/hal/delay.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/hal/delay.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/hal/delay.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/hal/delay.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/hal/delay.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/hal/delay.c ****  *
+  17:..//Source/stm/hal/delay.c ****  * \endcode
+  18:..//Source/stm/hal/delay.c ****  *
+  19:..//Source/stm/hal/delay.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/hal/delay.c ****  *
+  21:..//Source/stm/hal/delay.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/hal/delay.c ****  */
+  23:..//Source/stm/hal/delay.c **** #include "delay-board.h"
+  24:..//Source/stm/hal/delay.c **** #include "delay.h"
+  25:..//Source/stm/hal/delay.c **** 
+  26:..//Source/stm/hal/delay.c **** void Delay( float s )
+  27:..//Source/stm/hal/delay.c **** {
+  28:..//Source/stm/hal/delay.c ****     DelayMs( s * 1000.0f );
+  29:..//Source/stm/hal/delay.c **** }
+  30:..//Source/stm/hal/delay.c **** 
+  31:..//Source/stm/hal/delay.c **** void DelayMs( uint32_t ms )
+  32:..//Source/stm/hal/delay.c **** {
+  26              		.loc 1 32 0
+ARM GAS  /tmp/ccazhTYh.s 			page 2
+
+
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 08B5     		push	{r3, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  33:..//Source/stm/hal/delay.c ****     DelayMsMcu( ms );
+  36              		.loc 1 33 0
+  37 0002 FFF7FEFF 		bl	DelayMsMcu
+  38              	.LVL1:
+  39 0006 08BD     		pop	{r3, pc}
+  40              		.cfi_endproc
+  41              	.LFE1:
+  43              		.global	__aeabi_fmul
+  44              		.global	__aeabi_f2uiz
+  45              		.section	.text.Delay,"ax",%progbits
+  46              		.align	1
+  47              		.global	Delay
+  48              		.syntax unified
+  49              		.thumb
+  50              		.thumb_func
+  51              		.fpu softvfp
+  53              	Delay:
+  54              	.LFB0:
+  27:..//Source/stm/hal/delay.c ****     DelayMs( s * 1000.0f );
+  55              		.loc 1 27 0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              	.LVL2:
+  60 0000 08B5     		push	{r3, lr}
+  61              	.LCFI1:
+  62              		.cfi_def_cfa_offset 8
+  63              		.cfi_offset 3, -8
+  64              		.cfi_offset 14, -4
+  28:..//Source/stm/hal/delay.c **** }
+  65              		.loc 1 28 0
+  66 0002 0449     		ldr	r1, .L5
+  67 0004 FFF7FEFF 		bl	__aeabi_fmul
+  68              	.LVL3:
+  69 0008 FFF7FEFF 		bl	__aeabi_f2uiz
+  70              	.LVL4:
+  71 000c FFF7FEFF 		bl	DelayMs
+  72              	.LVL5:
+  73 0010 08BD     		pop	{r3, pc}
+  74              	.L6:
+  75 0012 00BF     		.align	2
+  76              	.L5:
+  77 0014 00007A44 		.word	1148846080
+  78              		.cfi_endproc
+  79              	.LFE0:
+  81              		.text
+  82              	.Letext0:
+  83              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ARM GAS  /tmp/ccazhTYh.s 			page 3
+
+
+  84              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+  85              		.file 4 "..//Source/stm/board/delay-board.h"
+ARM GAS  /tmp/ccazhTYh.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 delay.c
+     /tmp/ccazhTYh.s:16     .text.DelayMs:0000000000000000 $t
+     /tmp/ccazhTYh.s:23     .text.DelayMs:0000000000000000 DelayMs
+     /tmp/ccazhTYh.s:46     .text.Delay:0000000000000000 $t
+     /tmp/ccazhTYh.s:53     .text.Delay:0000000000000000 Delay
+     /tmp/ccazhTYh.s:77     .text.Delay:0000000000000014 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+DelayMsMcu
+__aeabi_fmul
+__aeabi_f2uiz

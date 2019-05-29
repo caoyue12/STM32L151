@@ -1,0 +1,282 @@
+ARM GAS  /tmp/ccf7OjEk.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"gpio.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.GpioInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	GpioInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	GpioInit:
+  24              	.LFB0:
+  25              		.file 1 "..//Source/stm/hal/gpio.c"
+   1:..//Source/stm/hal/gpio.c **** /*!
+   2:..//Source/stm/hal/gpio.c ****  * \file      gpio.c
+   3:..//Source/stm/hal/gpio.c ****  *
+   4:..//Source/stm/hal/gpio.c ****  * \brief     GPIO driver implementation
+   5:..//Source/stm/hal/gpio.c ****  *
+   6:..//Source/stm/hal/gpio.c ****  * \remark: Relies on the specific board GPIO implementation as well as on
+   7:..//Source/stm/hal/gpio.c ****  *          IO expander driver implementation if one is available on the target
+   8:..//Source/stm/hal/gpio.c ****  *          board.
+   9:..//Source/stm/hal/gpio.c ****  *
+  10:..//Source/stm/hal/gpio.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+  11:..//Source/stm/hal/gpio.c ****  *
+  12:..//Source/stm/hal/gpio.c ****  * \code
+  13:..//Source/stm/hal/gpio.c ****  *                ______                              _
+  14:..//Source/stm/hal/gpio.c ****  *               / _____)             _              | |
+  15:..//Source/stm/hal/gpio.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  16:..//Source/stm/hal/gpio.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  17:..//Source/stm/hal/gpio.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  18:..//Source/stm/hal/gpio.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  19:..//Source/stm/hal/gpio.c ****  *              (C)2013-2017 Semtech
+  20:..//Source/stm/hal/gpio.c ****  *
+  21:..//Source/stm/hal/gpio.c ****  * \endcode
+  22:..//Source/stm/hal/gpio.c ****  *
+  23:..//Source/stm/hal/gpio.c ****  * \author    Miguel Luis ( Semtech )
+  24:..//Source/stm/hal/gpio.c ****  *
+  25:..//Source/stm/hal/gpio.c ****  * \author    Gregory Cristian ( Semtech )
+  26:..//Source/stm/hal/gpio.c ****  */
+  27:..//Source/stm/hal/gpio.c **** #include "gpio-board.h"
+  28:..//Source/stm/hal/gpio.c **** 
+  29:..//Source/stm/hal/gpio.c **** void GpioInit( Gpio_t *obj, PinNames pin, PinModes mode,  PinConfigs config, PinTypes type, uint32_
+  30:..//Source/stm/hal/gpio.c **** {
+  26              		.loc 1 30 0
+  27              		.cfi_startproc
+  28              		@ args = 8, pretend = 0, frame = 0
+ARM GAS  /tmp/ccf7OjEk.s 			page 2
+
+
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 10B5     		push	{r4, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  36 0002 82B0     		sub	sp, sp, #8
+  37              	.LCFI1:
+  38              		.cfi_def_cfa_offset 16
+  31:..//Source/stm/hal/gpio.c ****     GpioMcuInit( obj, pin, mode, config, type, value );
+  39              		.loc 1 31 0
+  40 0004 059C     		ldr	r4, [sp, #20]
+  41 0006 0194     		str	r4, [sp, #4]
+  42 0008 9DF81040 		ldrb	r4, [sp, #16]	@ zero_extendqisi2
+  43 000c 0094     		str	r4, [sp]
+  44 000e FFF7FEFF 		bl	GpioMcuInit
+  45              	.LVL1:
+  32:..//Source/stm/hal/gpio.c **** }
+  46              		.loc 1 32 0
+  47 0012 02B0     		add	sp, sp, #8
+  48              	.LCFI2:
+  49              		.cfi_def_cfa_offset 8
+  50              		@ sp needed
+  51 0014 10BD     		pop	{r4, pc}
+  52              		.cfi_endproc
+  53              	.LFE0:
+  55              		.section	.text.GpioSetInterrupt,"ax",%progbits
+  56              		.align	1
+  57              		.global	GpioSetInterrupt
+  58              		.syntax unified
+  59              		.thumb
+  60              		.thumb_func
+  61              		.fpu softvfp
+  63              	GpioSetInterrupt:
+  64              	.LFB1:
+  33:..//Source/stm/hal/gpio.c **** 
+  34:..//Source/stm/hal/gpio.c **** void GpioSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *ir
+  35:..//Source/stm/hal/gpio.c **** {
+  65              		.loc 1 35 0
+  66              		.cfi_startproc
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69              	.LVL2:
+  70 0000 08B5     		push	{r3, lr}
+  71              	.LCFI3:
+  72              		.cfi_def_cfa_offset 8
+  73              		.cfi_offset 3, -8
+  74              		.cfi_offset 14, -4
+  36:..//Source/stm/hal/gpio.c ****     GpioMcuSetInterrupt( obj, irqMode, irqPriority, irqHandler );
+  75              		.loc 1 36 0
+  76 0002 FFF7FEFF 		bl	GpioMcuSetInterrupt
+  77              	.LVL3:
+  78 0006 08BD     		pop	{r3, pc}
+  79              		.cfi_endproc
+  80              	.LFE1:
+  82              		.section	.text.GpioRemoveInterrupt,"ax",%progbits
+ARM GAS  /tmp/ccf7OjEk.s 			page 3
+
+
+  83              		.align	1
+  84              		.global	GpioRemoveInterrupt
+  85              		.syntax unified
+  86              		.thumb
+  87              		.thumb_func
+  88              		.fpu softvfp
+  90              	GpioRemoveInterrupt:
+  91              	.LFB2:
+  37:..//Source/stm/hal/gpio.c **** }
+  38:..//Source/stm/hal/gpio.c **** 
+  39:..//Source/stm/hal/gpio.c **** void GpioRemoveInterrupt( Gpio_t *obj )
+  40:..//Source/stm/hal/gpio.c **** {
+  92              		.loc 1 40 0
+  93              		.cfi_startproc
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 0, uses_anonymous_args = 0
+  96              	.LVL4:
+  97 0000 08B5     		push	{r3, lr}
+  98              	.LCFI4:
+  99              		.cfi_def_cfa_offset 8
+ 100              		.cfi_offset 3, -8
+ 101              		.cfi_offset 14, -4
+  41:..//Source/stm/hal/gpio.c ****     GpioMcuRemoveInterrupt( obj );
+ 102              		.loc 1 41 0
+ 103 0002 FFF7FEFF 		bl	GpioMcuRemoveInterrupt
+ 104              	.LVL5:
+ 105 0006 08BD     		pop	{r3, pc}
+ 106              		.cfi_endproc
+ 107              	.LFE2:
+ 109              		.section	.text.GpioWrite,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	GpioWrite
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 115              		.fpu softvfp
+ 117              	GpioWrite:
+ 118              	.LFB3:
+  42:..//Source/stm/hal/gpio.c **** }
+  43:..//Source/stm/hal/gpio.c **** 
+  44:..//Source/stm/hal/gpio.c **** void GpioWrite( Gpio_t *obj, uint32_t value )
+  45:..//Source/stm/hal/gpio.c **** {
+ 119              		.loc 1 45 0
+ 120              		.cfi_startproc
+ 121              		@ args = 0, pretend = 0, frame = 0
+ 122              		@ frame_needed = 0, uses_anonymous_args = 0
+ 123              	.LVL6:
+ 124 0000 08B5     		push	{r3, lr}
+ 125              	.LCFI5:
+ 126              		.cfi_def_cfa_offset 8
+ 127              		.cfi_offset 3, -8
+ 128              		.cfi_offset 14, -4
+  46:..//Source/stm/hal/gpio.c ****     GpioMcuWrite( obj, value );
+ 129              		.loc 1 46 0
+ 130 0002 FFF7FEFF 		bl	GpioMcuWrite
+ 131              	.LVL7:
+ 132 0006 08BD     		pop	{r3, pc}
+ARM GAS  /tmp/ccf7OjEk.s 			page 4
+
+
+ 133              		.cfi_endproc
+ 134              	.LFE3:
+ 136              		.section	.text.GpioToggle,"ax",%progbits
+ 137              		.align	1
+ 138              		.global	GpioToggle
+ 139              		.syntax unified
+ 140              		.thumb
+ 141              		.thumb_func
+ 142              		.fpu softvfp
+ 144              	GpioToggle:
+ 145              	.LFB4:
+  47:..//Source/stm/hal/gpio.c **** }
+  48:..//Source/stm/hal/gpio.c **** 
+  49:..//Source/stm/hal/gpio.c **** void GpioToggle( Gpio_t *obj )
+  50:..//Source/stm/hal/gpio.c **** {
+ 146              		.loc 1 50 0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              	.LVL8:
+ 151 0000 08B5     		push	{r3, lr}
+ 152              	.LCFI6:
+ 153              		.cfi_def_cfa_offset 8
+ 154              		.cfi_offset 3, -8
+ 155              		.cfi_offset 14, -4
+  51:..//Source/stm/hal/gpio.c ****     GpioMcuToggle( obj );
+ 156              		.loc 1 51 0
+ 157 0002 FFF7FEFF 		bl	GpioMcuToggle
+ 158              	.LVL9:
+ 159 0006 08BD     		pop	{r3, pc}
+ 160              		.cfi_endproc
+ 161              	.LFE4:
+ 163              		.section	.text.GpioRead,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	GpioRead
+ 166              		.syntax unified
+ 167              		.thumb
+ 168              		.thumb_func
+ 169              		.fpu softvfp
+ 171              	GpioRead:
+ 172              	.LFB5:
+  52:..//Source/stm/hal/gpio.c **** }
+  53:..//Source/stm/hal/gpio.c **** 
+  54:..//Source/stm/hal/gpio.c **** uint32_t GpioRead( Gpio_t *obj )
+  55:..//Source/stm/hal/gpio.c **** {
+ 173              		.loc 1 55 0
+ 174              		.cfi_startproc
+ 175              		@ args = 0, pretend = 0, frame = 0
+ 176              		@ frame_needed = 0, uses_anonymous_args = 0
+ 177              	.LVL10:
+ 178 0000 08B5     		push	{r3, lr}
+ 179              	.LCFI7:
+ 180              		.cfi_def_cfa_offset 8
+ 181              		.cfi_offset 3, -8
+ 182              		.cfi_offset 14, -4
+  56:..//Source/stm/hal/gpio.c ****     return GpioMcuRead( obj );
+ 183              		.loc 1 56 0
+ARM GAS  /tmp/ccf7OjEk.s 			page 5
+
+
+ 184 0002 FFF7FEFF 		bl	GpioMcuRead
+ 185              	.LVL11:
+  57:..//Source/stm/hal/gpio.c **** }
+ 186              		.loc 1 57 0
+ 187 0006 08BD     		pop	{r3, pc}
+ 188              		.cfi_endproc
+ 189              	.LFE5:
+ 191              		.text
+ 192              	.Letext0:
+ 193              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 194              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 195              		.file 4 "..//Source/stm/hal/gpio.h"
+ 196              		.file 5 "..//Source/stm/board/gpio-board.h"
+ARM GAS  /tmp/ccf7OjEk.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 gpio.c
+     /tmp/ccf7OjEk.s:16     .text.GpioInit:0000000000000000 $t
+     /tmp/ccf7OjEk.s:23     .text.GpioInit:0000000000000000 GpioInit
+     /tmp/ccf7OjEk.s:56     .text.GpioSetInterrupt:0000000000000000 $t
+     /tmp/ccf7OjEk.s:63     .text.GpioSetInterrupt:0000000000000000 GpioSetInterrupt
+     /tmp/ccf7OjEk.s:83     .text.GpioRemoveInterrupt:0000000000000000 $t
+     /tmp/ccf7OjEk.s:90     .text.GpioRemoveInterrupt:0000000000000000 GpioRemoveInterrupt
+     /tmp/ccf7OjEk.s:110    .text.GpioWrite:0000000000000000 $t
+     /tmp/ccf7OjEk.s:117    .text.GpioWrite:0000000000000000 GpioWrite
+     /tmp/ccf7OjEk.s:137    .text.GpioToggle:0000000000000000 $t
+     /tmp/ccf7OjEk.s:144    .text.GpioToggle:0000000000000000 GpioToggle
+     /tmp/ccf7OjEk.s:164    .text.GpioRead:0000000000000000 $t
+     /tmp/ccf7OjEk.s:171    .text.GpioRead:0000000000000000 GpioRead
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+GpioMcuInit
+GpioMcuSetInterrupt
+GpioMcuRemoveInterrupt
+GpioMcuWrite
+GpioMcuToggle
+GpioMcuRead

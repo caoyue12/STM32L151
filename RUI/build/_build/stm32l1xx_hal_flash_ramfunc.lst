@@ -1,0 +1,1864 @@
+ARM GAS  /tmp/ccKnQxIq.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"stm32l1xx_hal_flash_ramfunc.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.RamFunc,"ax",%progbits
+  16              		.align	1
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	FLASHRAM_SetErrorCode:
+  23              	.LFB78:
+  24              		.file 1 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c"
+   1:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+   2:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   ******************************************************************************
+   3:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @file    stm32l1xx_hal_flash_ramfunc.c
+   4:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @author  MCD Application Team
+   5:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief   FLASH RAMFUNC driver.
+   6:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *          This file provides a Flash firmware functions which should be 
+   7:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *          executed from internal SRAM
+   8:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *
+   9:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *  @verbatim
+  10:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  11:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *** ARM Compiler ***
+  12:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     --------------------
+  13:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     [..] RAM functions are defined using the toolchain options. 
+  14:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****          Functions that are be executed in RAM should reside in a separate
+  15:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****          source module. Using the 'Options for File' dialog you can simply change
+  16:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****          the 'Code / Const' area of a module to a memory space in physical RAM.
+  17:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****          Available memory areas are declared in the 'Target' tab of the 
+  18:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****          Options for Target' dialog.
+  19:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  20:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *** ICCARM Compiler ***
+  21:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     -----------------------
+  22:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     [..] RAM functions are defined using a specific toolchain keyword "__ramfunc".
+  23:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  24:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *** GNU Compiler ***
+  25:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     --------------------
+  26:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     [..] RAM functions are defined using a specific toolchain attribute
+  27:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****          "__attribute__((section(".RamFunc")))".
+  28:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  29:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @endverbatim
+  30:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   ******************************************************************************
+  31:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @attention
+  32:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *
+  33:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  34:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * All rights reserved.</center></h2>
+ARM GAS  /tmp/ccKnQxIq.s 			page 2
+
+
+  35:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *
+  36:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * This software component is licensed by ST under BSD 3-Clause license,
+  37:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * the "License"; You may not use this file except in compliance with the
+  38:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * License. You may obtain a copy of the License at:
+  39:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *                        opensource.org/licenses/BSD-3-Clause
+  40:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *
+  41:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   ******************************************************************************
+  42:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+  43:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  44:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Includes ------------------------------------------------------------------*/
+  45:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #include "stm32l1xx_hal.h"
+  46:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  47:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @addtogroup STM32L1xx_HAL_Driver
+  48:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+  49:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+  50:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  51:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #ifdef HAL_FLASH_MODULE_ENABLED
+  52:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  53:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @addtogroup FLASH
+  54:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+  55:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+  56:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @addtogroup FLASH_Private_Variables
+  57:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  * @{
+  58:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  */
+  59:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** extern FLASH_ProcessTypeDef pFlash;
+  60:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+  61:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+  62:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+  63:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  64:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+  65:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+  66:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+  67:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+  68:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC FLASH_RAMFUNC
+  69:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief FLASH functions executed from RAM
+  70:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+  71:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */ 
+  72:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  73:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  74:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Private typedef -----------------------------------------------------------*/
+  75:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Private define ------------------------------------------------------------*/
+  76:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Private macro -------------------------------------------------------------*/
+  77:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Private variables ---------------------------------------------------------*/
+  78:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Private function prototypes -----------------------------------------------*/
+  79:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC_Private_Functions FLASH RAM Private Functions
+  80:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  * @{
+  81:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  */
+  82:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  83:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** static __RAM_FUNC HAL_StatusTypeDef FLASHRAM_WaitForLastOperation(uint32_t Timeout);
+  84:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** static __RAM_FUNC HAL_StatusTypeDef FLASHRAM_SetErrorCode(void);
+  85:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  86:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+  87:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+  88:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+  89:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+  90:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /* Private functions ---------------------------------------------------------*/
+  91:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  
+ARM GAS  /tmp/ccKnQxIq.s 			page 3
+
+
+  92:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC_Exported_Functions FLASH RAM Exported Functions
+  93:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  *
+  94:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @verbatim  
+  95:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  ===============================================================================
+  96:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****                       ##### ramfunc functions #####
+  97:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  ===============================================================================  
+  98:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     [..]
+  99:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     This subsection provides a set of functions that should be executed from RAM 
+ 100:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     transfers.
+ 101:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 102:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @endverbatim
+ 103:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+ 104:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */ 
+ 105:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 106:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC_Exported_Functions_Group1 Peripheral features functions 
+ 107:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+ 108:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */  
+ 109:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 110:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 111:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Enable  the power down mode during RUN mode.
+ 112:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note  This function can be used only when the user code is running from Internal SRAM.
+ 113:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 114:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 115:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_EnableRunPowerDown(void)
+ 116:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 117:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Enable the Power Down in Run mode*/
+ 118:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   __HAL_FLASH_POWER_DOWN_ENABLE();
+ 119:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 120:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return HAL_OK;
+ 121:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 122:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 123:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 124:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Disable the power down mode during RUN mode.
+ 125:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note  This function can be used only when the user code is running from Internal SRAM.
+ 126:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 127:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 128:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DisableRunPowerDown(void)
+ 129:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 130:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Disable the Power Down in Run mode*/
+ 131:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   __HAL_FLASH_POWER_DOWN_DISABLE();
+ 132:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 133:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return HAL_OK;  
+ 134:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 135:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 136:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 137:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+ 138:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 139:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 140:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC_Exported_Functions_Group2 Programming and erasing operation functions 
+ 141:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  *
+ 142:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @verbatim  
+ 143:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @endverbatim
+ 144:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+ 145:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 146:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 147:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #if defined(FLASH_PECR_PARALLBANK)
+ 148:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ARM GAS  /tmp/ccKnQxIq.s 			page 4
+
+
+ 149:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Erases a specified 2 pages in program memory in parallel.
+ 150:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   This function can be used only for STM32L151xD, STM32L152xD), STM32L162xD and Cat5  dev
+ 151:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         To correctly run this function, the @ref HAL_FLASH_Unlock() function
+ 152:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         must be called before.
+ 153:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access 
+ 154:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *        (recommended to protect the FLASH memory against possible unwanted operation).
+ 155:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Page_Address1: The page address in program memory to be erased in 
+ 156:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         the first Bank (BANK1). This parameter should be between FLASH_BASE
+ 157:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         and FLASH_BANK1_END.
+ 158:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Page_Address2: The page address in program memory to be erased in 
+ 159:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         the second Bank (BANK2). This parameter should be between FLASH_BANK2_BASE
+ 160:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         and FLASH_BANK2_END.
+ 161:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   A Page is erased in the Program memory only if the address to load 
+ 162:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         is the start address of a page (multiple of @ref FLASH_PAGE_SIZE bytes).
+ 163:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 164:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 165:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_EraseParallelPage(uint32_t Page_Address1, uint32_t Page_Ad
+ 166:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 167:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   HAL_StatusTypeDef status = HAL_OK;
+ 168:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 169:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Wait for last operation to be completed */
+ 170:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 171:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 172:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(status == HAL_OK)
+ 173:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 174:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Proceed to erase the page */
+ 175:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_PARALLBANK);
+ 176:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_ERASE);
+ 177:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 178:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 179:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write 00000000h to the first word of the first program page to erase */
+ 180:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *(__IO uint32_t *)Page_Address1 = 0x00000000U;
+ 181:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write 00000000h to the first word of the second program page to erase */    
+ 182:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *(__IO uint32_t *)Page_Address2 = 0x00000000U;
+ 183:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  
+ 184:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Wait for last operation to be completed */
+ 185:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 186:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 187:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* If the erase operation is completed, disable the ERASE, PROG and PARALLBANK bits */
+ 188:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 189:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_ERASE);
+ 190:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_PARALLBANK);
+ 191:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }     
+ 192:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Return the Erase Status */
+ 193:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return status;
+ 194:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 195:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 196:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 197:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Program 2 half pages in program memory in parallel (half page size is 32 Words).
+ 198:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   This function can be used only for STM32L151xD, STM32L152xD), STM32L162xD and Cat5  dev
+ 199:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Address1: specifies the first address to be written in the first bank 
+ 200:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *        (BANK1). This parameter should be between FLASH_BASE and (FLASH_BANK1_END - FLASH_PAGE_S
+ 201:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  pBuffer1: pointer to the buffer  containing the data to be  written 
+ 202:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         to the first half page in the first bank.
+ 203:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Address2: specifies the second address to be written in the second bank
+ 204:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *        (BANK2). This parameter should be between FLASH_BANK2_BASE and (FLASH_BANK2_END - FLASH_
+ 205:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  pBuffer2: pointer to the buffer containing the data to be  written 
+ARM GAS  /tmp/ccKnQxIq.s 			page 5
+
+
+ 206:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         to the second half page in the second bank.
+ 207:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   To correctly run this function, the @ref HAL_FLASH_Unlock() function
+ 208:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         must be called before.
+ 209:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access  
+ 210:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         (recommended to protect the FLASH memory against possible unwanted operation).
+ 211:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   Half page write is possible only from SRAM.
+ 212:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   If there are more than 32 words to write, after 32 words another 
+ 213:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Half Page programming operation starts and has to be finished.
+ 214:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   A half page is written to the program memory only if the first 
+ 215:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         address to load is the start address of a half page (multiple of 128 
+ 216:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         bytes) and the 31 remaining words to load are in the same half page.
+ 217:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   During the Program memory half page write all read operations are 
+ 218:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         forbidden (this includes DMA read operations and debugger read 
+ 219:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         operations such as breakpoints, periodic updates, etc.).
+ 220:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   If a PGAERR is set during a Program memory half page write, the 
+ 221:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         complete write operation is aborted. Software should then reset the 
+ 222:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         FPRG and PROG/DATA bits and restart the write operation from the 
+ 223:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         beginning.
+ 224:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 225:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 226:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_ProgramParallelHalfPage(uint32_t Address1, uint32_t* pBuff
+ 227:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 228:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ 229:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t count = 0U; 
+ 230:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   HAL_StatusTypeDef status = HAL_OK;
+ 231:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 232:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Wait for last operation to be completed */
+ 233:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 234:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 235:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(status == HAL_OK)
+ 236:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 237:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Disable all IRQs */
+ 238:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     primask_bit = __get_PRIMASK();
+ 239:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __disable_irq();
+ 240:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 241:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Proceed to program the new half page */
+ 242:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_PARALLBANK);
+ 243:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 244:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 245:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 246:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write the first half page directly with 32 different words */
+ 247:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     while(count < 32U)
+ 248:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     {
+ 249:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       *(__IO uint32_t*) ((uint32_t)(Address1 + (4 * count))) = *pBuffer1;
+ 250:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       pBuffer1++;
+ 251:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       count ++;  
+ 252:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     }
+ 253:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 254:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write the second half page directly with 32 different words */
+ 255:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     count = 0U;
+ 256:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     while(count < 32U)
+ 257:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     {
+ 258:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       *(__IO uint32_t*) ((uint32_t)(Address2 + (4 * count))) = *pBuffer2;
+ 259:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       pBuffer2++;
+ 260:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       count ++;  
+ 261:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     }
+ 262:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ARM GAS  /tmp/ccKnQxIq.s 			page 6
+
+
+ 263:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Wait for last operation to be completed */
+ 264:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 265:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 266:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* if the write operation is completed, disable the PROG, FPRG and PARALLBANK bits */
+ 267:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 268:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 269:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_PARALLBANK);
+ 270:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 271:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Enable IRQs */
+ 272:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __set_PRIMASK(primask_bit);    
+ 273:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 274:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 275:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Return the Write Status */
+ 276:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return status;
+ 277:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 278:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #endif /* FLASH_PECR_PARALLBANK */
+ 279:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 280:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 281:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Program a half page in program memory.
+ 282:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Address specifies the address to be written.
+ 283:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  pBuffer pointer to the buffer  containing the data to be  written to 
+ 284:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         the half page.
+ 285:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   To correctly run this function, the @ref HAL_FLASH_Unlock() function
+ 286:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         must be called before.
+ 287:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access  
+ 288:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         (recommended to protect the FLASH memory against possible unwanted operation)
+ 289:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   Half page write is possible only from SRAM.
+ 290:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   If there are more than 32 words to write, after 32 words another 
+ 291:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Half Page programming operation starts and has to be finished.
+ 292:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   A half page is written to the program memory only if the first 
+ 293:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         address to load is the start address of a half page (multiple of 128 
+ 294:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         bytes) and the 31 remaining words to load are in the same half page.
+ 295:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   During the Program memory half page write all read operations are 
+ 296:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         forbidden (this includes DMA read operations and debugger read 
+ 297:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         operations such as breakpoints, periodic updates, etc.).
+ 298:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   If a PGAERR is set during a Program memory half page write, the 
+ 299:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         complete write operation is aborted. Software should then reset the 
+ 300:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         FPRG and PROG/DATA bits and restart the write operation from the 
+ 301:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         beginning.
+ 302:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 303:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 304:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_HalfPageProgram(uint32_t Address, uint32_t* pBuffer)
+ 305:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 306:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ 307:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t count = 0U; 
+ 308:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   HAL_StatusTypeDef status = HAL_OK;
+ 309:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 310:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Wait for last operation to be completed */
+ 311:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 312:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 313:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(status == HAL_OK)
+ 314:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 315:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Disable all IRQs */
+ 316:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     primask_bit = __get_PRIMASK();
+ 317:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __disable_irq();
+ 318:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 319:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Proceed to program the new half page */
+ARM GAS  /tmp/ccKnQxIq.s 			page 7
+
+
+ 320:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 321:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 322:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 323:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write one half page directly with 32 different words */
+ 324:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     while(count < 32U)
+ 325:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     {
+ 326:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       *(__IO uint32_t*) ((uint32_t)(Address + (4 * count))) = *pBuffer;
+ 327:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       pBuffer++;
+ 328:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       count ++;  
+ 329:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     }
+ 330:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 331:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Wait for last operation to be completed */
+ 332:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 333:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  
+ 334:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* If the write operation is completed, disable the PROG and FPRG bits */
+ 335:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 336:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 337:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 338:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Enable IRQs */
+ 339:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __set_PRIMASK(primask_bit);
+ 340:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 341:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****    
+ 342:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Return the Write Status */
+ 343:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return status;
+ 344:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 345:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 346:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 347:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+ 348:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 349:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 350:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC_Exported_Functions_Group3 Peripheral errors functions 
+ 351:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  *  @brief    Peripheral errors functions 
+ 352:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  *
+ 353:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @verbatim   
+ 354:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  ===============================================================================
+ 355:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****                       ##### Peripheral errors functions #####
+ 356:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  ===============================================================================  
+ 357:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     [..]
+ 358:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     This subsection permit to get in run-time errors of  the FLASH peripheral.
+ 359:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 360:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @endverbatim
+ 361:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+ 362:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 363:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 364:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 365:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Get the specific FLASH errors flag.
+ 366:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Error pointer is the error value. It can be a mixed of:
+ 367:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @if STM32L100xB
+ 368:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L100xBA
+ 369:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 370:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L151xB
+ 371:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L151xBA
+ 372:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 373:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L152xB
+ 374:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L152xBA
+ 375:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 376:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L100xC
+ARM GAS  /tmp/ccKnQxIq.s 			page 8
+
+
+ 377:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 378:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_OPTVUSR FLASH Option User validity error
+ 379:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L151xC
+ 380:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 381:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_OPTVUSR FLASH Option User validity error
+ 382:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L152xC
+ 383:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 384:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_OPTVUSR FLASH Option User validity error
+ 385:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @elif STM32L162xC
+ 386:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_RD      FLASH Read Protection error flag (PCROP)
+ 387:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_OPTVUSR FLASH Option User validity error
+ 388:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @else
+ 389:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_OPTVUSR FLASH Option User validity error
+ 390:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** @endif
+ 391:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_PGA     FLASH Programming Alignment error flag
+ 392:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_WRP     FLASH Write protected error flag
+ 393:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *            @arg @ref HAL_FLASH_ERROR_OPTV    FLASH Option valid error flag 
+ 394:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL Status
+ 395:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 396:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_GetError(uint32_t * Error)
+ 397:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** { 
+ 398:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *Error = pFlash.ErrorCode;
+ 399:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return HAL_OK;  
+ 400:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 401:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 402:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 403:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+ 404:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 405:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 406:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @defgroup FLASH_RAMFUNC_Exported_Functions_Group4 DATA EEPROM functions
+ 407:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *
+ 408:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+ 409:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 410:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 411:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 412:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Erase a double word in data memory.
+ 413:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Address specifies the address to be erased.
+ 414:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   To correctly run this function, the HAL_FLASH_EEPROM_Unlock() function
+ 415:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         must be called before.
+ 416:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Call the HAL_FLASH_EEPROM_Lock() to he data EEPROM access
+ 417:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         and Flash program erase control register access(recommended to protect 
+ 418:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         the DATA_EEPROM against possible unwanted operation).
+ 419:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   Data memory double word erase is possible only from SRAM.
+ 420:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   A double word is erased to the data memory only if the first address 
+ 421:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         to load is the start address of a double word (multiple of 8 bytes).
+ 422:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   During the Data memory double word erase, all read operations are 
+ 423:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         forbidden (this includes DMA read operations and debugger read 
+ 424:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         operations such as breakpoints, periodic updates, etc.).
+ 425:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 426:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 427:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 428:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_EraseDoubleWord(uint32_t Address)
+ 429:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 430:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ 431:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   HAL_StatusTypeDef status = HAL_OK;
+ 432:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 433:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Wait for last operation to be completed */
+ARM GAS  /tmp/ccKnQxIq.s 			page 9
+
+
+ 434:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 435:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 436:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(status == HAL_OK)
+ 437:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 438:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Disable all IRQs */
+ 439:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     primask_bit = __get_PRIMASK();
+ 440:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __disable_irq();
+ 441:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 442:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* If the previous operation is completed, proceed to erase the next double word */
+ 443:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Set the ERASE bit */
+ 444:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_ERASE);
+ 445:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 446:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Set DATA bit */
+ 447:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_DATA);
+ 448:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****    
+ 449:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write 00000000h to the 2 words to erase */
+ 450:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *(__IO uint32_t *)Address = 0x00000000U;
+ 451:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     Address += 4U;
+ 452:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     *(__IO uint32_t *)Address = 0x00000000U;
+ 453:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****    
+ 454:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Wait for last operation to be completed */
+ 455:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 456:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 457:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* If the erase operation is completed, disable the ERASE and DATA bits */
+ 458:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_ERASE);
+ 459:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_DATA);
+ 460:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 461:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Enable IRQs */
+ 462:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __set_PRIMASK(primask_bit);
+ 463:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  
+ 464:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }  
+ 465:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       
+ 466:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Return the erase status */
+ 467:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return status;
+ 468:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 469:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 470:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 471:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Write a double word in data memory without erase.
+ 472:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Address specifies the address to be written.
+ 473:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Data specifies the data to be written.
+ 474:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   To correctly run this function, the HAL_FLASH_EEPROM_Unlock() function
+ 475:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         must be called before.
+ 476:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         Call the HAL_FLASH_EEPROM_Lock() to he data EEPROM access
+ 477:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         and Flash program erase control register access(recommended to protect 
+ 478:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         the DATA_EEPROM against possible unwanted operation).
+ 479:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   Data memory double word write is possible only from SRAM.
+ 480:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   A data memory double word is written to the data memory only if the 
+ 481:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         first address to load is the start address of a double word (multiple 
+ 482:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         of double word).
+ 483:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @note   During the Data memory double word write, all read operations are 
+ 484:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         forbidden (this includes DMA read operations and debugger read 
+ 485:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *         operations such as breakpoints, periodic updates, etc.).
+ 486:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 487:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */ 
+ 488:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_ProgramDoubleWord(uint32_t Address, uint64_t Da
+ 489:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+ 490:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ARM GAS  /tmp/ccKnQxIq.s 			page 10
+
+
+ 491:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   HAL_StatusTypeDef status = HAL_OK;
+ 492:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 493:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Wait for last operation to be completed */
+ 494:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 495:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 496:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(status == HAL_OK)
+ 497:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 498:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Disable all IRQs */
+ 499:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     primask_bit = __get_PRIMASK();
+ 500:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __disable_irq();
+ 501:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 502:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* If the previous operation is completed, proceed to program the new data*/
+ 503:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 504:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_DATA);
+ 505:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 506:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Write the 2 words */  
+ 507:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      *(__IO uint32_t *)Address = (uint32_t) Data;
+ 508:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      Address += 4U;
+ 509:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      *(__IO uint32_t *)Address = (uint32_t) (Data >> 32);
+ 510:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      
+ 511:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Wait for last operation to be completed */
+ 512:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     status = FLASHRAM_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
+ 513:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 514:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* If the write operation is completed, disable the FPRG and DATA bits */
+ 515:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 516:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_DATA);     
+ 517:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 518:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Enable IRQs */
+ 519:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __set_PRIMASK(primask_bit);
+ 520:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 521:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       
+ 522:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Return the Write Status */
+ 523:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return status;
+ 524:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 525:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 526:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 527:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+ 528:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 529:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 530:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 531:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @}
+ 532:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 533:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 534:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /** @addtogroup FLASH_RAMFUNC_Private_Functions
+ 535:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @{
+ 536:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */ 
+ 537:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 538:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 539:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Set the specific FLASH error flag.
+ 540:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL Status
+ 541:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 542:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** static __RAM_FUNC HAL_StatusTypeDef FLASHRAM_SetErrorCode(void)
+ 543:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** {
+  25              		.loc 1 543 0
+  26              		.cfi_startproc
+  27              		@ args = 0, pretend = 0, frame = 0
+  28              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  /tmp/ccKnQxIq.s 			page 11
+
+
+  29              		@ link register save eliminated.
+  30              	.LVL0:
+ 544:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t flags = 0U;
+ 545:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 546:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_WRPERR))
+  31              		.loc 1 546 0
+  32 0000 1A4B     		ldr	r3, .L7
+  33 0002 9B69     		ldr	r3, [r3, #24]
+  34 0004 13F4807F 		tst	r3, #256
+  35 0008 2ED0     		beq	.L6
+ 547:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 548:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     pFlash.ErrorCode |= HAL_FLASH_ERROR_WRP;
+  36              		.loc 1 548 0
+  37 000a 194A     		ldr	r2, .L7+4
+  38 000c 5369     		ldr	r3, [r2, #20]
+  39 000e 43F00203 		orr	r3, r3, #2
+  40 0012 5361     		str	r3, [r2, #20]
+  41              	.LVL1:
+ 549:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     flags |= FLASH_FLAG_WRPERR;
+  42              		.loc 1 549 0
+  43 0014 4FF48073 		mov	r3, #256
+  44              	.LVL2:
+  45              	.L2:
+ 550:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 551:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_PGAERR))
+  46              		.loc 1 551 0
+  47 0018 144A     		ldr	r2, .L7
+  48 001a 9269     		ldr	r2, [r2, #24]
+  49 001c 12F4007F 		tst	r2, #512
+  50 0020 06D0     		beq	.L3
+ 552:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 553:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     pFlash.ErrorCode |= HAL_FLASH_ERROR_PGA;
+  51              		.loc 1 553 0
+  52 0022 1349     		ldr	r1, .L7+4
+  53 0024 4A69     		ldr	r2, [r1, #20]
+  54 0026 42F00102 		orr	r2, r2, #1
+  55 002a 4A61     		str	r2, [r1, #20]
+ 554:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     flags |= FLASH_FLAG_PGAERR;
+  56              		.loc 1 554 0
+  57 002c 43F40073 		orr	r3, r3, #512
+  58              	.LVL3:
+  59              	.L3:
+ 555:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 556:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_OPTVERR))
+  60              		.loc 1 556 0
+  61 0030 0E4A     		ldr	r2, .L7
+  62 0032 9269     		ldr	r2, [r2, #24]
+  63 0034 12F4006F 		tst	r2, #2048
+  64 0038 06D0     		beq	.L4
+ 557:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 558:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     pFlash.ErrorCode |= HAL_FLASH_ERROR_OPTV;
+  65              		.loc 1 558 0
+  66 003a 0D49     		ldr	r1, .L7+4
+  67 003c 4A69     		ldr	r2, [r1, #20]
+  68 003e 42F00402 		orr	r2, r2, #4
+  69 0042 4A61     		str	r2, [r1, #20]
+ 559:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     flags |= FLASH_FLAG_OPTVERR;
+ARM GAS  /tmp/ccKnQxIq.s 			page 12
+
+
+  70              		.loc 1 559 0
+  71 0044 43F40063 		orr	r3, r3, #2048
+  72              	.LVL4:
+  73              	.L4:
+ 560:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 561:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 562:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #if defined(FLASH_SR_RDERR)
+ 563:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_RDERR))
+  74              		.loc 1 563 0
+  75 0048 084A     		ldr	r2, .L7
+  76 004a 9269     		ldr	r2, [r2, #24]
+  77 004c 12F4005F 		tst	r2, #8192
+  78 0050 06D0     		beq	.L5
+ 564:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 565:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     pFlash.ErrorCode |= HAL_FLASH_ERROR_RD;
+  79              		.loc 1 565 0
+  80 0052 0749     		ldr	r1, .L7+4
+  81 0054 4A69     		ldr	r2, [r1, #20]
+  82 0056 42F01002 		orr	r2, r2, #16
+  83 005a 4A61     		str	r2, [r1, #20]
+ 566:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     flags |= FLASH_FLAG_RDERR;
+  84              		.loc 1 566 0
+  85 005c 43F40053 		orr	r3, r3, #8192
+  86              	.LVL5:
+  87              	.L5:
+ 567:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 568:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #endif /* FLASH_SR_RDERR */
+ 569:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #if defined(FLASH_SR_OPTVERRUSR)
+ 570:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_OPTVERRUSR))
+ 571:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 572:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     pFlash.ErrorCode |= HAL_FLASH_ERROR_OPTVUSR;
+ 573:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     flags |= FLASH_FLAG_OPTVERRUSR;
+ 574:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 575:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #endif /* FLASH_SR_OPTVERRUSR */
+ 576:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 577:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Clear FLASH error pending bits */
+ 578:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   __HAL_FLASH_CLEAR_FLAG(flags);
+  88              		.loc 1 578 0
+  89 0060 024A     		ldr	r2, .L7
+  90 0062 9361     		str	r3, [r2, #24]
+ 579:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 580:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return HAL_OK;
+ 581:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }  
+  91              		.loc 1 581 0
+  92 0064 0020     		movs	r0, #0
+  93 0066 7047     		bx	lr
+  94              	.LVL6:
+  95              	.L6:
+ 544:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+  96              		.loc 1 544 0
+  97 0068 0023     		movs	r3, #0
+  98 006a D5E7     		b	.L2
+  99              	.L8:
+ 100              		.align	2
+ 101              	.L7:
+ 102 006c 003C0240 		.word	1073888256
+ 103 0070 00000000 		.word	pFlash
+ARM GAS  /tmp/ccKnQxIq.s 			page 13
+
+
+ 104              		.cfi_endproc
+ 105              	.LFE78:
+ 107              		.align	1
+ 108              		.syntax unified
+ 109              		.thumb
+ 110              		.thumb_func
+ 111              		.fpu softvfp
+ 113              	FLASHRAM_WaitForLastOperation:
+ 114              	.LFB79:
+ 582:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 583:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** /**
+ 584:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @brief  Wait for a FLASH operation to complete.
+ 585:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @param  Timeout maximum flash operationtimeout
+ 586:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   * @retval HAL status
+ 587:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   */
+ 588:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** static __RAM_FUNC HAL_StatusTypeDef FLASHRAM_WaitForLastOperation(uint32_t Timeout)
+ 589:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** { 
+ 115              		.loc 1 589 0
+ 116              		.cfi_startproc
+ 117              		@ args = 0, pretend = 0, frame = 0
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119              	.LVL7:
+ 120 0074 08B5     		push	{r3, lr}
+ 121              	.LCFI0:
+ 122              		.cfi_def_cfa_offset 8
+ 123              		.cfi_offset 3, -8
+ 124              		.cfi_offset 14, -4
+ 590:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
+ 591:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****        Even if the FLASH operation fails, the BUSY flag will be reset and an error
+ 592:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****        flag will be set */
+ 593:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****        
+ 594:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) && (Timeout != 0x00U)) 
+ 125              		.loc 1 594 0
+ 126 0076 00E0     		b	.L10
+ 127              	.L12:
+ 595:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     { 
+ 596:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       Timeout--;
+ 128              		.loc 1 596 0
+ 129 0078 0138     		subs	r0, r0, #1
+ 130              	.LVL8:
+ 131              	.L10:
+ 594:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     { 
+ 132              		.loc 1 594 0
+ 133 007a 164B     		ldr	r3, .L20
+ 134 007c 9B69     		ldr	r3, [r3, #24]
+ 135 007e 13F0010F 		tst	r3, #1
+ 136 0082 01D0     		beq	.L11
+ 594:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     { 
+ 137              		.loc 1 594 0 is_stmt 0 discriminator 1
+ 138 0084 0028     		cmp	r0, #0
+ 139 0086 F7D1     		bne	.L12
+ 140              	.L11:
+ 597:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     }
+ 598:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 599:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     if(Timeout == 0x00U)
+ 141              		.loc 1 599 0 is_stmt 1
+ 142 0088 08B9     		cbnz	r0, .L19
+ARM GAS  /tmp/ccKnQxIq.s 			page 14
+
+
+ 600:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     {
+ 601:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       return HAL_TIMEOUT;
+ 143              		.loc 1 601 0
+ 144 008a 0320     		movs	r0, #3
+ 145              	.LVL9:
+ 146 008c 08BD     		pop	{r3, pc}
+ 147              	.LVL10:
+ 148              	.L19:
+ 602:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     }
+ 603:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 604:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Check FLASH End of Operation flag  */
+ 605:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_EOP))
+ 149              		.loc 1 605 0
+ 150 008e 114B     		ldr	r3, .L20
+ 151 0090 9B69     		ldr	r3, [r3, #24]
+ 152 0092 13F0020F 		tst	r3, #2
+ 153 0096 02D0     		beq	.L14
+ 606:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 607:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /* Clear FLASH End of Operation pending bit */
+ 608:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
+ 154              		.loc 1 608 0
+ 155 0098 0222     		movs	r2, #2
+ 156 009a 0E4B     		ldr	r3, .L20
+ 157 009c 9A61     		str	r2, [r3, #24]
+ 158              	.L14:
+ 609:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 610:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 611:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_WRPERR)  || 
+ 159              		.loc 1 611 0
+ 160 009e 0D4B     		ldr	r3, .L20
+ 161 00a0 9B69     		ldr	r3, [r3, #24]
+ 162 00a2 13F4807F 		tst	r3, #256
+ 163 00a6 0ED1     		bne	.L15
+ 612:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      __HAL_FLASH_GET_FLAG(FLASH_FLAG_OPTVERR) || 
+ 164              		.loc 1 612 0 discriminator 1
+ 165 00a8 0A4B     		ldr	r3, .L20
+ 166 00aa 9B69     		ldr	r3, [r3, #24]
+ 611:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      __HAL_FLASH_GET_FLAG(FLASH_FLAG_OPTVERR) || 
+ 167              		.loc 1 611 0 discriminator 1
+ 168 00ac 13F4006F 		tst	r3, #2048
+ 169 00b0 09D1     		bne	.L15
+ 613:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #if defined(FLASH_SR_RDERR)
+ 614:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       __HAL_FLASH_GET_FLAG(FLASH_FLAG_RDERR) || 
+ 170              		.loc 1 614 0
+ 171 00b2 084B     		ldr	r3, .L20
+ 172 00b4 9B69     		ldr	r3, [r3, #24]
+ 612:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #if defined(FLASH_SR_RDERR)
+ 173              		.loc 1 612 0
+ 174 00b6 13F4005F 		tst	r3, #8192
+ 175 00ba 04D1     		bne	.L15
+ 615:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #endif /* FLASH_SR_RDERR */
+ 616:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #if defined(FLASH_SR_OPTVERRUSR)
+ 617:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       __HAL_FLASH_GET_FLAG(FLASH_FLAG_OPTVERRUSR) || 
+ 618:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #endif /* FLASH_SR_OPTVERRUSR */
+ 619:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      __HAL_FLASH_GET_FLAG(FLASH_FLAG_PGAERR))
+ 176              		.loc 1 619 0
+ 177 00bc 054B     		ldr	r3, .L20
+ARM GAS  /tmp/ccKnQxIq.s 			page 15
+
+
+ 178 00be 9B69     		ldr	r3, [r3, #24]
+ 614:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** #endif /* FLASH_SR_RDERR */
+ 179              		.loc 1 614 0
+ 180 00c0 13F4007F 		tst	r3, #512
+ 181 00c4 03D0     		beq	.L17
+ 182              	.L15:
+ 620:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 621:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     /*Save the error code*/
+ 622:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     FLASHRAM_SetErrorCode();
+ 183              		.loc 1 622 0
+ 184 00c6 FFF79BFF 		bl	FLASHRAM_SetErrorCode
+ 185              	.LVL11:
+ 623:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     return HAL_ERROR;
+ 186              		.loc 1 623 0
+ 187 00ca 0120     		movs	r0, #1
+ 188 00cc 08BD     		pop	{r3, pc}
+ 189              	.LVL12:
+ 190              	.L17:
+ 624:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   }
+ 625:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 626:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* There is no error flag set */
+ 627:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return HAL_OK;
+ 191              		.loc 1 627 0
+ 192 00ce 0020     		movs	r0, #0
+ 193              	.LVL13:
+ 628:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** }
+ 194              		.loc 1 628 0
+ 195 00d0 08BD     		pop	{r3, pc}
+ 196              	.L21:
+ 197 00d2 00BF     		.align	2
+ 198              	.L20:
+ 199 00d4 003C0240 		.word	1073888256
+ 200              		.cfi_endproc
+ 201              	.LFE79:
+ 203              		.align	1
+ 204              		.global	HAL_FLASHEx_EnableRunPowerDown
+ 205              		.syntax unified
+ 206              		.thumb
+ 207              		.thumb_func
+ 208              		.fpu softvfp
+ 210              	HAL_FLASHEx_EnableRunPowerDown:
+ 211              	.LFB72:
+ 116:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Enable the Power Down in Run mode*/
+ 212              		.loc 1 116 0
+ 213              		.cfi_startproc
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216              		@ link register save eliminated.
+ 118:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 217              		.loc 1 118 0
+ 218 00d8 054B     		ldr	r3, .L23
+ 219 00da 064A     		ldr	r2, .L23+4
+ 220 00dc 9A60     		str	r2, [r3, #8]
+ 221 00de 064A     		ldr	r2, .L23+8
+ 222 00e0 9A60     		str	r2, [r3, #8]
+ 223 00e2 1A68     		ldr	r2, [r3]
+ 224 00e4 42F01002 		orr	r2, r2, #16
+ARM GAS  /tmp/ccKnQxIq.s 			page 16
+
+
+ 225 00e8 1A60     		str	r2, [r3]
+ 121:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 226              		.loc 1 121 0
+ 227 00ea 0020     		movs	r0, #0
+ 228 00ec 7047     		bx	lr
+ 229              	.L24:
+ 230 00ee 00BF     		.align	2
+ 231              	.L23:
+ 232 00f0 003C0240 		.word	1073888256
+ 233 00f4 37261504 		.word	68494903
+ 234 00f8 FDFCFBFA 		.word	-84148995
+ 235              		.cfi_endproc
+ 236              	.LFE72:
+ 238              		.align	1
+ 239              		.global	HAL_FLASHEx_DisableRunPowerDown
+ 240              		.syntax unified
+ 241              		.thumb
+ 242              		.thumb_func
+ 243              		.fpu softvfp
+ 245              	HAL_FLASHEx_DisableRunPowerDown:
+ 246              	.LFB73:
+ 129:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   /* Disable the Power Down in Run mode*/
+ 247              		.loc 1 129 0
+ 248              		.cfi_startproc
+ 249              		@ args = 0, pretend = 0, frame = 0
+ 250              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251              		@ link register save eliminated.
+ 131:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 252              		.loc 1 131 0
+ 253 00fc 054B     		ldr	r3, .L26
+ 254 00fe 064A     		ldr	r2, .L26+4
+ 255 0100 9A60     		str	r2, [r3, #8]
+ 256 0102 064A     		ldr	r2, .L26+8
+ 257 0104 9A60     		str	r2, [r3, #8]
+ 258 0106 1A68     		ldr	r2, [r3]
+ 259 0108 22F01002 		bic	r2, r2, #16
+ 260 010c 1A60     		str	r2, [r3]
+ 134:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 261              		.loc 1 134 0
+ 262 010e 0020     		movs	r0, #0
+ 263 0110 7047     		bx	lr
+ 264              	.L27:
+ 265 0112 00BF     		.align	2
+ 266              	.L26:
+ 267 0114 003C0240 		.word	1073888256
+ 268 0118 37261504 		.word	68494903
+ 269 011c FDFCFBFA 		.word	-84148995
+ 270              		.cfi_endproc
+ 271              	.LFE73:
+ 273              		.align	1
+ 274              		.global	HAL_FLASHEx_HalfPageProgram
+ 275              		.syntax unified
+ 276              		.thumb
+ 277              		.thumb_func
+ 278              		.fpu softvfp
+ 280              	HAL_FLASHEx_HalfPageProgram:
+ 281              	.LFB74:
+ARM GAS  /tmp/ccKnQxIq.s 			page 17
+
+
+ 305:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ 282              		.loc 1 305 0
+ 283              		.cfi_startproc
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286              	.LVL14:
+ 287 0120 70B5     		push	{r4, r5, r6, lr}
+ 288              	.LCFI1:
+ 289              		.cfi_def_cfa_offset 16
+ 290              		.cfi_offset 4, -16
+ 291              		.cfi_offset 5, -12
+ 292              		.cfi_offset 6, -8
+ 293              		.cfi_offset 14, -4
+ 294 0122 0546     		mov	r5, r0
+ 295 0124 0C46     		mov	r4, r1
+ 296              	.LVL15:
+ 311:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 297              		.loc 1 311 0
+ 298 0126 4CF25030 		movw	r0, #50000
+ 299              	.LVL16:
+ 300 012a FFF7A3FF 		bl	FLASHRAM_WaitForLastOperation
+ 301              	.LVL17:
+ 313:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 302              		.loc 1 313 0
+ 303 012e 0246     		mov	r2, r0
+ 304 0130 20BB     		cbnz	r0, .L29
+ 305              	.LBB20:
+ 306              	.LBB21:
+ 307              		.file 2 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h"
+   1:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
+   2:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.0.4
+   5:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * @date     09. April 2018
+   6:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
+   7:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /*
+   8:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
+   9:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  *
+  10:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  *
+  12:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  *
+  16:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  *
+  18:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
+  23:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+  24:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+  25:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
+  27:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+  28:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+ARM GAS  /tmp/ccKnQxIq.s 			page 18
+
+
+  29:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+  34:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /* Fallback for __has_builtin */
+  35:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef __has_builtin
+  36:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __has_builtin(x) (0)
+  37:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  38:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+  39:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  40:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ASM
+  41:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __ASM                                  __asm
+  42:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  43:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __INLINE
+  44:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __INLINE                               inline
+  45:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  46:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  47:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_INLINE                        static inline
+  48:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  49:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE                 
+  50:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+  51:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif                                           
+  52:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
+  53:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
+  54:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  55:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+  56:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
+  57:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  58:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
+  59:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
+  60:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  61:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
+  62:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
+  63:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  64:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  65:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
+  66:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  67:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
+  68:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
+  69:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  70:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
+  71:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  72:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  73:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  74:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  75:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  76:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
+  77:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  78:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
+  79:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  80:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  81:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  82:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
+  83:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  84:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
+  85:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  /tmp/ccKnQxIq.s 			page 19
+
+
+  86:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
+  87:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  88:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  89:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  90:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
+  91:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  92:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(add
+  93:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+  94:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_WRITE
+  95:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  96:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  97:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  98:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
+  99:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 100:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))-
+ 101:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 102:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_READ
+ 103:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+ 104:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+ 105:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+ 106:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
+ 107:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 108:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
+ 109:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 110:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
+ 111:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
+ 112:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 113:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
+ 114:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
+ 115:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 116:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 117:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 118:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
+ 119:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+ 120:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+ 121:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   @{
+ 122:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 123:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 124:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 125:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Enable IRQ Interrupts
+ 126:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Enables IRQ interrupts by clearing the I-bit in the CPSR.
+ 127:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 128:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 129:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __enable_irq(void)
+ 130:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 131:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
+ 132:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 133:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 134:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 135:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 136:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
+ 137:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
+ 138:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 139:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 140:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
+ 141:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 142:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
+ARM GAS  /tmp/ccKnQxIq.s 			page 20
+
+
+ 143:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 144:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 145:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 146:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 147:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Control Register
+ 148:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the Control Register.
+ 149:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               Control Register value
+ 150:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 151:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_CONTROL(void)
+ 152:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 153:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 154:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 155:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, control" : "=r" (result) );
+ 156:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 157:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 158:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 159:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 160:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 161:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 162:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Control Register (non-secure)
+ 163:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the non-secure Control Register when in secure mode.
+ 164:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               non-secure Control Register value
+ 165:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 166:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __TZ_get_CONTROL_NS(void)
+ 167:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 168:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 169:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 170:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, control_ns" : "=r" (result) );
+ 171:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 172:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 173:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 174:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 175:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 176:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 177:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Control Register
+ 178:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Writes the given value to the Control Register.
+ 179:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    control  Control Register value to set
+ 180:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 181:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __set_CONTROL(uint32_t control)
+ 182:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 183:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR control, %0" : : "r" (control) : "memory");
+ 184:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 185:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 186:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 187:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 188:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 189:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Control Register (non-secure)
+ 190:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Writes the given value to the non-secure Control Register when in secure state.
+ 191:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    control  Control Register value to set
+ 192:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 193:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
+ 194:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 195:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR control_ns, %0" : : "r" (control) : "memory");
+ 196:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 197:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 198:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 199:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  /tmp/ccKnQxIq.s 			page 21
+
+
+ 200:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 201:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get IPSR Register
+ 202:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the IPSR Register.
+ 203:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               IPSR Register value
+ 204:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 205:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_IPSR(void)
+ 206:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 207:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 208:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 209:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, ipsr" : "=r" (result) );
+ 210:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 211:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 212:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 213:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 214:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 215:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get APSR Register
+ 216:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the APSR Register.
+ 217:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               APSR Register value
+ 218:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 219:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_APSR(void)
+ 220:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 221:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 222:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 223:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, apsr" : "=r" (result) );
+ 224:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 225:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 226:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 227:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 228:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 229:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get xPSR Register
+ 230:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the xPSR Register.
+ 231:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               xPSR Register value
+ 232:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 233:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_xPSR(void)
+ 234:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 235:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 236:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 237:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, xpsr" : "=r" (result) );
+ 238:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 239:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 240:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 241:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 242:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 243:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Process Stack Pointer
+ 244:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current value of the Process Stack Pointer (PSP).
+ 245:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               PSP Register value
+ 246:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 247:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_PSP(void)
+ 248:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 249:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 250:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 251:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, psp"  : "=r" (result) );
+ 252:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 253:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 254:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 255:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 256:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ARM GAS  /tmp/ccKnQxIq.s 			page 22
+
+
+ 257:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 258:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Process Stack Pointer (non-secure)
+ 259:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current value of the non-secure Process Stack Pointer (PSP) when in secure s
+ 260:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               PSP Register value
+ 261:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 262:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __TZ_get_PSP_NS(void)
+ 263:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 264:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 265:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 266:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, psp_ns"  : "=r" (result) );
+ 267:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 268:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 269:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 270:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 271:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 272:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 273:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Process Stack Pointer
+ 274:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the Process Stack Pointer (PSP).
+ 275:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfProcStack  Process Stack Pointer value to set
+ 276:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 277:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __set_PSP(uint32_t topOfProcStack)
+ 278:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 279:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR psp, %0" : : "r" (topOfProcStack) : );
+ 280:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 281:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 282:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 283:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 284:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 285:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Process Stack Pointer (non-secure)
+ 286:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the non-secure Process Stack Pointer (PSP) when in secure sta
+ 287:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfProcStack  Process Stack Pointer value to set
+ 288:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 289:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_PSP_NS(uint32_t topOfProcStack)
+ 290:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 291:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR psp_ns, %0" : : "r" (topOfProcStack) : );
+ 292:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 293:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 294:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 295:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 296:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 297:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Main Stack Pointer
+ 298:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current value of the Main Stack Pointer (MSP).
+ 299:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               MSP Register value
+ 300:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 301:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_MSP(void)
+ 302:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 303:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 304:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 305:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, msp" : "=r" (result) );
+ 306:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 307:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 308:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 309:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 310:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 311:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 312:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Main Stack Pointer (non-secure)
+ 313:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current value of the non-secure Main Stack Pointer (MSP) when in secure stat
+ARM GAS  /tmp/ccKnQxIq.s 			page 23
+
+
+ 314:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               MSP Register value
+ 315:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 316:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __TZ_get_MSP_NS(void)
+ 317:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 318:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 319:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 320:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, msp_ns" : "=r" (result) );
+ 321:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 322:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 323:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 324:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 325:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 326:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 327:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Main Stack Pointer
+ 328:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the Main Stack Pointer (MSP).
+ 329:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfMainStack  Main Stack Pointer value to set
+ 330:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 331:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __set_MSP(uint32_t topOfMainStack)
+ 332:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 333:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR msp, %0" : : "r" (topOfMainStack) : );
+ 334:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 335:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 336:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 337:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 338:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 339:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Main Stack Pointer (non-secure)
+ 340:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the non-secure Main Stack Pointer (MSP) when in secure state.
+ 341:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfMainStack  Main Stack Pointer value to set
+ 342:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 343:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_MSP_NS(uint32_t topOfMainStack)
+ 344:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 345:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR msp_ns, %0" : : "r" (topOfMainStack) : );
+ 346:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 347:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 348:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 349:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 350:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 351:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 352:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Stack Pointer (non-secure)
+ 353:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current value of the non-secure Stack Pointer (SP) when in secure state.
+ 354:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               SP Register value
+ 355:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 356:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __TZ_get_SP_NS(void)
+ 357:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 358:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 359:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 360:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, sp_ns" : "=r" (result) );
+ 361:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 362:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 363:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 364:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 365:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 366:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Stack Pointer (non-secure)
+ 367:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the non-secure Stack Pointer (SP) when in secure state.
+ 368:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfStack  Stack Pointer value to set
+ 369:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 370:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_SP_NS(uint32_t topOfStack)
+ARM GAS  /tmp/ccKnQxIq.s 			page 24
+
+
+ 371:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 372:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR sp_ns, %0" : : "r" (topOfStack) : );
+ 373:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 374:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 375:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 376:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 377:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 378:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Priority Mask
+ 379:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current state of the priority mask bit from the Priority Mask Register.
+ 380:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               Priority Mask value
+ 381:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 382:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_PRIMASK(void)
+ 383:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 384:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 385:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 386:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, primask" : "=r" (result) :: "memory");
+ 308              		.loc 2 386 0
+ 309              		.syntax unified
+ 310              	@ 386 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 311 0132 EFF31086 		MRS r6, primask
+ 312              	@ 0 "" 2
+ 313              		.thumb
+ 314              		.syntax unified
+ 315              	.LBE21:
+ 316              	.LBE20:
+ 317              	.LBB22:
+ 318              	.LBB23:
+ 142:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 319              		.loc 2 142 0
+ 320              		.syntax unified
+ 321              	@ 142 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 322 0136 72B6     		cpsid i
+ 323              	@ 0 "" 2
+ 324              		.thumb
+ 325              		.syntax unified
+ 326              	.LBE23:
+ 327              	.LBE22:
+ 320:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_PROG);
+ 328              		.loc 1 320 0
+ 329 0138 114B     		ldr	r3, .L33
+ 330 013a 5A68     		ldr	r2, [r3, #4]
+ 331 013c 42F48062 		orr	r2, r2, #1024
+ 332 0140 5A60     		str	r2, [r3, #4]
+ 321:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 333              		.loc 1 321 0
+ 334 0142 5A68     		ldr	r2, [r3, #4]
+ 335 0144 42F00802 		orr	r2, r2, #8
+ 336 0148 5A60     		str	r2, [r3, #4]
+ 307:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   HAL_StatusTypeDef status = HAL_OK;
+ 337              		.loc 1 307 0
+ 338 014a 0023     		movs	r3, #0
+ 324:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     {
+ 339              		.loc 1 324 0
+ 340 014c 04E0     		b	.L30
+ 341              	.LVL18:
+ 342              	.L31:
+ 326:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****       pBuffer++;
+ARM GAS  /tmp/ccKnQxIq.s 			page 25
+
+
+ 343              		.loc 1 326 0
+ 344 014e 54F8042B 		ldr	r2, [r4], #4
+ 345              	.LVL19:
+ 346 0152 45F82320 		str	r2, [r5, r3, lsl #2]
+ 347              	.LVL20:
+ 328:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     }
+ 348              		.loc 1 328 0
+ 349 0156 0133     		adds	r3, r3, #1
+ 350              	.LVL21:
+ 351              	.L30:
+ 324:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     {
+ 352              		.loc 1 324 0
+ 353 0158 1F2B     		cmp	r3, #31
+ 354 015a F8D9     		bls	.L31
+ 332:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****  
+ 355              		.loc 1 332 0
+ 356 015c 4CF25030 		movw	r0, #50000
+ 357              	.LVL22:
+ 358 0160 FFF788FF 		bl	FLASHRAM_WaitForLastOperation
+ 359              	.LVL23:
+ 360 0164 0246     		mov	r2, r0
+ 361              	.LVL24:
+ 335:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_FPRG);
+ 362              		.loc 1 335 0
+ 363 0166 064B     		ldr	r3, .L33
+ 364 0168 5968     		ldr	r1, [r3, #4]
+ 365 016a 21F00801 		bic	r1, r1, #8
+ 366 016e 5960     		str	r1, [r3, #4]
+ 336:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 367              		.loc 1 336 0
+ 368 0170 5968     		ldr	r1, [r3, #4]
+ 369 0172 21F48061 		bic	r1, r1, #1024
+ 370 0176 5960     		str	r1, [r3, #4]
+ 371              	.LVL25:
+ 372              	.LBB24:
+ 373              	.LBB25:
+ 387:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 388:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 389:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 390:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 391:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
+ 392:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ 393:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Priority Mask (non-secure)
+ 394:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Returns the current state of the non-secure priority mask bit from the Priority Mask Reg
+ 395:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \return               Priority Mask value
+ 396:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 397:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __TZ_get_PRIMASK_NS(void)
+ 398:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 399:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 400:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 401:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, primask_ns" : "=r" (result) :: "memory");
+ 402:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 403:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 404:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** #endif
+ 405:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 406:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** 
+ 407:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** /**
+ARM GAS  /tmp/ccKnQxIq.s 			page 26
+
+
+ 408:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Priority Mask
+ 409:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the Priority Mask Register.
+ 410:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   \param [in]    priMask  Priority Mask
+ 411:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****  */
+ 412:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __set_PRIMASK(uint32_t priMask)
+ 413:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** {
+ 414:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
+ 374              		.loc 2 414 0
+ 375              		.syntax unified
+ 376              	@ 414 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 377 0178 86F31088 		MSR primask, r6
+ 378              	@ 0 "" 2
+ 379              	.LVL26:
+ 380              		.thumb
+ 381              		.syntax unified
+ 382              	.L29:
+ 383              	.LBE25:
+ 384              	.LBE24:
+ 344:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 385              		.loc 1 344 0
+ 386 017c 1046     		mov	r0, r2
+ 387 017e 70BD     		pop	{r4, r5, r6, pc}
+ 388              	.LVL27:
+ 389              	.L34:
+ 390              		.align	2
+ 391              	.L33:
+ 392 0180 003C0240 		.word	1073888256
+ 393              		.cfi_endproc
+ 394              	.LFE74:
+ 396              		.align	1
+ 397              		.global	HAL_FLASHEx_GetError
+ 398              		.syntax unified
+ 399              		.thumb
+ 400              		.thumb_func
+ 401              		.fpu softvfp
+ 403              	HAL_FLASHEx_GetError:
+ 404              	.LFB75:
+ 397:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   *Error = pFlash.ErrorCode;
+ 405              		.loc 1 397 0
+ 406              		.cfi_startproc
+ 407              		@ args = 0, pretend = 0, frame = 0
+ 408              		@ frame_needed = 0, uses_anonymous_args = 0
+ 409              		@ link register save eliminated.
+ 410              	.LVL28:
+ 398:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   return HAL_OK;  
+ 411              		.loc 1 398 0
+ 412 0184 024B     		ldr	r3, .L36
+ 413 0186 5B69     		ldr	r3, [r3, #20]
+ 414 0188 0360     		str	r3, [r0]
+ 400:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 415              		.loc 1 400 0
+ 416 018a 0020     		movs	r0, #0
+ 417              	.LVL29:
+ 418 018c 7047     		bx	lr
+ 419              	.L37:
+ 420 018e 00BF     		.align	2
+ 421              	.L36:
+ARM GAS  /tmp/ccKnQxIq.s 			page 27
+
+
+ 422 0190 00000000 		.word	pFlash
+ 423              		.cfi_endproc
+ 424              	.LFE75:
+ 426              		.align	1
+ 427              		.global	HAL_FLASHEx_DATAEEPROM_EraseDoubleWord
+ 428              		.syntax unified
+ 429              		.thumb
+ 430              		.thumb_func
+ 431              		.fpu softvfp
+ 433              	HAL_FLASHEx_DATAEEPROM_EraseDoubleWord:
+ 434              	.LFB76:
+ 429:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ 435              		.loc 1 429 0
+ 436              		.cfi_startproc
+ 437              		@ args = 0, pretend = 0, frame = 0
+ 438              		@ frame_needed = 0, uses_anonymous_args = 0
+ 439              	.LVL30:
+ 440 0194 70B5     		push	{r4, r5, r6, lr}
+ 441              	.LCFI2:
+ 442              		.cfi_def_cfa_offset 16
+ 443              		.cfi_offset 4, -16
+ 444              		.cfi_offset 5, -12
+ 445              		.cfi_offset 6, -8
+ 446              		.cfi_offset 14, -4
+ 447 0196 0546     		mov	r5, r0
+ 448              	.LVL31:
+ 434:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 449              		.loc 1 434 0
+ 450 0198 4CF25030 		movw	r0, #50000
+ 451              	.LVL32:
+ 452 019c FFF76AFF 		bl	FLASHRAM_WaitForLastOperation
+ 453              	.LVL33:
+ 436:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 454              		.loc 1 436 0
+ 455 01a0 0346     		mov	r3, r0
+ 456 01a2 08B1     		cbz	r0, .L41
+ 457              	.LVL34:
+ 458              	.L39:
+ 468:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 459              		.loc 1 468 0
+ 460 01a4 1846     		mov	r0, r3
+ 461 01a6 70BD     		pop	{r4, r5, r6, pc}
+ 462              	.LVL35:
+ 463              	.L41:
+ 464              	.LBB26:
+ 465              	.LBB27:
+ 386:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 466              		.loc 2 386 0
+ 467              		.syntax unified
+ 468              	@ 386 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 469 01a8 EFF31086 		MRS r6, primask
+ 470              	@ 0 "" 2
+ 471              		.thumb
+ 472              		.syntax unified
+ 473              	.LBE27:
+ 474              	.LBE26:
+ 475              	.LBB28:
+ARM GAS  /tmp/ccKnQxIq.s 			page 28
+
+
+ 476              	.LBB29:
+ 142:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 477              		.loc 2 142 0
+ 478              		.syntax unified
+ 479              	@ 142 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 480 01ac 72B6     		cpsid i
+ 481              	@ 0 "" 2
+ 482              		.thumb
+ 483              		.syntax unified
+ 484              	.LBE29:
+ 485              	.LBE28:
+ 444:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 486              		.loc 1 444 0
+ 487 01ae 0E4C     		ldr	r4, .L42
+ 488 01b0 6368     		ldr	r3, [r4, #4]
+ 489 01b2 43F40073 		orr	r3, r3, #512
+ 490 01b6 6360     		str	r3, [r4, #4]
+ 447:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****    
+ 491              		.loc 1 447 0
+ 492 01b8 6368     		ldr	r3, [r4, #4]
+ 493 01ba 43F01003 		orr	r3, r3, #16
+ 494 01be 6360     		str	r3, [r4, #4]
+ 450:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     Address += 4U;
+ 495              		.loc 1 450 0
+ 496 01c0 0023     		movs	r3, #0
+ 497 01c2 2B60     		str	r3, [r5]
+ 498              	.LVL36:
+ 452:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****    
+ 499              		.loc 1 452 0
+ 500 01c4 6B60     		str	r3, [r5, #4]
+ 455:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 501              		.loc 1 455 0
+ 502 01c6 4CF25030 		movw	r0, #50000
+ 503              	.LVL37:
+ 504 01ca FFF753FF 		bl	FLASHRAM_WaitForLastOperation
+ 505              	.LVL38:
+ 506 01ce 0346     		mov	r3, r0
+ 507              	.LVL39:
+ 458:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_DATA);
+ 508              		.loc 1 458 0
+ 509 01d0 6268     		ldr	r2, [r4, #4]
+ 510 01d2 22F40072 		bic	r2, r2, #512
+ 511 01d6 6260     		str	r2, [r4, #4]
+ 459:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 512              		.loc 1 459 0
+ 513 01d8 6268     		ldr	r2, [r4, #4]
+ 514 01da 22F01002 		bic	r2, r2, #16
+ 515 01de 6260     		str	r2, [r4, #4]
+ 516              	.LBB30:
+ 517              	.LBB31:
+ 518              		.loc 2 414 0
+ 519              		.syntax unified
+ 520              	@ 414 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 521 01e0 86F31088 		MSR primask, r6
+ 522              	@ 0 "" 2
+ 523              		.thumb
+ 524              		.syntax unified
+ARM GAS  /tmp/ccKnQxIq.s 			page 29
+
+
+ 525 01e4 DEE7     		b	.L39
+ 526              	.L43:
+ 527 01e6 00BF     		.align	2
+ 528              	.L42:
+ 529 01e8 003C0240 		.word	1073888256
+ 530              	.LBE31:
+ 531              	.LBE30:
+ 532              		.cfi_endproc
+ 533              	.LFE76:
+ 535              		.align	1
+ 536              		.global	HAL_FLASHEx_DATAEEPROM_ProgramDoubleWord
+ 537              		.syntax unified
+ 538              		.thumb
+ 539              		.thumb_func
+ 540              		.fpu softvfp
+ 542              	HAL_FLASHEx_DATAEEPROM_ProgramDoubleWord:
+ 543              	.LFB77:
+ 489:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   uint32_t primask_bit;
+ 544              		.loc 1 489 0
+ 545              		.cfi_startproc
+ 546              		@ args = 0, pretend = 0, frame = 0
+ 547              		@ frame_needed = 0, uses_anonymous_args = 0
+ 548              	.LVL40:
+ 549 01ec 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 550              	.LCFI3:
+ 551              		.cfi_def_cfa_offset 24
+ 552              		.cfi_offset 4, -24
+ 553              		.cfi_offset 5, -20
+ 554              		.cfi_offset 6, -16
+ 555              		.cfi_offset 7, -12
+ 556              		.cfi_offset 8, -8
+ 557              		.cfi_offset 14, -4
+ 558 01f0 0546     		mov	r5, r0
+ 559 01f2 9046     		mov	r8, r2
+ 560 01f4 1F46     		mov	r7, r3
+ 561              	.LVL41:
+ 494:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   
+ 562              		.loc 1 494 0
+ 563 01f6 4CF25030 		movw	r0, #50000
+ 564              	.LVL42:
+ 565 01fa FFF73BFF 		bl	FLASHRAM_WaitForLastOperation
+ 566              	.LVL43:
+ 496:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****   {
+ 567              		.loc 1 496 0
+ 568 01fe 0346     		mov	r3, r0
+ 569 0200 10B1     		cbz	r0, .L47
+ 570              	.LVL44:
+ 571              	.L45:
+ 524:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 572              		.loc 1 524 0
+ 573 0202 1846     		mov	r0, r3
+ 574 0204 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 575              	.LVL45:
+ 576              	.L47:
+ 577              	.LBB32:
+ 578              	.LBB33:
+ 386:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ARM GAS  /tmp/ccKnQxIq.s 			page 30
+
+
+ 579              		.loc 2 386 0
+ 580              		.syntax unified
+ 581              	@ 386 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 582 0208 EFF31086 		MRS r6, primask
+ 583              	@ 0 "" 2
+ 584              		.thumb
+ 585              		.syntax unified
+ 586              	.LBE33:
+ 587              	.LBE32:
+ 588              	.LBB34:
+ 589              	.LBB35:
+ 142:..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h **** }
+ 590              		.loc 2 142 0
+ 591              		.syntax unified
+ 592              	@ 142 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 593 020c 72B6     		cpsid i
+ 594              	@ 0 "" 2
+ 595              		.thumb
+ 596              		.syntax unified
+ 597              	.LBE35:
+ 598              	.LBE34:
+ 503:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     SET_BIT(FLASH->PECR, FLASH_PECR_DATA);
+ 599              		.loc 1 503 0
+ 600 020e 0E4C     		ldr	r4, .L48
+ 601 0210 6368     		ldr	r3, [r4, #4]
+ 602 0212 43F48063 		orr	r3, r3, #1024
+ 603 0216 6360     		str	r3, [r4, #4]
+ 504:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 604              		.loc 1 504 0
+ 605 0218 6368     		ldr	r3, [r4, #4]
+ 606 021a 43F01003 		orr	r3, r3, #16
+ 607 021e 6360     		str	r3, [r4, #4]
+ 507:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      Address += 4U;
+ 608              		.loc 1 507 0
+ 609 0220 C5F80080 		str	r8, [r5]
+ 610              	.LVL46:
+ 509:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****      
+ 611              		.loc 1 509 0
+ 612 0224 6F60     		str	r7, [r5, #4]
+ 512:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     
+ 613              		.loc 1 512 0
+ 614 0226 4CF25030 		movw	r0, #50000
+ 615              	.LVL47:
+ 616 022a FFF723FF 		bl	FLASHRAM_WaitForLastOperation
+ 617              	.LVL48:
+ 618 022e 0346     		mov	r3, r0
+ 619              	.LVL49:
+ 515:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c ****     CLEAR_BIT(FLASH->PECR, FLASH_PECR_DATA);     
+ 620              		.loc 1 515 0
+ 621 0230 6268     		ldr	r2, [r4, #4]
+ 622 0232 22F48062 		bic	r2, r2, #1024
+ 623 0236 6260     		str	r2, [r4, #4]
+ 516:..//Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c **** 
+ 624              		.loc 1 516 0
+ 625 0238 6268     		ldr	r2, [r4, #4]
+ 626 023a 22F01002 		bic	r2, r2, #16
+ 627 023e 6260     		str	r2, [r4, #4]
+ARM GAS  /tmp/ccKnQxIq.s 			page 31
+
+
+ 628              	.LBB36:
+ 629              	.LBB37:
+ 630              		.loc 2 414 0
+ 631              		.syntax unified
+ 632              	@ 414 "..//Source/stm/lib/CMSIS/Include/cmsis_gcc.h" 1
+ 633 0240 86F31088 		MSR primask, r6
+ 634              	@ 0 "" 2
+ 635              		.thumb
+ 636              		.syntax unified
+ 637 0244 DDE7     		b	.L45
+ 638              	.L49:
+ 639 0246 00BF     		.align	2
+ 640              	.L48:
+ 641 0248 003C0240 		.word	1073888256
+ 642              	.LBE37:
+ 643              	.LBE36:
+ 644              		.cfi_endproc
+ 645              	.LFE77:
+ 647              		.text
+ 648              	.Letext0:
+ 649              		.file 3 "/usr/include/newlib/machine/_default_types.h"
+ 650              		.file 4 "/usr/include/newlib/sys/_stdint.h"
+ 651              		.file 5 "..//Source/stm/lib/CMSIS/Include/core_cm3.h"
+ 652              		.file 6 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/system_stm32l1xx.h"
+ 653              		.file 7 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/stm32l151xba.h"
+ 654              		.file 8 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_def.h"
+ 655              		.file 9 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_flash.h"
+ 656              		.file 10 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal.h"
+ARM GAS  /tmp/ccKnQxIq.s 			page 32
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 stm32l1xx_hal_flash_ramfunc.c
+     /tmp/ccKnQxIq.s:16     .RamFunc:0000000000000000 $t
+     /tmp/ccKnQxIq.s:22     .RamFunc:0000000000000000 FLASHRAM_SetErrorCode
+     /tmp/ccKnQxIq.s:102    .RamFunc:000000000000006c $d
+     /tmp/ccKnQxIq.s:107    .RamFunc:0000000000000074 $t
+     /tmp/ccKnQxIq.s:113    .RamFunc:0000000000000074 FLASHRAM_WaitForLastOperation
+     /tmp/ccKnQxIq.s:199    .RamFunc:00000000000000d4 $d
+     /tmp/ccKnQxIq.s:203    .RamFunc:00000000000000d8 $t
+     /tmp/ccKnQxIq.s:210    .RamFunc:00000000000000d8 HAL_FLASHEx_EnableRunPowerDown
+     /tmp/ccKnQxIq.s:232    .RamFunc:00000000000000f0 $d
+     /tmp/ccKnQxIq.s:238    .RamFunc:00000000000000fc $t
+     /tmp/ccKnQxIq.s:245    .RamFunc:00000000000000fc HAL_FLASHEx_DisableRunPowerDown
+     /tmp/ccKnQxIq.s:267    .RamFunc:0000000000000114 $d
+     /tmp/ccKnQxIq.s:273    .RamFunc:0000000000000120 $t
+     /tmp/ccKnQxIq.s:280    .RamFunc:0000000000000120 HAL_FLASHEx_HalfPageProgram
+     /tmp/ccKnQxIq.s:392    .RamFunc:0000000000000180 $d
+     /tmp/ccKnQxIq.s:396    .RamFunc:0000000000000184 $t
+     /tmp/ccKnQxIq.s:403    .RamFunc:0000000000000184 HAL_FLASHEx_GetError
+     /tmp/ccKnQxIq.s:422    .RamFunc:0000000000000190 $d
+     /tmp/ccKnQxIq.s:426    .RamFunc:0000000000000194 $t
+     /tmp/ccKnQxIq.s:433    .RamFunc:0000000000000194 HAL_FLASHEx_DATAEEPROM_EraseDoubleWord
+     /tmp/ccKnQxIq.s:529    .RamFunc:00000000000001e8 $d
+     /tmp/ccKnQxIq.s:535    .RamFunc:00000000000001ec $t
+     /tmp/ccKnQxIq.s:542    .RamFunc:00000000000001ec HAL_FLASHEx_DATAEEPROM_ProgramDoubleWord
+     /tmp/ccKnQxIq.s:641    .RamFunc:0000000000000248 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+pFlash

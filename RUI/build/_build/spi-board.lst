@@ -1,0 +1,905 @@
+ARM GAS  /tmp/ccsXVdpe.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"spi-board.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.SpiDeInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	SpiDeInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	SpiDeInit:
+  24              	.LFB73:
+  25              		.file 1 "..//Source/stm/board/board_stm32l151cd/spi-board.c"
+   1:..//Source/stm/board/board_stm32l151cd/spi-board.c **** /*!
+   2:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \file      spi-board.c
+   3:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *
+   4:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \brief     Target board SPI driver implementation
+   5:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *
+   6:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *
+   8:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \code
+   9:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *                ______                              _
+  10:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *               / _____)             _              | |
+  11:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *
+  17:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \endcode
+  18:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *
+  19:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  *
+  21:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/board/board_stm32l151cd/spi-board.c ****  */
+  23:..//Source/stm/board/board_stm32l151cd/spi-board.c **** #include "stm32l1xx.h"
+  24:..//Source/stm/board/board_stm32l151cd/spi-board.c **** #include "utilities.h"
+  25:..//Source/stm/board/board_stm32l151cd/spi-board.c **** #include "board.h"
+  26:..//Source/stm/board/board_stm32l151cd/spi-board.c **** #include "gpio.h"
+  27:..//Source/stm/board/board_stm32l151cd/spi-board.c **** #include "spi-board.h"
+  28:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  29:..//Source/stm/board/board_stm32l151cd/spi-board.c **** static SPI_HandleTypeDef SpiHandle[2];
+  30:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  31:..//Source/stm/board/board_stm32l151cd/spi-board.c **** void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames sclk, PinNames nss 
+  32:..//Source/stm/board/board_stm32l151cd/spi-board.c **** {
+  33:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     BoardDisableIrq( );
+ARM GAS  /tmp/ccsXVdpe.s 			page 2
+
+
+  34:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  35:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     obj->SpiId = spiId;
+  36:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  37:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     if( spiId == SPI_1 )
+  38:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+  39:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI1_FORCE_RESET( );
+  40:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI1_RELEASE_RESET( );
+  41:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI1_CLK_ENABLE( );
+  42:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  43:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[spiId].Instance = ( SPI_TypeDef* )SPI1_BASE;
+  44:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  45:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Mosi, mosi, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI1 
+  46:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Miso, miso, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI1 
+  47:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Sclk, sclk, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI1 
+  48:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Nss, nss, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_UP, GPIO_AF5_SPI1 );
+  49:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+  50:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     else
+  51:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+  52:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI2_FORCE_RESET( );
+  53:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI2_RELEASE_RESET( );
+  54:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI2_CLK_ENABLE( );
+  55:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  56:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[spiId].Instance = ( SPI_TypeDef* )SPI2_BASE;
+  57:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  58:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Mosi, mosi, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI2 
+  59:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Miso, miso, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI2 
+  60:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Sclk, sclk, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI2 
+  61:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Nss, nss, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_UP, GPIO_AF5_SPI2 );
+  62:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+  63:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  64:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     if( nss == NC )
+  65:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+  66:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[spiId].Init.NSS = SPI_NSS_SOFT;
+  67:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiFormat( obj, SPI_DATASIZE_8BIT, SPI_POLARITY_LOW, SPI_PHASE_1EDGE, 0 );
+  68:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+  69:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     else
+  70:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+  71:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiFormat( obj, SPI_DATASIZE_8BIT, SPI_POLARITY_LOW, SPI_PHASE_1EDGE, 1 );
+  72:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+  73:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiFrequency( obj, 10000000 );
+  74:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  75:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     HAL_SPI_Init( &SpiHandle[spiId] );
+  76:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  77:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     BoardEnableIrq( );
+  78:..//Source/stm/board/board_stm32l151cd/spi-board.c **** }
+  79:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  80:..//Source/stm/board/board_stm32l151cd/spi-board.c **** void SpiDeInit( Spi_t *obj )
+  81:..//Source/stm/board/board_stm32l151cd/spi-board.c **** {
+  26              		.loc 1 81 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 30B5     		push	{r4, r5, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 12
+  34              		.cfi_offset 4, -12
+ARM GAS  /tmp/ccsXVdpe.s 			page 3
+
+
+  35              		.cfi_offset 5, -8
+  36              		.cfi_offset 14, -4
+  37 0002 83B0     		sub	sp, sp, #12
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 24
+  40 0004 0446     		mov	r4, r0
+  82:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     HAL_SPI_DeInit( &SpiHandle[obj->SpiId] );
+  41              		.loc 1 82 0
+  42 0006 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+  43 0008 5820     		movs	r0, #88
+  44              	.LVL1:
+  45 000a 164B     		ldr	r3, .L3
+  46 000c 00FB0230 		mla	r0, r0, r2, r3
+  47 0010 FFF7FEFF 		bl	HAL_SPI_DeInit
+  48              	.LVL2:
+  83:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  84:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     GpioInit( &obj->Mosi, obj->Mosi.pin, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+  49              		.loc 1 84 0
+  50 0014 2046     		mov	r0, r4
+  51 0016 10F9041F 		ldrsb	r1, [r0, #4]!
+  52 001a 0025     		movs	r5, #0
+  53 001c 0195     		str	r5, [sp, #4]
+  54 001e 0095     		str	r5, [sp]
+  55 0020 2B46     		mov	r3, r5
+  56 0022 0122     		movs	r2, #1
+  57 0024 FFF7FEFF 		bl	GpioInit
+  58              	.LVL3:
+  85:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     GpioInit( &obj->Miso, obj->Miso.pin, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_DOWN, 0 );
+  59              		.loc 1 85 0
+  60 0028 2046     		mov	r0, r4
+  61 002a 10F9101F 		ldrsb	r1, [r0, #16]!
+  62 002e 0195     		str	r5, [sp, #4]
+  63 0030 0223     		movs	r3, #2
+  64 0032 0093     		str	r3, [sp]
+  65 0034 2B46     		mov	r3, r5
+  66 0036 0122     		movs	r2, #1
+  67 0038 FFF7FEFF 		bl	GpioInit
+  68              	.LVL4:
+  86:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     GpioInit( &obj->Sclk, obj->Sclk.pin, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+  69              		.loc 1 86 0
+  70 003c 2046     		mov	r0, r4
+  71 003e 10F91C1F 		ldrsb	r1, [r0, #28]!
+  72 0042 0195     		str	r5, [sp, #4]
+  73 0044 0095     		str	r5, [sp]
+  74 0046 2B46     		mov	r3, r5
+  75 0048 0122     		movs	r2, #1
+  76 004a FFF7FEFF 		bl	GpioInit
+  77              	.LVL5:
+  87:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     GpioInit( &obj->Nss, obj->Nss.pin, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+  78              		.loc 1 87 0
+  79 004e 2046     		mov	r0, r4
+  80 0050 10F9281F 		ldrsb	r1, [r0, #40]!
+  81 0054 0122     		movs	r2, #1
+  82 0056 0192     		str	r2, [sp, #4]
+  83 0058 0092     		str	r2, [sp]
+  84 005a 2B46     		mov	r3, r5
+  85 005c FFF7FEFF 		bl	GpioInit
+ARM GAS  /tmp/ccsXVdpe.s 			page 4
+
+
+  86              	.LVL6:
+  88:..//Source/stm/board/board_stm32l151cd/spi-board.c **** }
+  87              		.loc 1 88 0
+  88 0060 03B0     		add	sp, sp, #12
+  89              	.LCFI2:
+  90              		.cfi_def_cfa_offset 12
+  91              		@ sp needed
+  92 0062 30BD     		pop	{r4, r5, pc}
+  93              	.LVL7:
+  94              	.L4:
+  95              		.align	2
+  96              	.L3:
+  97 0064 00000000 		.word	.LANCHOR0
+  98              		.cfi_endproc
+  99              	.LFE73:
+ 101              		.section	.text.SpiFormat,"ax",%progbits
+ 102              		.align	1
+ 103              		.global	SpiFormat
+ 104              		.syntax unified
+ 105              		.thumb
+ 106              		.thumb_func
+ 107              		.fpu softvfp
+ 109              	SpiFormat:
+ 110              	.LFB74:
+  89:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+  90:..//Source/stm/board/board_stm32l151cd/spi-board.c **** void SpiFormat( Spi_t *obj, int8_t bits, int8_t cpol, int8_t cpha, int8_t slave )
+  91:..//Source/stm/board/board_stm32l151cd/spi-board.c **** {
+ 111              		.loc 1 91 0
+ 112              		.cfi_startproc
+ 113              		@ args = 4, pretend = 0, frame = 0
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115              		@ link register save eliminated.
+ 116              	.LVL8:
+ 117 0000 F0B4     		push	{r4, r5, r6, r7}
+ 118              	.LCFI3:
+ 119              		.cfi_def_cfa_offset 16
+ 120              		.cfi_offset 4, -16
+ 121              		.cfi_offset 5, -12
+ 122              		.cfi_offset 6, -8
+ 123              		.cfi_offset 7, -4
+ 124 0002 9DF91050 		ldrsb	r5, [sp, #16]
+  92:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.Direction = SPI_DIRECTION_2LINES;
+ 125              		.loc 1 92 0
+ 126 0006 0478     		ldrb	r4, [r0]	@ zero_extendqisi2
+ 127 0008 5827     		movs	r7, #88
+ 128 000a 224E     		ldr	r6, .L12
+ 129 000c 07FB0464 		mla	r4, r7, r4, r6
+ 130 0010 0026     		movs	r6, #0
+ 131 0012 A660     		str	r6, [r4, #8]
+  93:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     if( bits == SPI_DATASIZE_8BIT )
+ 132              		.loc 1 93 0
+ 133 0014 0029     		cmp	r1, #0
+ 134 0016 2BD1     		bne	.L6
+  94:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+  95:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[obj->SpiId].Init.DataSize = SPI_DATASIZE_8BIT;
+ 135              		.loc 1 95 0
+ 136 0018 0178     		ldrb	r1, [r0]	@ zero_extendqisi2
+ARM GAS  /tmp/ccsXVdpe.s 			page 5
+
+
+ 137              	.LVL9:
+ 138 001a 1E4C     		ldr	r4, .L12
+ 139 001c 07FB0141 		mla	r1, r7, r1, r4
+ 140 0020 0024     		movs	r4, #0
+ 141 0022 CC60     		str	r4, [r1, #12]
+ 142              	.L7:
+  96:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+  97:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     else
+  98:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+  99:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[obj->SpiId].Init.DataSize = SPI_DATASIZE_16BIT;
+ 100:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 101:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.CLKPolarity = cpol;
+ 143              		.loc 1 101 0
+ 144 0024 0678     		ldrb	r6, [r0]	@ zero_extendqisi2
+ 145 0026 1B49     		ldr	r1, .L12
+ 146 0028 5824     		movs	r4, #88
+ 147 002a 04FB0616 		mla	r6, r4, r6, r1
+ 148 002e 3261     		str	r2, [r6, #16]
+ 102:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.CLKPhase = cpha;
+ 149              		.loc 1 102 0
+ 150 0030 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+ 151              	.LVL10:
+ 152 0032 04FB0212 		mla	r2, r4, r2, r1
+ 153 0036 5361     		str	r3, [r2, #20]
+ 103:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.FirstBit = SPI_FIRSTBIT_MSB;
+ 154              		.loc 1 103 0
+ 155 0038 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 156              	.LVL11:
+ 157 003a 04FB0313 		mla	r3, r4, r3, r1
+ 158 003e 0022     		movs	r2, #0
+ 159 0040 1A62     		str	r2, [r3, #32]
+ 104:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.TIMode = SPI_TIMODE_DISABLE;
+ 160              		.loc 1 104 0
+ 161 0042 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 162 0044 04FB0313 		mla	r3, r4, r3, r1
+ 163 0048 5A62     		str	r2, [r3, #36]
+ 105:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+ 164              		.loc 1 105 0
+ 165 004a 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 166 004c 04FB0313 		mla	r3, r4, r3, r1
+ 167 0050 9A62     		str	r2, [r3, #40]
+ 106:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.CRCPolynomial = 7;
+ 168              		.loc 1 106 0
+ 169 0052 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 170 0054 04FB0311 		mla	r1, r4, r3, r1
+ 171 0058 0723     		movs	r3, #7
+ 172 005a CB62     		str	r3, [r1, #44]
+ 107:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 108:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     if( slave == 0 )
+ 173              		.loc 1 108 0
+ 174 005c 8DB1     		cbz	r5, .L11
+ 109:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+ 110:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[obj->SpiId].Init.Mode = SPI_MODE_MASTER;
+ 111:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 112:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     else
+ 113:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+ 114:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiHandle[obj->SpiId].Init.Mode = SPI_MODE_SLAVE;
+ARM GAS  /tmp/ccsXVdpe.s 			page 6
+
+
+ 175              		.loc 1 114 0
+ 176 005e 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 177 0060 5821     		movs	r1, #88
+ 178 0062 0C4A     		ldr	r2, .L12
+ 179 0064 01FB0323 		mla	r3, r1, r3, r2
+ 180 0068 0022     		movs	r2, #0
+ 181 006a 5A60     		str	r2, [r3, #4]
+ 182              	.L5:
+ 115:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 116:..//Source/stm/board/board_stm32l151cd/spi-board.c **** }
+ 183              		.loc 1 116 0
+ 184 006c F0BC     		pop	{r4, r5, r6, r7}
+ 185              	.LCFI4:
+ 186              		.cfi_remember_state
+ 187              		.cfi_restore 7
+ 188              		.cfi_restore 6
+ 189              		.cfi_restore 5
+ 190              		.cfi_restore 4
+ 191              		.cfi_def_cfa_offset 0
+ 192              	.LVL12:
+ 193 006e 7047     		bx	lr
+ 194              	.LVL13:
+ 195              	.L6:
+ 196              	.LCFI5:
+ 197              		.cfi_restore_state
+  99:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 198              		.loc 1 99 0
+ 199 0070 0178     		ldrb	r1, [r0]	@ zero_extendqisi2
+ 200              	.LVL14:
+ 201 0072 5826     		movs	r6, #88
+ 202 0074 074C     		ldr	r4, .L12
+ 203 0076 06FB0141 		mla	r1, r6, r1, r4
+ 204 007a 4FF40064 		mov	r4, #2048
+ 205 007e CC60     		str	r4, [r1, #12]
+ 206 0080 D0E7     		b	.L7
+ 207              	.LVL15:
+ 208              	.L11:
+ 110:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 209              		.loc 1 110 0
+ 210 0082 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 211 0084 034A     		ldr	r2, .L12
+ 212 0086 04FB0323 		mla	r3, r4, r3, r2
+ 213 008a 4FF48272 		mov	r2, #260
+ 214 008e 5A60     		str	r2, [r3, #4]
+ 215 0090 ECE7     		b	.L5
+ 216              	.L13:
+ 217 0092 00BF     		.align	2
+ 218              	.L12:
+ 219 0094 00000000 		.word	.LANCHOR0
+ 220              		.cfi_endproc
+ 221              	.LFE74:
+ 223              		.section	.text.SpiFrequency,"ax",%progbits
+ 224              		.align	1
+ 225              		.global	SpiFrequency
+ 226              		.syntax unified
+ 227              		.thumb
+ 228              		.thumb_func
+ARM GAS  /tmp/ccsXVdpe.s 			page 7
+
+
+ 229              		.fpu softvfp
+ 231              	SpiFrequency:
+ 232              	.LFB75:
+ 117:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 118:..//Source/stm/board/board_stm32l151cd/spi-board.c **** void SpiFrequency( Spi_t *obj, uint32_t hz )
+ 119:..//Source/stm/board/board_stm32l151cd/spi-board.c **** {
+ 233              		.loc 1 119 0
+ 234              		.cfi_startproc
+ 235              		@ args = 0, pretend = 0, frame = 0
+ 236              		@ frame_needed = 0, uses_anonymous_args = 0
+ 237              		@ link register save eliminated.
+ 238              	.LVL16:
+ 120:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     uint32_t divisor = 0;
+ 121:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     uint32_t sysClkTmp = SystemCoreClock;
+ 239              		.loc 1 121 0
+ 240 0000 0E4B     		ldr	r3, .L24
+ 241 0002 1A68     		ldr	r2, [r3]
+ 242              	.LVL17:
+ 120:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     uint32_t divisor = 0;
+ 243              		.loc 1 120 0
+ 244 0004 0023     		movs	r3, #0
+ 245              	.LVL18:
+ 246              	.L15:
+ 122:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     uint32_t baudRate;
+ 123:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 124:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     while( sysClkTmp > hz )
+ 247              		.loc 1 124 0
+ 248 0006 8A42     		cmp	r2, r1
+ 249 0008 03D9     		bls	.L16
+ 125:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+ 126:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         divisor++;
+ 250              		.loc 1 126 0
+ 251 000a 0133     		adds	r3, r3, #1
+ 252              	.LVL19:
+ 127:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         sysClkTmp = ( sysClkTmp >> 1 );
+ 253              		.loc 1 127 0
+ 254 000c 5208     		lsrs	r2, r2, #1
+ 255              	.LVL20:
+ 128:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 129:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         if( divisor >= 7 )
+ 256              		.loc 1 129 0
+ 257 000e 062B     		cmp	r3, #6
+ 258 0010 F9D9     		bls	.L15
+ 259              	.L16:
+ 130:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         {
+ 131:..//Source/stm/board/board_stm32l151cd/spi-board.c ****             break;
+ 132:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         }
+ 133:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 134:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 135:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     baudRate =( ( ( divisor & 0x4 ) == 0 ) ? 0x0 : SPI_CR1_BR_2 ) |
+ 260              		.loc 1 135 0
+ 261 0012 13F00402 		ands	r2, r3, #4
+ 262              	.LVL21:
+ 263 0016 00D0     		beq	.L18
+ 264 0018 2022     		movs	r2, #32
+ 265              	.L18:
+ 136:..//Source/stm/board/board_stm32l151cd/spi-board.c ****               ( ( ( divisor & 0x2 ) == 0 ) ? 0x0 : SPI_CR1_BR_1 ) |
+ARM GAS  /tmp/ccsXVdpe.s 			page 8
+
+
+ 266              		.loc 1 136 0
+ 267 001a 13F00201 		ands	r1, r3, #2
+ 268              	.LVL22:
+ 269 001e 00D0     		beq	.L19
+ 270 0020 1021     		movs	r1, #16
+ 271              	.L19:
+ 135:..//Source/stm/board/board_stm32l151cd/spi-board.c ****               ( ( ( divisor & 0x2 ) == 0 ) ? 0x0 : SPI_CR1_BR_1 ) |
+ 272              		.loc 1 135 0
+ 273 0022 0A43     		orrs	r2, r2, r1
+ 137:..//Source/stm/board/board_stm32l151cd/spi-board.c ****               ( ( ( divisor & 0x1 ) == 0 ) ? 0x0 : SPI_CR1_BR_0 );
+ 274              		.loc 1 137 0
+ 275 0024 13F00103 		ands	r3, r3, #1
+ 276              	.LVL23:
+ 277 0028 00D0     		beq	.L20
+ 278 002a 0823     		movs	r3, #8
+ 279              	.L20:
+ 135:..//Source/stm/board/board_stm32l151cd/spi-board.c ****               ( ( ( divisor & 0x2 ) == 0 ) ? 0x0 : SPI_CR1_BR_1 ) |
+ 280              		.loc 1 135 0
+ 281 002c 1343     		orrs	r3, r3, r2
+ 282              	.LVL24:
+ 138:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 139:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Init.BaudRatePrescaler = baudRate;
+ 283              		.loc 1 139 0
+ 284 002e 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+ 285 0030 5820     		movs	r0, #88
+ 286              	.LVL25:
+ 287 0032 0349     		ldr	r1, .L24+4
+ 288 0034 00FB0212 		mla	r2, r0, r2, r1
+ 289 0038 D361     		str	r3, [r2, #28]
+ 290 003a 7047     		bx	lr
+ 291              	.L25:
+ 292              		.align	2
+ 293              	.L24:
+ 294 003c 00000000 		.word	SystemCoreClock
+ 295 0040 00000000 		.word	.LANCHOR0
+ 296              		.cfi_endproc
+ 297              	.LFE75:
+ 299              		.section	.text.SpiInit,"ax",%progbits
+ 300              		.align	1
+ 301              		.global	SpiInit
+ 302              		.syntax unified
+ 303              		.thumb
+ 304              		.thumb_func
+ 305              		.fpu softvfp
+ 307              	SpiInit:
+ 308              	.LFB72:
+  32:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     BoardDisableIrq( );
+ 309              		.loc 1 32 0
+ 310              		.cfi_startproc
+ 311              		@ args = 8, pretend = 0, frame = 8
+ 312              		@ frame_needed = 0, uses_anonymous_args = 0
+ 313              	.LVL26:
+ 314 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 315              	.LCFI6:
+ 316              		.cfi_def_cfa_offset 36
+ 317              		.cfi_offset 4, -36
+ 318              		.cfi_offset 5, -32
+ARM GAS  /tmp/ccsXVdpe.s 			page 9
+
+
+ 319              		.cfi_offset 6, -28
+ 320              		.cfi_offset 7, -24
+ 321              		.cfi_offset 8, -20
+ 322              		.cfi_offset 9, -16
+ 323              		.cfi_offset 10, -12
+ 324              		.cfi_offset 11, -8
+ 325              		.cfi_offset 14, -4
+ 326 0004 85B0     		sub	sp, sp, #20
+ 327              	.LCFI7:
+ 328              		.cfi_def_cfa_offset 56
+ 329 0006 0446     		mov	r4, r0
+ 330 0008 0D46     		mov	r5, r1
+ 331 000a 9246     		mov	r10, r2
+ 332 000c 9946     		mov	r9, r3
+ 333 000e 9DF93880 		ldrsb	r8, [sp, #56]
+ 334 0012 9DF93C70 		ldrsb	r7, [sp, #60]
+  33:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 335              		.loc 1 33 0
+ 336 0016 FFF7FEFF 		bl	BoardDisableIrq
+ 337              	.LVL27:
+  35:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 338              		.loc 1 35 0
+ 339 001a 2570     		strb	r5, [r4]
+  37:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+ 340              		.loc 1 37 0
+ 341 001c 002D     		cmp	r5, #0
+ 342 001e 5CD1     		bne	.L27
+  39:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI1_RELEASE_RESET( );
+ 343              		.loc 1 39 0
+ 344 0020 574B     		ldr	r3, .L33
+ 345 0022 5A69     		ldr	r2, [r3, #20]
+ 346 0024 42F48052 		orr	r2, r2, #4096
+ 347 0028 5A61     		str	r2, [r3, #20]
+ 348              	.LVL28:
+  40:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI1_CLK_ENABLE( );
+ 349              		.loc 1 40 0
+ 350 002a 5A69     		ldr	r2, [r3, #20]
+ 351 002c 22F48052 		bic	r2, r2, #4096
+ 352 0030 5A61     		str	r2, [r3, #20]
+ 353              	.LBB2:
+  41:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 354              		.loc 1 41 0
+ 355 0032 1A6A     		ldr	r2, [r3, #32]
+ 356 0034 42F48052 		orr	r2, r2, #4096
+ 357 0038 1A62     		str	r2, [r3, #32]
+ 358 003a 1B6A     		ldr	r3, [r3, #32]
+ 359 003c 03F48053 		and	r3, r3, #4096
+ 360 0040 0293     		str	r3, [sp, #8]
+ 361 0042 029B     		ldr	r3, [sp, #8]
+ 362              	.LBE2:
+  43:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 363              		.loc 1 43 0
+ 364 0044 5823     		movs	r3, #88
+ 365 0046 03FB05F3 		mul	r3, r3, r5
+ 366 004a 4E49     		ldr	r1, .L33+4
+ 367 004c 4E4A     		ldr	r2, .L33+8
+ 368 004e D150     		str	r1, [r2, r3]
+ARM GAS  /tmp/ccsXVdpe.s 			page 10
+
+
+  45:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Miso, miso, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI1 
+ 369              		.loc 1 45 0
+ 370 0050 4FF0050B 		mov	fp, #5
+ 371 0054 CDF804B0 		str	fp, [sp, #4]
+ 372 0058 0226     		movs	r6, #2
+ 373 005a 0096     		str	r6, [sp]
+ 374 005c 0023     		movs	r3, #0
+ 375 005e 3246     		mov	r2, r6
+ 376 0060 5146     		mov	r1, r10
+ 377 0062 201D     		adds	r0, r4, #4
+ 378 0064 FFF7FEFF 		bl	GpioInit
+ 379              	.LVL29:
+  46:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Sclk, sclk, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI1 
+ 380              		.loc 1 46 0
+ 381 0068 CDF804B0 		str	fp, [sp, #4]
+ 382 006c 0096     		str	r6, [sp]
+ 383 006e 0023     		movs	r3, #0
+ 384 0070 3246     		mov	r2, r6
+ 385 0072 4946     		mov	r1, r9
+ 386 0074 04F11000 		add	r0, r4, #16
+ 387 0078 FFF7FEFF 		bl	GpioInit
+ 388              	.LVL30:
+  47:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Nss, nss, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_UP, GPIO_AF5_SPI1 );
+ 389              		.loc 1 47 0
+ 390 007c CDF804B0 		str	fp, [sp, #4]
+ 391 0080 0096     		str	r6, [sp]
+ 392 0082 0023     		movs	r3, #0
+ 393 0084 3246     		mov	r2, r6
+ 394 0086 4146     		mov	r1, r8
+ 395 0088 04F11C00 		add	r0, r4, #28
+ 396 008c FFF7FEFF 		bl	GpioInit
+ 397              	.LVL31:
+  48:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 398              		.loc 1 48 0
+ 399 0090 CDF804B0 		str	fp, [sp, #4]
+ 400 0094 0123     		movs	r3, #1
+ 401 0096 0093     		str	r3, [sp]
+ 402 0098 0023     		movs	r3, #0
+ 403 009a 3246     		mov	r2, r6
+ 404 009c 3946     		mov	r1, r7
+ 405 009e 04F12800 		add	r0, r4, #40
+ 406 00a2 FFF7FEFF 		bl	GpioInit
+ 407              	.LVL32:
+ 408              	.L28:
+  64:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+ 409              		.loc 1 64 0
+ 410 00a6 B7F1FF3F 		cmp	r7, #-1
+ 411 00aa 5AD0     		beq	.L32
+  71:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 412              		.loc 1 71 0
+ 413 00ac 0123     		movs	r3, #1
+ 414 00ae 0093     		str	r3, [sp]
+ 415 00b0 0023     		movs	r3, #0
+ 416 00b2 1A46     		mov	r2, r3
+ 417 00b4 1946     		mov	r1, r3
+ 418 00b6 2046     		mov	r0, r4
+ 419 00b8 FFF7FEFF 		bl	SpiFormat
+ARM GAS  /tmp/ccsXVdpe.s 			page 11
+
+
+ 420              	.LVL33:
+ 421              	.L30:
+  73:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 422              		.loc 1 73 0
+ 423 00bc 3349     		ldr	r1, .L33+12
+ 424 00be 2046     		mov	r0, r4
+ 425 00c0 FFF7FEFF 		bl	SpiFrequency
+ 426              	.LVL34:
+  75:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 427              		.loc 1 75 0
+ 428 00c4 5820     		movs	r0, #88
+ 429 00c6 304B     		ldr	r3, .L33+8
+ 430 00c8 00FB0530 		mla	r0, r0, r5, r3
+ 431 00cc FFF7FEFF 		bl	HAL_SPI_Init
+ 432              	.LVL35:
+  77:..//Source/stm/board/board_stm32l151cd/spi-board.c **** }
+ 433              		.loc 1 77 0
+ 434 00d0 FFF7FEFF 		bl	BoardEnableIrq
+ 435              	.LVL36:
+  78:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 436              		.loc 1 78 0
+ 437 00d4 05B0     		add	sp, sp, #20
+ 438              	.LCFI8:
+ 439              		.cfi_remember_state
+ 440              		.cfi_def_cfa_offset 36
+ 441              		@ sp needed
+ 442 00d6 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 443              	.LVL37:
+ 444              	.L27:
+ 445              	.LCFI9:
+ 446              		.cfi_restore_state
+  52:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI2_RELEASE_RESET( );
+ 447              		.loc 1 52 0
+ 448 00da 294B     		ldr	r3, .L33
+ 449 00dc 9A69     		ldr	r2, [r3, #24]
+ 450 00de 42F48042 		orr	r2, r2, #16384
+ 451 00e2 9A61     		str	r2, [r3, #24]
+ 452              	.LVL38:
+  53:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         __HAL_RCC_SPI2_CLK_ENABLE( );
+ 453              		.loc 1 53 0
+ 454 00e4 9A69     		ldr	r2, [r3, #24]
+ 455 00e6 22F48042 		bic	r2, r2, #16384
+ 456 00ea 9A61     		str	r2, [r3, #24]
+ 457              	.LBB3:
+  54:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 458              		.loc 1 54 0
+ 459 00ec 5A6A     		ldr	r2, [r3, #36]
+ 460 00ee 42F48042 		orr	r2, r2, #16384
+ 461 00f2 5A62     		str	r2, [r3, #36]
+ 462 00f4 5B6A     		ldr	r3, [r3, #36]
+ 463 00f6 03F48043 		and	r3, r3, #16384
+ 464 00fa 0393     		str	r3, [sp, #12]
+ 465 00fc 039B     		ldr	r3, [sp, #12]
+ 466              	.LBE3:
+  56:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 467              		.loc 1 56 0
+ 468 00fe 5823     		movs	r3, #88
+ARM GAS  /tmp/ccsXVdpe.s 			page 12
+
+
+ 469 0100 03FB05F3 		mul	r3, r3, r5
+ 470 0104 2249     		ldr	r1, .L33+16
+ 471 0106 204A     		ldr	r2, .L33+8
+ 472 0108 D150     		str	r1, [r2, r3]
+  58:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Miso, miso, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI2 
+ 473              		.loc 1 58 0
+ 474 010a 4FF0050B 		mov	fp, #5
+ 475 010e CDF804B0 		str	fp, [sp, #4]
+ 476 0112 0226     		movs	r6, #2
+ 477 0114 0096     		str	r6, [sp]
+ 478 0116 0023     		movs	r3, #0
+ 479 0118 3246     		mov	r2, r6
+ 480 011a 5146     		mov	r1, r10
+ 481 011c 201D     		adds	r0, r4, #4
+ 482 011e FFF7FEFF 		bl	GpioInit
+ 483              	.LVL39:
+  59:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Sclk, sclk, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_DOWN, GPIO_AF5_SPI2 
+ 484              		.loc 1 59 0
+ 485 0122 CDF804B0 		str	fp, [sp, #4]
+ 486 0126 0096     		str	r6, [sp]
+ 487 0128 0023     		movs	r3, #0
+ 488 012a 3246     		mov	r2, r6
+ 489 012c 4946     		mov	r1, r9
+ 490 012e 04F11000 		add	r0, r4, #16
+ 491 0132 FFF7FEFF 		bl	GpioInit
+ 492              	.LVL40:
+  60:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         GpioInit( &obj->Nss, nss, PIN_ALTERNATE_FCT, PIN_PUSH_PULL, PIN_PULL_UP, GPIO_AF5_SPI2 );
+ 493              		.loc 1 60 0
+ 494 0136 CDF804B0 		str	fp, [sp, #4]
+ 495 013a 0096     		str	r6, [sp]
+ 496 013c 0023     		movs	r3, #0
+ 497 013e 3246     		mov	r2, r6
+ 498 0140 4146     		mov	r1, r8
+ 499 0142 04F11C00 		add	r0, r4, #28
+ 500 0146 FFF7FEFF 		bl	GpioInit
+ 501              	.LVL41:
+  61:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 502              		.loc 1 61 0
+ 503 014a CDF804B0 		str	fp, [sp, #4]
+ 504 014e 0123     		movs	r3, #1
+ 505 0150 0093     		str	r3, [sp]
+ 506 0152 0023     		movs	r3, #0
+ 507 0154 3246     		mov	r2, r6
+ 508 0156 3946     		mov	r1, r7
+ 509 0158 04F12800 		add	r0, r4, #40
+ 510 015c FFF7FEFF 		bl	GpioInit
+ 511              	.LVL42:
+ 512 0160 A1E7     		b	.L28
+ 513              	.L32:
+  66:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         SpiFormat( obj, SPI_DATASIZE_8BIT, SPI_POLARITY_LOW, SPI_PHASE_1EDGE, 0 );
+ 514              		.loc 1 66 0
+ 515 0162 5823     		movs	r3, #88
+ 516 0164 084A     		ldr	r2, .L33+8
+ 517 0166 03FB0523 		mla	r3, r3, r5, r2
+ 518 016a 4FF40072 		mov	r2, #512
+ 519 016e 9A61     		str	r2, [r3, #24]
+  67:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ARM GAS  /tmp/ccsXVdpe.s 			page 13
+
+
+ 520              		.loc 1 67 0
+ 521 0170 0021     		movs	r1, #0
+ 522 0172 0091     		str	r1, [sp]
+ 523 0174 0B46     		mov	r3, r1
+ 524 0176 0A46     		mov	r2, r1
+ 525 0178 2046     		mov	r0, r4
+ 526 017a FFF7FEFF 		bl	SpiFormat
+ 527              	.LVL43:
+ 528 017e 9DE7     		b	.L30
+ 529              	.L34:
+ 530              		.align	2
+ 531              	.L33:
+ 532 0180 00380240 		.word	1073887232
+ 533 0184 00300140 		.word	1073819648
+ 534 0188 00000000 		.word	.LANCHOR0
+ 535 018c 80969800 		.word	10000000
+ 536 0190 00380040 		.word	1073756160
+ 537              		.cfi_endproc
+ 538              	.LFE72:
+ 540              		.section	.text.SpiInOut,"ax",%progbits
+ 541              		.align	1
+ 542              		.global	SpiInOut
+ 543              		.syntax unified
+ 544              		.thumb
+ 545              		.thumb_func
+ 546              		.fpu softvfp
+ 548              	SpiInOut:
+ 549              	.LFB76:
+ 140:..//Source/stm/board/board_stm32l151cd/spi-board.c **** }
+ 141:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 142:..//Source/stm/board/board_stm32l151cd/spi-board.c **** uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
+ 143:..//Source/stm/board/board_stm32l151cd/spi-board.c **** {
+ 550              		.loc 1 143 0
+ 551              		.cfi_startproc
+ 552              		@ args = 0, pretend = 0, frame = 0
+ 553              		@ frame_needed = 0, uses_anonymous_args = 0
+ 554              	.LVL44:
+ 555 0000 38B5     		push	{r3, r4, r5, lr}
+ 556              	.LCFI10:
+ 557              		.cfi_def_cfa_offset 16
+ 558              		.cfi_offset 3, -16
+ 559              		.cfi_offset 4, -12
+ 560              		.cfi_offset 5, -8
+ 561              		.cfi_offset 14, -4
+ 562 0002 0446     		mov	r4, r0
+ 563 0004 0D46     		mov	r5, r1
+ 564              	.LVL45:
+ 144:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     uint8_t rxData = 0;
+ 145:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 146:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     if( ( obj == NULL ) || ( SpiHandle[obj->SpiId].Instance ) == NULL )
+ 147:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     {
+ 148:..//Source/stm/board/board_stm32l151cd/spi-board.c ****         assert_param( FAIL );
+ 149:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     }
+ 150:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 151:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     __HAL_SPI_ENABLE( &SpiHandle[obj->SpiId] );
+ 565              		.loc 1 151 0
+ 566 0006 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+ARM GAS  /tmp/ccsXVdpe.s 			page 14
+
+
+ 567 0008 5823     		movs	r3, #88
+ 568 000a 03FB02F3 		mul	r3, r3, r2
+ 569 000e 124A     		ldr	r2, .L39
+ 570 0010 D258     		ldr	r2, [r2, r3]
+ 571 0012 1368     		ldr	r3, [r2]
+ 572 0014 43F04003 		orr	r3, r3, #64
+ 573 0018 1360     		str	r3, [r2]
+ 152:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 153:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     BoardDisableIrq( );
+ 574              		.loc 1 153 0
+ 575 001a FFF7FEFF 		bl	BoardDisableIrq
+ 576              	.LVL46:
+ 577              	.L36:
+ 154:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 155:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     while( __HAL_SPI_GET_FLAG( &SpiHandle[obj->SpiId], SPI_FLAG_TXE ) == RESET );
+ 578              		.loc 1 155 0 discriminator 1
+ 579 001e 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 580 0020 5823     		movs	r3, #88
+ 581 0022 03FB02F3 		mul	r3, r3, r2
+ 582 0026 0C4A     		ldr	r2, .L39
+ 583 0028 D358     		ldr	r3, [r2, r3]
+ 584 002a 9A68     		ldr	r2, [r3, #8]
+ 585 002c 12F0020F 		tst	r2, #2
+ 586 0030 F5D0     		beq	.L36
+ 156:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     SpiHandle[obj->SpiId].Instance->DR = ( uint16_t ) ( outData & 0xFF );
+ 587              		.loc 1 156 0
+ 588 0032 EDB2     		uxtb	r5, r5
+ 589 0034 DD60     		str	r5, [r3, #12]
+ 590              	.L37:
+ 157:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 158:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     while( __HAL_SPI_GET_FLAG( &SpiHandle[obj->SpiId], SPI_FLAG_RXNE ) == RESET );
+ 591              		.loc 1 158 0 discriminator 1
+ 592 0036 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 593 0038 5823     		movs	r3, #88
+ 594 003a 03FB02F3 		mul	r3, r3, r2
+ 595 003e 064A     		ldr	r2, .L39
+ 596 0040 D358     		ldr	r3, [r2, r3]
+ 597 0042 9A68     		ldr	r2, [r3, #8]
+ 598 0044 12F0010F 		tst	r2, #1
+ 599 0048 F5D0     		beq	.L37
+ 159:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     rxData = ( uint16_t ) SpiHandle[obj->SpiId].Instance->DR;
+ 600              		.loc 1 159 0
+ 601 004a DC68     		ldr	r4, [r3, #12]
+ 602              	.LVL47:
+ 603 004c E4B2     		uxtb	r4, r4
+ 604              	.LVL48:
+ 160:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 161:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     BoardEnableIrq( );
+ 605              		.loc 1 161 0
+ 606 004e FFF7FEFF 		bl	BoardEnableIrq
+ 607              	.LVL49:
+ 162:..//Source/stm/board/board_stm32l151cd/spi-board.c **** 
+ 163:..//Source/stm/board/board_stm32l151cd/spi-board.c ****     return( rxData );
+ 164:..//Source/stm/board/board_stm32l151cd/spi-board.c **** }
+ 608              		.loc 1 164 0
+ 609 0052 2046     		mov	r0, r4
+ 610 0054 38BD     		pop	{r3, r4, r5, pc}
+ARM GAS  /tmp/ccsXVdpe.s 			page 15
+
+
+ 611              	.LVL50:
+ 612              	.L40:
+ 613 0056 00BF     		.align	2
+ 614              	.L39:
+ 615 0058 00000000 		.word	.LANCHOR0
+ 616              		.cfi_endproc
+ 617              	.LFE76:
+ 619              		.section	.bss.SpiHandle,"aw",%nobits
+ 620              		.align	2
+ 621              		.set	.LANCHOR0,. + 0
+ 624              	SpiHandle:
+ 625 0000 00000000 		.space	176
+ 625      00000000 
+ 625      00000000 
+ 625      00000000 
+ 625      00000000 
+ 626              		.text
+ 627              	.Letext0:
+ 628              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 629              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 630              		.file 4 "..//Source/stm/lib/CMSIS/Include/core_cm3.h"
+ 631              		.file 5 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/system_stm32l1xx.h"
+ 632              		.file 6 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/stm32l151xba.h"
+ 633              		.file 7 "..//Source/stm/lib/CMSIS/Device/ST/STM32L1xx/Include/stm32l1xx.h"
+ 634              		.file 8 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_def.h"
+ 635              		.file 9 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_dma.h"
+ 636              		.file 10 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal_spi.h"
+ 637              		.file 11 "..//Source/stm/lib/STM32L1xx_HAL_Driver/Inc/stm32l1xx_hal.h"
+ 638              		.file 12 "..//Source/stm/hal/gpio.h"
+ 639              		.file 13 "..//Source/stm/hal/spi.h"
+ 640              		.file 14 "..//Source/stm/board/board.h"
+ARM GAS  /tmp/ccsXVdpe.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 spi-board.c
+     /tmp/ccsXVdpe.s:16     .text.SpiDeInit:0000000000000000 $t
+     /tmp/ccsXVdpe.s:23     .text.SpiDeInit:0000000000000000 SpiDeInit
+     /tmp/ccsXVdpe.s:97     .text.SpiDeInit:0000000000000064 $d
+     /tmp/ccsXVdpe.s:102    .text.SpiFormat:0000000000000000 $t
+     /tmp/ccsXVdpe.s:109    .text.SpiFormat:0000000000000000 SpiFormat
+     /tmp/ccsXVdpe.s:219    .text.SpiFormat:0000000000000094 $d
+     /tmp/ccsXVdpe.s:224    .text.SpiFrequency:0000000000000000 $t
+     /tmp/ccsXVdpe.s:231    .text.SpiFrequency:0000000000000000 SpiFrequency
+     /tmp/ccsXVdpe.s:294    .text.SpiFrequency:000000000000003c $d
+     /tmp/ccsXVdpe.s:300    .text.SpiInit:0000000000000000 $t
+     /tmp/ccsXVdpe.s:307    .text.SpiInit:0000000000000000 SpiInit
+     /tmp/ccsXVdpe.s:532    .text.SpiInit:0000000000000180 $d
+     /tmp/ccsXVdpe.s:541    .text.SpiInOut:0000000000000000 $t
+     /tmp/ccsXVdpe.s:548    .text.SpiInOut:0000000000000000 SpiInOut
+     /tmp/ccsXVdpe.s:615    .text.SpiInOut:0000000000000058 $d
+     /tmp/ccsXVdpe.s:620    .bss.SpiHandle:0000000000000000 $d
+     /tmp/ccsXVdpe.s:624    .bss.SpiHandle:0000000000000000 SpiHandle
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+HAL_SPI_DeInit
+GpioInit
+SystemCoreClock
+BoardDisableIrq
+HAL_SPI_Init
+BoardEnableIrq

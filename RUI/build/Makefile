@@ -6,7 +6,6 @@
 
 PROJECT_NAME     := RUI
 SDK_ROOT      := ../..
-P :=
 NUM := $(words $(P))
 
 ifeq (1, $(word 1, $(P)))
@@ -25,6 +24,7 @@ endif
 clean:
 	@find $(SDK_ROOT)/RUI/Source/ -name "*.o" | xargs rm -f
 	rm -rf _build
+
 
 # Print all targets that can be built
 help:

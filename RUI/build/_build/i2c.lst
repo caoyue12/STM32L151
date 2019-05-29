@@ -1,0 +1,630 @@
+ARM GAS  /tmp/cc7EmIm4.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"i2c.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.I2cInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	I2cInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	I2cInit:
+  24              	.LFB0:
+  25              		.file 1 "..//Source/stm/hal/i2c.c"
+   1:..//Source/stm/hal/i2c.c **** /*!
+   2:..//Source/stm/hal/i2c.c ****  * \file      i2c.c
+   3:..//Source/stm/hal/i2c.c ****  *
+   4:..//Source/stm/hal/i2c.c ****  * \brief     I2C driver implementation
+   5:..//Source/stm/hal/i2c.c ****  *
+   6:..//Source/stm/hal/i2c.c ****  * \copyright Revised BSD License, see section \ref LICENSE.
+   7:..//Source/stm/hal/i2c.c ****  *
+   8:..//Source/stm/hal/i2c.c ****  * \code
+   9:..//Source/stm/hal/i2c.c ****  *                ______                              _
+  10:..//Source/stm/hal/i2c.c ****  *               / _____)             _              | |
+  11:..//Source/stm/hal/i2c.c ****  *              ( (____  _____ ____ _| |_ _____  ____| |__
+  12:..//Source/stm/hal/i2c.c ****  *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+  13:..//Source/stm/hal/i2c.c ****  *               _____) ) ____| | | || |_| ____( (___| | | |
+  14:..//Source/stm/hal/i2c.c ****  *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+  15:..//Source/stm/hal/i2c.c ****  *              (C)2013-2017 Semtech
+  16:..//Source/stm/hal/i2c.c ****  *
+  17:..//Source/stm/hal/i2c.c ****  * \endcode
+  18:..//Source/stm/hal/i2c.c ****  *
+  19:..//Source/stm/hal/i2c.c ****  * \author    Miguel Luis ( Semtech )
+  20:..//Source/stm/hal/i2c.c ****  *
+  21:..//Source/stm/hal/i2c.c ****  * \author    Gregory Cristian ( Semtech )
+  22:..//Source/stm/hal/i2c.c ****  */
+  23:..//Source/stm/hal/i2c.c **** #include <stdbool.h>
+  24:..//Source/stm/hal/i2c.c **** #include "utilities.h"
+  25:..//Source/stm/hal/i2c.c **** #include "i2c-board.h"
+  26:..//Source/stm/hal/i2c.c **** 
+  27:..//Source/stm/hal/i2c.c **** /*!
+  28:..//Source/stm/hal/i2c.c ****  * Flag to indicates if the I2C is initialized
+  29:..//Source/stm/hal/i2c.c ****  */
+  30:..//Source/stm/hal/i2c.c **** static bool I2cInitialized = false;
+  31:..//Source/stm/hal/i2c.c **** 
+  32:..//Source/stm/hal/i2c.c **** void I2cInit( I2c_t *obj, I2cId_t i2cId, PinNames scl, PinNames sda )
+  33:..//Source/stm/hal/i2c.c **** {
+ARM GAS  /tmp/cc7EmIm4.s 			page 2
+
+
+  26              		.loc 1 33 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 30B5     		push	{r4, r5, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 12
+  34              		.cfi_offset 4, -12
+  35              		.cfi_offset 5, -8
+  36              		.cfi_offset 14, -4
+  37 0002 83B0     		sub	sp, sp, #12
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 24
+  34:..//Source/stm/hal/i2c.c ****     if( I2cInitialized == false )
+  40              		.loc 1 34 0
+  41 0004 0A4C     		ldr	r4, .L5
+  42 0006 2478     		ldrb	r4, [r4]	@ zero_extendqisi2
+  43 0008 0CB1     		cbz	r4, .L4
+  44              	.LVL1:
+  45              	.L1:
+  35:..//Source/stm/hal/i2c.c ****     {
+  36:..//Source/stm/hal/i2c.c ****         I2cInitialized = true;
+  37:..//Source/stm/hal/i2c.c **** 
+  38:..//Source/stm/hal/i2c.c ****         I2cMcuInit( obj, i2cId, scl, sda );
+  39:..//Source/stm/hal/i2c.c ****         I2cMcuFormat( obj, MODE_I2C, I2C_DUTY_CYCLE_2, true, I2C_ACK_ADD_7_BIT, 400000 );
+  40:..//Source/stm/hal/i2c.c ****     }
+  41:..//Source/stm/hal/i2c.c **** }
+  46              		.loc 1 41 0
+  47 000a 03B0     		add	sp, sp, #12
+  48              	.LCFI2:
+  49              		.cfi_remember_state
+  50              		.cfi_def_cfa_offset 12
+  51              		@ sp needed
+  52 000c 30BD     		pop	{r4, r5, pc}
+  53              	.LVL2:
+  54              	.L4:
+  55              	.LCFI3:
+  56              		.cfi_restore_state
+  57 000e 0446     		mov	r4, r0
+  36:..//Source/stm/hal/i2c.c **** 
+  58              		.loc 1 36 0
+  59 0010 0125     		movs	r5, #1
+  60 0012 0748     		ldr	r0, .L5
+  61              	.LVL3:
+  62 0014 0570     		strb	r5, [r0]
+  38:..//Source/stm/hal/i2c.c ****         I2cMcuFormat( obj, MODE_I2C, I2C_DUTY_CYCLE_2, true, I2C_ACK_ADD_7_BIT, 400000 );
+  63              		.loc 1 38 0
+  64 0016 2046     		mov	r0, r4
+  65 0018 FFF7FEFF 		bl	I2cMcuInit
+  66              	.LVL4:
+  39:..//Source/stm/hal/i2c.c ****     }
+  67              		.loc 1 39 0
+  68 001c 054B     		ldr	r3, .L5+4
+  69 001e 0193     		str	r3, [sp, #4]
+  70 0020 0021     		movs	r1, #0
+  71 0022 0091     		str	r1, [sp]
+ARM GAS  /tmp/cc7EmIm4.s 			page 3
+
+
+  72 0024 2B46     		mov	r3, r5
+  73 0026 0A46     		mov	r2, r1
+  74 0028 2046     		mov	r0, r4
+  75 002a FFF7FEFF 		bl	I2cMcuFormat
+  76              	.LVL5:
+  77              		.loc 1 41 0
+  78 002e ECE7     		b	.L1
+  79              	.L6:
+  80              		.align	2
+  81              	.L5:
+  82 0030 00000000 		.word	.LANCHOR0
+  83 0034 801A0600 		.word	400000
+  84              		.cfi_endproc
+  85              	.LFE0:
+  87              		.section	.text.I2cDeInit,"ax",%progbits
+  88              		.align	1
+  89              		.global	I2cDeInit
+  90              		.syntax unified
+  91              		.thumb
+  92              		.thumb_func
+  93              		.fpu softvfp
+  95              	I2cDeInit:
+  96              	.LFB1:
+  42:..//Source/stm/hal/i2c.c **** 
+  43:..//Source/stm/hal/i2c.c **** void I2cDeInit( I2c_t *obj )
+  44:..//Source/stm/hal/i2c.c **** {
+  97              		.loc 1 44 0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101              	.LVL6:
+ 102 0000 08B5     		push	{r3, lr}
+ 103              	.LCFI4:
+ 104              		.cfi_def_cfa_offset 8
+ 105              		.cfi_offset 3, -8
+ 106              		.cfi_offset 14, -4
+  45:..//Source/stm/hal/i2c.c ****     I2cInitialized = false;
+ 107              		.loc 1 45 0
+ 108 0002 0022     		movs	r2, #0
+ 109 0004 024B     		ldr	r3, .L9
+ 110 0006 1A70     		strb	r2, [r3]
+  46:..//Source/stm/hal/i2c.c ****     I2cMcuDeInit( obj );
+ 111              		.loc 1 46 0
+ 112 0008 FFF7FEFF 		bl	I2cMcuDeInit
+ 113              	.LVL7:
+ 114 000c 08BD     		pop	{r3, pc}
+ 115              	.L10:
+ 116 000e 00BF     		.align	2
+ 117              	.L9:
+ 118 0010 00000000 		.word	.LANCHOR0
+ 119              		.cfi_endproc
+ 120              	.LFE1:
+ 122              		.section	.text.I2cResetBus,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	I2cResetBus
+ 125              		.syntax unified
+ 126              		.thumb
+ARM GAS  /tmp/cc7EmIm4.s 			page 4
+
+
+ 127              		.thumb_func
+ 128              		.fpu softvfp
+ 130              	I2cResetBus:
+ 131              	.LFB2:
+  47:..//Source/stm/hal/i2c.c **** }
+  48:..//Source/stm/hal/i2c.c **** 
+  49:..//Source/stm/hal/i2c.c **** void I2cResetBus( I2c_t *obj )
+  50:..//Source/stm/hal/i2c.c **** {
+ 132              		.loc 1 50 0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136              	.LVL8:
+ 137 0000 08B5     		push	{r3, lr}
+ 138              	.LCFI5:
+ 139              		.cfi_def_cfa_offset 8
+ 140              		.cfi_offset 3, -8
+ 141              		.cfi_offset 14, -4
+  51:..//Source/stm/hal/i2c.c ****     I2cMcuResetBus( obj );
+ 142              		.loc 1 51 0
+ 143 0002 FFF7FEFF 		bl	I2cMcuResetBus
+ 144              	.LVL9:
+ 145 0006 08BD     		pop	{r3, pc}
+ 146              		.cfi_endproc
+ 147              	.LFE2:
+ 149              		.section	.text.I2cWrite,"ax",%progbits
+ 150              		.align	1
+ 151              		.global	I2cWrite
+ 152              		.syntax unified
+ 153              		.thumb
+ 154              		.thumb_func
+ 155              		.fpu softvfp
+ 157              	I2cWrite:
+ 158              	.LFB3:
+  52:..//Source/stm/hal/i2c.c **** }
+  53:..//Source/stm/hal/i2c.c **** 
+  54:..//Source/stm/hal/i2c.c **** uint8_t I2cWrite( I2c_t *obj, uint8_t deviceAddr, uint16_t addr, uint8_t data )
+  55:..//Source/stm/hal/i2c.c **** {
+ 159              		.loc 1 55 0
+ 160              		.cfi_startproc
+ 161              		@ args = 0, pretend = 0, frame = 8
+ 162              		@ frame_needed = 0, uses_anonymous_args = 0
+ 163              	.LVL10:
+ 164 0000 70B5     		push	{r4, r5, r6, lr}
+ 165              	.LCFI6:
+ 166              		.cfi_def_cfa_offset 16
+ 167              		.cfi_offset 4, -16
+ 168              		.cfi_offset 5, -12
+ 169              		.cfi_offset 6, -8
+ 170              		.cfi_offset 14, -4
+ 171 0002 84B0     		sub	sp, sp, #16
+ 172              	.LCFI7:
+ 173              		.cfi_def_cfa_offset 32
+ 174 0004 8DF80F30 		strb	r3, [sp, #15]
+  56:..//Source/stm/hal/i2c.c ****     if( I2cInitialized == true )
+ 175              		.loc 1 56 0
+ 176 0008 104B     		ldr	r3, .L21
+ARM GAS  /tmp/cc7EmIm4.s 			page 5
+
+
+ 177              	.LVL11:
+ 178 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 179 000c 1BB9     		cbnz	r3, .L19
+  57:..//Source/stm/hal/i2c.c ****     {
+  58:..//Source/stm/hal/i2c.c ****         if( I2cMcuWriteBuffer( obj, deviceAddr, addr, &data, 1 ) == FAIL )
+  59:..//Source/stm/hal/i2c.c ****         {
+  60:..//Source/stm/hal/i2c.c ****             // if first attempt fails due to an IRQ, try a second time
+  61:..//Source/stm/hal/i2c.c ****             if( I2cMcuWriteBuffer( obj, deviceAddr, addr, &data, 1 ) == FAIL )
+  62:..//Source/stm/hal/i2c.c ****             {
+  63:..//Source/stm/hal/i2c.c ****                 return FAIL;
+  64:..//Source/stm/hal/i2c.c ****             }
+  65:..//Source/stm/hal/i2c.c ****             else
+  66:..//Source/stm/hal/i2c.c ****             {
+  67:..//Source/stm/hal/i2c.c ****                 return SUCCESS;
+  68:..//Source/stm/hal/i2c.c ****             }
+  69:..//Source/stm/hal/i2c.c ****         }
+  70:..//Source/stm/hal/i2c.c ****         else
+  71:..//Source/stm/hal/i2c.c ****         {
+  72:..//Source/stm/hal/i2c.c ****             return SUCCESS;
+  73:..//Source/stm/hal/i2c.c ****         }
+  74:..//Source/stm/hal/i2c.c ****     }
+  75:..//Source/stm/hal/i2c.c ****     else
+  76:..//Source/stm/hal/i2c.c ****     {
+  77:..//Source/stm/hal/i2c.c ****         return FAIL;
+ 180              		.loc 1 77 0
+ 181 000e 0023     		movs	r3, #0
+ 182              	.LVL12:
+ 183              	.L14:
+  78:..//Source/stm/hal/i2c.c ****     }
+  79:..//Source/stm/hal/i2c.c **** }
+ 184              		.loc 1 79 0
+ 185 0010 1846     		mov	r0, r3
+ 186 0012 04B0     		add	sp, sp, #16
+ 187              	.LCFI8:
+ 188              		.cfi_remember_state
+ 189              		.cfi_def_cfa_offset 16
+ 190              		@ sp needed
+ 191 0014 70BD     		pop	{r4, r5, r6, pc}
+ 192              	.LVL13:
+ 193              	.L19:
+ 194              	.LCFI9:
+ 195              		.cfi_restore_state
+ 196 0016 1646     		mov	r6, r2
+ 197 0018 0D46     		mov	r5, r1
+ 198 001a 0446     		mov	r4, r0
+  58:..//Source/stm/hal/i2c.c ****         {
+ 199              		.loc 1 58 0
+ 200 001c 0123     		movs	r3, #1
+ 201 001e 0093     		str	r3, [sp]
+ 202 0020 0DF10F03 		add	r3, sp, #15
+ 203              	.LVL14:
+ 204 0024 FFF7FEFF 		bl	I2cMcuWriteBuffer
+ 205              	.LVL15:
+ 206 0028 08B1     		cbz	r0, .L20
+  72:..//Source/stm/hal/i2c.c ****         }
+ 207              		.loc 1 72 0
+ 208 002a 0123     		movs	r3, #1
+ARM GAS  /tmp/cc7EmIm4.s 			page 6
+
+
+ 209 002c F0E7     		b	.L14
+ 210              	.L20:
+  61:..//Source/stm/hal/i2c.c ****             {
+ 211              		.loc 1 61 0
+ 212 002e 0123     		movs	r3, #1
+ 213 0030 0093     		str	r3, [sp]
+ 214 0032 0DF10F03 		add	r3, sp, #15
+ 215 0036 3246     		mov	r2, r6
+ 216 0038 2946     		mov	r1, r5
+ 217 003a 2046     		mov	r0, r4
+ 218 003c FFF7FEFF 		bl	I2cMcuWriteBuffer
+ 219              	.LVL16:
+ 220 0040 0346     		mov	r3, r0
+ 221 0042 0028     		cmp	r0, #0
+ 222 0044 E4D0     		beq	.L14
+  67:..//Source/stm/hal/i2c.c ****             }
+ 223              		.loc 1 67 0
+ 224 0046 0123     		movs	r3, #1
+ 225 0048 E2E7     		b	.L14
+ 226              	.L22:
+ 227 004a 00BF     		.align	2
+ 228              	.L21:
+ 229 004c 00000000 		.word	.LANCHOR0
+ 230              		.cfi_endproc
+ 231              	.LFE3:
+ 233              		.section	.text.I2cWriteBuffer,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	I2cWriteBuffer
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 239              		.fpu softvfp
+ 241              	I2cWriteBuffer:
+ 242              	.LFB4:
+  80:..//Source/stm/hal/i2c.c **** 
+  81:..//Source/stm/hal/i2c.c **** uint8_t I2cWriteBuffer( I2c_t *obj, uint8_t deviceAddr, uint16_t addr, uint8_t *buffer, uint16_t si
+  82:..//Source/stm/hal/i2c.c **** {
+ 243              		.loc 1 82 0
+ 244              		.cfi_startproc
+ 245              		@ args = 4, pretend = 0, frame = 0
+ 246              		@ frame_needed = 0, uses_anonymous_args = 0
+ 247              	.LVL17:
+ 248 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 249              	.LCFI10:
+ 250              		.cfi_def_cfa_offset 24
+ 251              		.cfi_offset 4, -24
+ 252              		.cfi_offset 5, -20
+ 253              		.cfi_offset 6, -16
+ 254              		.cfi_offset 7, -12
+ 255              		.cfi_offset 8, -8
+ 256              		.cfi_offset 14, -4
+ 257 0004 82B0     		sub	sp, sp, #8
+ 258              	.LCFI11:
+ 259              		.cfi_def_cfa_offset 32
+ 260 0006 BDF82070 		ldrh	r7, [sp, #32]
+  83:..//Source/stm/hal/i2c.c ****     if( I2cInitialized == true )
+ 261              		.loc 1 83 0
+ARM GAS  /tmp/cc7EmIm4.s 			page 7
+
+
+ 262 000a 0F4C     		ldr	r4, .L31
+ 263 000c 2478     		ldrb	r4, [r4]	@ zero_extendqisi2
+ 264 000e 24B9     		cbnz	r4, .L29
+  84:..//Source/stm/hal/i2c.c ****     {
+  85:..//Source/stm/hal/i2c.c ****         if( I2cMcuWriteBuffer( obj, deviceAddr, addr, buffer, size ) == FAIL )
+  86:..//Source/stm/hal/i2c.c ****         {
+  87:..//Source/stm/hal/i2c.c ****             // if first attempt fails due to an IRQ, try a second time
+  88:..//Source/stm/hal/i2c.c ****             if( I2cMcuWriteBuffer( obj, deviceAddr, addr, buffer, size ) == FAIL )
+  89:..//Source/stm/hal/i2c.c ****             {
+  90:..//Source/stm/hal/i2c.c ****                 return FAIL;
+  91:..//Source/stm/hal/i2c.c ****             }
+  92:..//Source/stm/hal/i2c.c ****             else
+  93:..//Source/stm/hal/i2c.c ****             {
+  94:..//Source/stm/hal/i2c.c ****                 return SUCCESS;
+  95:..//Source/stm/hal/i2c.c ****             }
+  96:..//Source/stm/hal/i2c.c ****         }
+  97:..//Source/stm/hal/i2c.c ****         else
+  98:..//Source/stm/hal/i2c.c ****         {
+  99:..//Source/stm/hal/i2c.c ****             return SUCCESS;
+ 100:..//Source/stm/hal/i2c.c ****         }
+ 101:..//Source/stm/hal/i2c.c ****     }
+ 102:..//Source/stm/hal/i2c.c ****     else
+ 103:..//Source/stm/hal/i2c.c ****     {
+ 104:..//Source/stm/hal/i2c.c ****         return FAIL;
+ 265              		.loc 1 104 0
+ 266 0010 0023     		movs	r3, #0
+ 267              	.LVL18:
+ 268              	.L24:
+ 105:..//Source/stm/hal/i2c.c ****     }
+ 106:..//Source/stm/hal/i2c.c **** }
+ 269              		.loc 1 106 0
+ 270 0012 1846     		mov	r0, r3
+ 271 0014 02B0     		add	sp, sp, #8
+ 272              	.LCFI12:
+ 273              		.cfi_remember_state
+ 274              		.cfi_def_cfa_offset 24
+ 275              		@ sp needed
+ 276 0016 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 277              	.LVL19:
+ 278              	.L29:
+ 279              	.LCFI13:
+ 280              		.cfi_restore_state
+ 281 001a 9846     		mov	r8, r3
+ 282 001c 1646     		mov	r6, r2
+ 283 001e 0D46     		mov	r5, r1
+ 284 0020 0446     		mov	r4, r0
+  85:..//Source/stm/hal/i2c.c ****         {
+ 285              		.loc 1 85 0
+ 286 0022 0097     		str	r7, [sp]
+ 287 0024 FFF7FEFF 		bl	I2cMcuWriteBuffer
+ 288              	.LVL20:
+ 289 0028 08B1     		cbz	r0, .L30
+  99:..//Source/stm/hal/i2c.c ****         }
+ 290              		.loc 1 99 0
+ 291 002a 0123     		movs	r3, #1
+ 292 002c F1E7     		b	.L24
+ 293              	.L30:
+ARM GAS  /tmp/cc7EmIm4.s 			page 8
+
+
+  88:..//Source/stm/hal/i2c.c ****             {
+ 294              		.loc 1 88 0
+ 295 002e 0097     		str	r7, [sp]
+ 296 0030 4346     		mov	r3, r8
+ 297 0032 3246     		mov	r2, r6
+ 298 0034 2946     		mov	r1, r5
+ 299 0036 2046     		mov	r0, r4
+ 300 0038 FFF7FEFF 		bl	I2cMcuWriteBuffer
+ 301              	.LVL21:
+ 302 003c 0346     		mov	r3, r0
+ 303 003e 0028     		cmp	r0, #0
+ 304 0040 E7D0     		beq	.L24
+  94:..//Source/stm/hal/i2c.c ****             }
+ 305              		.loc 1 94 0
+ 306 0042 0123     		movs	r3, #1
+ 307 0044 E5E7     		b	.L24
+ 308              	.L32:
+ 309 0046 00BF     		.align	2
+ 310              	.L31:
+ 311 0048 00000000 		.word	.LANCHOR0
+ 312              		.cfi_endproc
+ 313              	.LFE4:
+ 315              		.section	.text.I2cRead,"ax",%progbits
+ 316              		.align	1
+ 317              		.global	I2cRead
+ 318              		.syntax unified
+ 319              		.thumb
+ 320              		.thumb_func
+ 321              		.fpu softvfp
+ 323              	I2cRead:
+ 324              	.LFB5:
+ 107:..//Source/stm/hal/i2c.c **** 
+ 108:..//Source/stm/hal/i2c.c **** uint8_t I2cRead( I2c_t *obj, uint8_t deviceAddr, uint16_t addr, uint8_t *data )
+ 109:..//Source/stm/hal/i2c.c **** {
+ 325              		.loc 1 109 0
+ 326              		.cfi_startproc
+ 327              		@ args = 0, pretend = 0, frame = 0
+ 328              		@ frame_needed = 0, uses_anonymous_args = 0
+ 329              	.LVL22:
+ 330 0000 10B5     		push	{r4, lr}
+ 331              	.LCFI14:
+ 332              		.cfi_def_cfa_offset 8
+ 333              		.cfi_offset 4, -8
+ 334              		.cfi_offset 14, -4
+ 335 0002 82B0     		sub	sp, sp, #8
+ 336              	.LCFI15:
+ 337              		.cfi_def_cfa_offset 16
+ 110:..//Source/stm/hal/i2c.c ****     if( I2cInitialized == true )
+ 338              		.loc 1 110 0
+ 339 0004 054C     		ldr	r4, .L38
+ 340 0006 2478     		ldrb	r4, [r4]	@ zero_extendqisi2
+ 341 0008 14B9     		cbnz	r4, .L37
+ 111:..//Source/stm/hal/i2c.c ****     {
+ 112:..//Source/stm/hal/i2c.c ****         return( I2cMcuReadBuffer( obj, deviceAddr, addr, data, 1 ) );
+ 113:..//Source/stm/hal/i2c.c ****     }
+ 114:..//Source/stm/hal/i2c.c ****     else
+ 115:..//Source/stm/hal/i2c.c ****     {
+ARM GAS  /tmp/cc7EmIm4.s 			page 9
+
+
+ 116:..//Source/stm/hal/i2c.c ****         return FAIL;
+ 342              		.loc 1 116 0
+ 343 000a 0020     		movs	r0, #0
+ 344              	.LVL23:
+ 345              	.L34:
+ 117:..//Source/stm/hal/i2c.c ****     }
+ 118:..//Source/stm/hal/i2c.c **** }
+ 346              		.loc 1 118 0
+ 347 000c 02B0     		add	sp, sp, #8
+ 348              	.LCFI16:
+ 349              		.cfi_remember_state
+ 350              		.cfi_def_cfa_offset 8
+ 351              		@ sp needed
+ 352 000e 10BD     		pop	{r4, pc}
+ 353              	.LVL24:
+ 354              	.L37:
+ 355              	.LCFI17:
+ 356              		.cfi_restore_state
+ 112:..//Source/stm/hal/i2c.c ****     }
+ 357              		.loc 1 112 0
+ 358 0010 0124     		movs	r4, #1
+ 359 0012 0094     		str	r4, [sp]
+ 360 0014 FFF7FEFF 		bl	I2cMcuReadBuffer
+ 361              	.LVL25:
+ 362 0018 F8E7     		b	.L34
+ 363              	.L39:
+ 364 001a 00BF     		.align	2
+ 365              	.L38:
+ 366 001c 00000000 		.word	.LANCHOR0
+ 367              		.cfi_endproc
+ 368              	.LFE5:
+ 370              		.section	.text.I2cReadBuffer,"ax",%progbits
+ 371              		.align	1
+ 372              		.global	I2cReadBuffer
+ 373              		.syntax unified
+ 374              		.thumb
+ 375              		.thumb_func
+ 376              		.fpu softvfp
+ 378              	I2cReadBuffer:
+ 379              	.LFB6:
+ 119:..//Source/stm/hal/i2c.c **** 
+ 120:..//Source/stm/hal/i2c.c **** uint8_t I2cReadBuffer( I2c_t *obj, uint8_t deviceAddr, uint16_t addr, uint8_t *buffer, uint16_t siz
+ 121:..//Source/stm/hal/i2c.c **** {
+ 380              		.loc 1 121 0
+ 381              		.cfi_startproc
+ 382              		@ args = 4, pretend = 0, frame = 0
+ 383              		@ frame_needed = 0, uses_anonymous_args = 0
+ 384              	.LVL26:
+ 385 0000 10B5     		push	{r4, lr}
+ 386              	.LCFI18:
+ 387              		.cfi_def_cfa_offset 8
+ 388              		.cfi_offset 4, -8
+ 389              		.cfi_offset 14, -4
+ 390 0002 82B0     		sub	sp, sp, #8
+ 391              	.LCFI19:
+ 392              		.cfi_def_cfa_offset 16
+ 122:..//Source/stm/hal/i2c.c ****     if( I2cInitialized == true )
+ARM GAS  /tmp/cc7EmIm4.s 			page 10
+
+
+ 393              		.loc 1 122 0
+ 394 0004 054C     		ldr	r4, .L45
+ 395 0006 2478     		ldrb	r4, [r4]	@ zero_extendqisi2
+ 396 0008 14B9     		cbnz	r4, .L44
+ 123:..//Source/stm/hal/i2c.c ****     {
+ 124:..//Source/stm/hal/i2c.c ****         return( I2cMcuReadBuffer( obj, deviceAddr, addr, buffer, size ) );
+ 125:..//Source/stm/hal/i2c.c ****     }
+ 126:..//Source/stm/hal/i2c.c ****     else
+ 127:..//Source/stm/hal/i2c.c ****     {
+ 128:..//Source/stm/hal/i2c.c ****         return FAIL;
+ 397              		.loc 1 128 0
+ 398 000a 0020     		movs	r0, #0
+ 399              	.LVL27:
+ 400              	.L41:
+ 129:..//Source/stm/hal/i2c.c ****     }
+ 130:..//Source/stm/hal/i2c.c **** }
+ 401              		.loc 1 130 0
+ 402 000c 02B0     		add	sp, sp, #8
+ 403              	.LCFI20:
+ 404              		.cfi_remember_state
+ 405              		.cfi_def_cfa_offset 8
+ 406              		@ sp needed
+ 407 000e 10BD     		pop	{r4, pc}
+ 408              	.LVL28:
+ 409              	.L44:
+ 410              	.LCFI21:
+ 411              		.cfi_restore_state
+ 124:..//Source/stm/hal/i2c.c ****     }
+ 412              		.loc 1 124 0
+ 413 0010 BDF81040 		ldrh	r4, [sp, #16]
+ 414 0014 0094     		str	r4, [sp]
+ 415 0016 FFF7FEFF 		bl	I2cMcuReadBuffer
+ 416              	.LVL29:
+ 417 001a F7E7     		b	.L41
+ 418              	.L46:
+ 419              		.align	2
+ 420              	.L45:
+ 421 001c 00000000 		.word	.LANCHOR0
+ 422              		.cfi_endproc
+ 423              	.LFE6:
+ 425              		.section	.bss.I2cInitialized,"aw",%nobits
+ 426              		.set	.LANCHOR0,. + 0
+ 429              	I2cInitialized:
+ 430 0000 00       		.space	1
+ 431              		.text
+ 432              	.Letext0:
+ 433              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 434              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 435              		.file 4 "..//Source/stm/hal/gpio.h"
+ 436              		.file 5 "..//Source/stm/hal/i2c.h"
+ 437              		.file 6 "..//Source/stm/board/i2c-board.h"
+ARM GAS  /tmp/cc7EmIm4.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 i2c.c
+     /tmp/cc7EmIm4.s:16     .text.I2cInit:0000000000000000 $t
+     /tmp/cc7EmIm4.s:23     .text.I2cInit:0000000000000000 I2cInit
+     /tmp/cc7EmIm4.s:82     .text.I2cInit:0000000000000030 $d
+     /tmp/cc7EmIm4.s:88     .text.I2cDeInit:0000000000000000 $t
+     /tmp/cc7EmIm4.s:95     .text.I2cDeInit:0000000000000000 I2cDeInit
+     /tmp/cc7EmIm4.s:118    .text.I2cDeInit:0000000000000010 $d
+     /tmp/cc7EmIm4.s:123    .text.I2cResetBus:0000000000000000 $t
+     /tmp/cc7EmIm4.s:130    .text.I2cResetBus:0000000000000000 I2cResetBus
+     /tmp/cc7EmIm4.s:150    .text.I2cWrite:0000000000000000 $t
+     /tmp/cc7EmIm4.s:157    .text.I2cWrite:0000000000000000 I2cWrite
+     /tmp/cc7EmIm4.s:229    .text.I2cWrite:000000000000004c $d
+     /tmp/cc7EmIm4.s:234    .text.I2cWriteBuffer:0000000000000000 $t
+     /tmp/cc7EmIm4.s:241    .text.I2cWriteBuffer:0000000000000000 I2cWriteBuffer
+     /tmp/cc7EmIm4.s:311    .text.I2cWriteBuffer:0000000000000048 $d
+     /tmp/cc7EmIm4.s:316    .text.I2cRead:0000000000000000 $t
+     /tmp/cc7EmIm4.s:323    .text.I2cRead:0000000000000000 I2cRead
+     /tmp/cc7EmIm4.s:366    .text.I2cRead:000000000000001c $d
+     /tmp/cc7EmIm4.s:371    .text.I2cReadBuffer:0000000000000000 $t
+     /tmp/cc7EmIm4.s:378    .text.I2cReadBuffer:0000000000000000 I2cReadBuffer
+     /tmp/cc7EmIm4.s:421    .text.I2cReadBuffer:000000000000001c $d
+     /tmp/cc7EmIm4.s:429    .bss.I2cInitialized:0000000000000000 I2cInitialized
+     /tmp/cc7EmIm4.s:430    .bss.I2cInitialized:0000000000000000 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+I2cMcuInit
+I2cMcuFormat
+I2cMcuDeInit
+I2cMcuResetBus
+I2cMcuWriteBuffer
+I2cMcuReadBuffer
