@@ -31,17 +31,18 @@
 #include "uart.h"
 #include "timer.h"
 #include "gps.h"
-//#include "mpl3115.h"
-//#include "mag3110.h"
-//#include "mma8451.h"
-//#include "sx9500.h"
-#include "board-config.h"
 #include "rtc-board.h"
 #include "sx1276-board.h"
 #if defined( USE_USB_CDC )
 #include "uart-usb-board.h"
 #endif
 #include "board.h"
+//#include "mpl3115.h"
+//#include "mag3110.h"
+//#include "mma8451.h"
+//#include "sx9500.h"
+#include "board-config.h"
+
 
 /*!
  * Unique Devices IDs register set ( STM32L1xxx )
@@ -66,6 +67,13 @@ Gpio_t UsbDetect;
 Adc_t Adc;
 I2c_t I2c;
 Uart_t Uart1;
+
+#define UART1_FIFO_TX_SIZE                                1024
+#define UART1_FIFO_RX_SIZE                                1024
+
+uint8_t Uart1TxBuffer[UART1_FIFO_TX_SIZE];
+uint8_t Uart1RxBuffer[UART1_FIFO_RX_SIZE];
+
 #if defined( USE_USB_CDC )
 Uart_t UartUsb;
 #endif
@@ -192,29 +200,12 @@ void BoardInitMcu( void )
 
         SystemClockConfig( );
 
-//      GpioInit( &UsbDetect, USB_ON, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-
         RtcInit( );
+		FifoInit( &Uart1.FifoTx, Uart1TxBuffer, UART1_FIFO_TX_SIZE );
+		FifoInit( &Uart1.FifoRx, Uart1RxBuffer, UART1_FIFO_RX_SIZE );
+		UartInit( &Uart1, UART_1, UART_TX, UART_RX );
+        UartConfig( &Uart1, RX_TX, 115200, UART_8_BIT, UART_1_STOP_BIT, NO_PARITY, NO_FLOW_CTRL );
 
-#if defined( USE_USB_CDC )
-        {
-            Gpio_t ioPin;
-
-            GpioInit( &ioPin, USB_DM, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-
-            if( GpioRead( &ioPin ) == 0 )
-            {
-                UartInit( &UartUsb, UART_USB_CDC, NC, NC );
-                UartConfig( &UartUsb, RX_TX, 115200, UART_8_BIT, UART_1_STOP_BIT, NO_PARITY, NO_FLOW_CTRL );
-
-                DelayMs( 1000 ); // 1000 ms for Usb initialization
-            }
-            else
-            {
-                GpioInit( &ioPin, USB_DM, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-            }
-        }
-#endif
         BoardUnusedIoInit( );
 
         I2cInit( &I2c, I2C_1, I2C_SCL, I2C_SDA );
@@ -232,10 +223,10 @@ void BoardInitMcu( void )
     if( McuInitialized == false )
     {
         McuInitialized = true;
-        if( GetBoardPowerSource( ) == BATTERY_POWER )
-        {
-            CalibrateSystemWakeupTime( );
-        }
+ //       if( GetBoardPowerSource( ) == BATTERY_POWER )
+ //       {
+ //           CalibrateSystemWakeupTime( );
+ //       }
     }
 }
 

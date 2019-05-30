@@ -18,7 +18,7 @@ else ifeq (4, $(word 1, $(P)))
     include stm/Makefile_stm32l073rz
 endif
 
-.PHONY: clean help
+.PHONY: clean help 
 
 # clean target
 clean:

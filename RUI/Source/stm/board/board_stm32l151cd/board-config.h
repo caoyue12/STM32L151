@@ -33,6 +33,10 @@
 #ifndef __BOARD_CONFIG_H__
 #define __BOARD_CONFIG_H__
 
+
+
+
+
 /*!
  * Defines the time required for the TCXO to wakeup [ms].
  */

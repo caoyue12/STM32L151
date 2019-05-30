@@ -134,7 +134,9 @@ C_INCLUDES =  \
 -I$(PWD)/Source/external/LoRaMac-node/src/radio \
 -I$(PWD)/Source/stm/board/board_stm32l151cd \
 -I$(PWD)/Source/external/LoRaMac-node/src/radio/sx1276\
--I$(PWD)/Source/stm/app/
+-I$(PWD)/Source/stm/app/\
+-I$(PWD)/Source/external/LoRaMac-node/src/mac/
+
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -199,9 +201,12 @@ $(BUILD_DIR):
 #######################################
 # clean up
 #######################################
+.PHONY:flash
 #clean:
 #	-rm -fR $(BUILD_DIR)
-  
+flash:
+	st-flash write $../_build$(TARGET).bin 0x8000000
+
 #######################################
 # dependencies
 #######################################
