@@ -42,6 +42,7 @@
 //#include "mma8451.h"
 //#include "sx9500.h"
 #include "board-config.h"
+#include "stdio.h"
 
 
 /*!
@@ -106,7 +107,7 @@ static TimerEvent_t CalibrateSystemWakeupTimeTimer;
 /*!
  * Flag to indicate if the MCU is Initialized
  */
-static bool McuInitialized = false;
+ bool McuInitialized = false;
 
 /*!
  * Flag to indicate if the SystemWakeupTime is Calibrated
@@ -118,7 +119,10 @@ static bool SystemWakeupTimeCalibrated = false;
  */
 static void OnCalibrateSystemWakeupTimeTimerEvent( void )
 {
+
     SystemWakeupTimeCalibrated = true;
+	DelayMs(100);
+	printf("\r\nSystemWakeupTimeCalibrated\r\n");
 }
 
 /*!
@@ -223,10 +227,10 @@ void BoardInitMcu( void )
     if( McuInitialized == false )
     {
         McuInitialized = true;
- //       if( GetBoardPowerSource( ) == BATTERY_POWER )
- //       {
- //           CalibrateSystemWakeupTime( );
- //       }
+        if( GetBoardPowerSource( ) == BATTERY_POWER )
+        {
+            CalibrateSystemWakeupTime( );
+        }
     }
 }
 
@@ -386,10 +390,61 @@ static void BoardUnusedIoInit( void )
     HAL_DBGMCU_DisableDBGStopMode( );
     HAL_DBGMCU_DisableDBGStandbyMode( );
 
-    GpioInit( &ioPin, SWDIO, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, SWCLK, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, SWDIO, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, SWCLK, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 #endif
 }
+
+//void SystemClockConfig( void )
+//{
+//    RCC_OscInitTypeDef RCC_OscInitStruct;
+//    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+//    RCC_PeriphCLKInitTypeDef PeriphClkInit;
+
+//    __HAL_RCC_PWR_CLK_ENABLE( );
+
+//    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
+
+//    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_LSE;
+//    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+//    RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+//    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+//    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+//    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL8;
+//    RCC_OscInitStruct.PLL.PLLDIV = RCC_PLL_DIV3;
+//    if( HAL_RCC_OscConfig( &RCC_OscInitStruct ) != HAL_OK )
+//    {
+//        assert_param( FAIL );
+//    }
+
+//    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
+//                                  RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+//    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+//    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+//    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+//    if( HAL_RCC_ClockConfig( &RCC_ClkInitStruct, FLASH_LATENCY_1 ) != HAL_OK )
+//    {
+//        assert_param( FAIL );
+//    }
+
+//    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+//    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+//    if( HAL_RCCEx_PeriphCLKConfig( &PeriphClkInit ) != HAL_OK )
+//    {
+//        assert_param( FAIL );
+//    }
+
+//    HAL_SYSTICK_Config( HAL_RCC_GetHCLKFreq( ) / 1000 );
+
+//    HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
+
+//    // HAL_NVIC_GetPriorityGrouping
+//    HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4 );
+
+//    // SysTick_IRQn interrupt configuration
+//    HAL_NVIC_SetPriority( SysTick_IRQn, 0, 0 );
+//}
 
 void SystemClockConfig( void )
 {
@@ -399,92 +454,111 @@ void SystemClockConfig( void )
 
     __HAL_RCC_PWR_CLK_ENABLE( );
 
-    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
+    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE2 );
 
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_LSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSE;
+    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
     RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL8;
-    RCC_OscInitStruct.PLL.PLLDIV = RCC_PLL_DIV3;
-    if( HAL_RCC_OscConfig( &RCC_OscInitStruct ) != HAL_OK )
+    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_OFF;
+//    RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+//    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+//    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;
+//    RCC_OscInitStruct.PLL.PLLDIV = RCC_PLL_DIV3;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
-        assert_param( FAIL );
+      //while(1);
     }
-
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
-                                  RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    
+    RCC_ClkInitStruct.ClockType = ( RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2 );
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-    if( HAL_RCC_ClockConfig( &RCC_ClkInitStruct, FLASH_LATENCY_1 ) != HAL_OK )
-    {
-        assert_param( FAIL );
-    }
+    HAL_RCC_ClockConfig( &RCC_ClkInitStruct, FLASH_LATENCY_1 );
 
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
     PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-    if( HAL_RCCEx_PeriphCLKConfig( &PeriphClkInit ) != HAL_OK )
-    {
-        assert_param( FAIL );
-    }
+    HAL_RCCEx_PeriphCLKConfig( &PeriphClkInit );
 
     HAL_SYSTICK_Config( HAL_RCC_GetHCLKFreq( ) / 1000 );
 
     HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
 
-    // HAL_NVIC_GetPriorityGrouping
+    /*    HAL_NVIC_GetPriorityGrouping*/
     HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4 );
 
-    // SysTick_IRQn interrupt configuration
+    /* SysTick_IRQn interrupt configuration */
     HAL_NVIC_SetPriority( SysTick_IRQn, 0, 0 );
 }
 
 void CalibrateSystemWakeupTime( void )
 {
-    if( SystemWakeupTimeCalibrated == false )
+    if( SystemWakeupTimeCalibrated == false )           //µÍ¹¦ºÄ´¦Àí
     {
         TimerInit( &CalibrateSystemWakeupTimeTimer, OnCalibrateSystemWakeupTimeTimerEvent );
         TimerSetValue( &CalibrateSystemWakeupTimeTimer, 1000 );
         TimerStart( &CalibrateSystemWakeupTimeTimer );
         while( SystemWakeupTimeCalibrated == false )
         {
+						
             TimerLowPowerHandler( );
         }
     }
 }
 
+//void SystemClockReConfig( void )
+//{
+//    __HAL_RCC_PWR_CLK_ENABLE( );
+//    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
+
+//    /* Enable HSE */
+//    __HAL_RCC_HSE_CONFIG( RCC_HSE_ON );
+
+//    /* Wait till HSE is ready */
+//    while( __HAL_RCC_GET_FLAG( RCC_FLAG_HSERDY ) == RESET )
+//    {
+//    }
+
+//    /* Enable PLL */
+//    __HAL_RCC_PLL_ENABLE( );
+
+//    /* Wait till PLL is ready */
+//    while( __HAL_RCC_GET_FLAG( RCC_FLAG_PLLRDY ) == RESET )
+//    {
+//    }
+
+//    /* Select PLL as system clock source */
+//    __HAL_RCC_SYSCLK_CONFIG ( RCC_SYSCLKSOURCE_PLLCLK );
+
+//    /* Wait till PLL is used as system clock source */
+//    while( __HAL_RCC_GET_SYSCLK_SOURCE( ) != RCC_SYSCLKSOURCE_STATUS_PLLCLK )
+//    {
+//    }
+//}
+
 void SystemClockReConfig( void )
 {
     __HAL_RCC_PWR_CLK_ENABLE( );
-    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
+    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE2 );
 
-    /* Enable HSE */
-    __HAL_RCC_HSE_CONFIG( RCC_HSE_ON );
-
-    /* Wait till HSE is ready */
-    while( __HAL_RCC_GET_FLAG( RCC_FLAG_HSERDY ) == RESET )
-    {
-    }
-
-    /* Enable PLL */
-    __HAL_RCC_PLL_ENABLE( );
-
-    /* Wait till PLL is ready */
-    while( __HAL_RCC_GET_FLAG( RCC_FLAG_PLLRDY ) == RESET )
+    /* Enable HSI */
+    __HAL_RCC_HSI_ENABLE();
+    /* Wait till HSI is ready */
+    while( __HAL_RCC_GET_FLAG( RCC_FLAG_HSIRDY ) == RESET )
     {
     }
 
     /* Select PLL as system clock source */
-    __HAL_RCC_SYSCLK_CONFIG ( RCC_SYSCLKSOURCE_PLLCLK );
+    __HAL_RCC_SYSCLK_CONFIG ( RCC_SYSCLKSOURCE_HSI );
 
     /* Wait till PLL is used as system clock source */
-    while( __HAL_RCC_GET_SYSCLK_SOURCE( ) != RCC_SYSCLKSOURCE_STATUS_PLLCLK )
+    while( __HAL_RCC_GET_SYSCLK_SOURCE( ) != RCC_SYSCLKSOURCE_STATUS_HSI )
     {
     }
+	
 }
+
 
 void SysTick_Handler( void )
 {
@@ -508,17 +582,7 @@ uint8_t GetBoardPowerSource( void )
 #endif
 }
 
-#ifdef __GNUC__
-int __io_putchar( int c )
-#else /* __GNUC__ */
-int fputc( int c, FILE *stream )
-#endif
-{
-#if defined( USE_USB_CDC )
-    while( UartPutChar( &UartUsb, c ) != 0 );
-#endif
-    return c;
-}
+
 
 #ifdef USE_FULL_ASSERT
 /*

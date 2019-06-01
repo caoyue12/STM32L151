@@ -42,6 +42,7 @@ C_SOURCES :=  \
 $(PWD)/Source/stm/app/main.c \
 $(PWD)/Source/stm/board/board_stm32l151cd/cmsis/system_stm32l1xx.c \
 $(PWD)/Source/external/LoRaMac-node/src/radio/sx1276/sx1276.c
+
 #$(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_tim.c \
 $(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_tim_ex.c \
 $(PWD)/Source/stm/lib/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal.c \

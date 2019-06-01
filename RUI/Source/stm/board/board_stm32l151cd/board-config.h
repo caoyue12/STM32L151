@@ -40,13 +40,33 @@
 /*!
  * Defines the time required for the TCXO to wakeup [ms].
  */
-#define BOARD_TCXO_WAKEUP_TIME                      0
+#define BOARD_TCXO_WAKEUP_TIME                      1
 
 /*!
  * Define indicating if an external IO expander is to be used
  */
 //#define BOARD_IOE_EXT
+#define RADIO_ANT_SWITCH_PA								PA_4  //Pa_Boost
+#define RADIO_XTAL_EN                           		PH_1
+#ifdef LORA_HF_BOARD
+	#define RADIO_RESET                                 PB_13
+	#define RADIO_DIO_0                                 PA_11
+	#define RADIO_DIO_2                                 PA_3
+	#define RADIO_ANT_SWITCH_RX                             	PB_6  //CRF3     
+	#define RADIO_ANT_SWITCH_HL									PB_7  //CRF2 HF 
 
+	#define I2C_SCL                                     PB_8
+	#define I2C_SDA                                     PB_9	
+#else
+	#define RADIO_RESET                                 PA_8
+	#define RADIO_DIO_0                                 PB_4
+	#define RADIO_DIO_2                                 PB_9
+	#define RADIO_ANT_SWITCH_RX                       	PB_3  //CRF3
+	#define RADIO_ANT_SWITCH_HL		                    PB_8  //CRF2 HF 
+
+	#define I2C_SCL                                     PB_6
+	#define I2C_SDA                                     PB_7
+#endif
 /*!
  * Board IO Extender pins definitions
  */
@@ -71,16 +91,16 @@
  * Board MCU pins definitions
  */
 
-#define RADIO_RESET                                 PB_10
+//#define RADIO_RESET                                 PB_10
 
 #define RADIO_MOSI                                  PA_7
 #define RADIO_MISO                                  PA_6
 #define RADIO_SCLK                                  PA_5
-#define RADIO_NSS                                   PA_4
+#define RADIO_NSS                                   PB_0
 
-#define RADIO_DIO_0                                 PB_11
+//#define RADIO_DIO_0                                 PB_11
 #define RADIO_DIO_1                                 PC_13
-#define RADIO_DIO_2                                 PB_9
+//#define RADIO_DIO_2                                 PB_9
 #define RADIO_DIO_3                                 PB_4
 #define RADIO_DIO_4                                 PB_3
 #define RADIO_DIO_5                                 PA_15

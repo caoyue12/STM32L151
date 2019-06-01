@@ -347,15 +347,15 @@ void RtcEnterLowPowerStopMode( void )
         // Disable the Power Voltage Detector
         HAL_PWR_DisablePVD( );
 
-        SET_BIT( PWR->CR, PWR_CR_CWUF );
+        SET_BIT( PWR->CR, PWR_CR_CWUF );    
 
-        // Enable Ultra low power mode
-        HAL_PWREx_EnableUltraLowPower( );
+//        // Enable Ultra low power mode
+        HAL_PWREx_EnableUltraLowPower( );    //关闭内部参考电压
 
-        // Enable the fast wake up from Ultra low power mode
-        HAL_PWREx_EnableFastWakeUp( );
-
-        // Enter Stop Mode
+//        // Enable the fast wake up from Ultra low power mode
+        HAL_PWREx_EnableFastWakeUp( );          
+		printf("\r\nHAL_PWR_EnterSTOPMode\r\n");
+//        // Enter Stop Mode
         HAL_PWR_EnterSTOPMode( PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI );
     }
 }
@@ -369,7 +369,7 @@ void RtcRecoverMcuStatus( void )
     }
     else
     {
-        NonScheduledWakeUp = true;
+        NonScheduledWakeUp = true;          
     }
     // check the clk source and set to full speed if we are coming from sleep mode
     if( ( __HAL_RCC_GET_SYSCLK_SOURCE( ) == RCC_SYSCLKSOURCE_STATUS_HSI ) ||

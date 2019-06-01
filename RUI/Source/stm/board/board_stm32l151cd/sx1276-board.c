@@ -66,8 +66,14 @@ const struct Radio_s Radio =
 /*!
  * Antenna switch GPIO pins objects
  */
-Gpio_t AntSwitchLf;
-Gpio_t AntSwitchHf;
+//Gpio_t AntSwitchLf;
+//Gpio_t AntSwitchHf;
+Gpio_t AntSwitchHL;
+Gpio_t AntSwitchRx;
+Gpio_t AntSwitchPa;
+
+
+
 
 void SX1276IoInit( void )
 {
@@ -78,7 +84,7 @@ void SX1276IoInit( void )
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+//    GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
 }
 
 void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
@@ -88,7 +94,7 @@ void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
     GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[2] );
     GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
     GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[4] );
-    GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
+//    GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
 }
 
 void SX1276IoDeInit( void )
@@ -100,7 +106,7 @@ void SX1276IoDeInit( void )
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
 
 /*!
@@ -108,14 +114,31 @@ void SX1276IoDeInit( void )
  *
  * \param [IN] state TCXO enabled when true and disabled when false.
  */
+
+static Gpio_t 	SX1276_ecxo_power;
+
+
+void TCXO_ON(void)
+{
+	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+}
+
+void TCXO_OFF()
+{
+	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+}
+
+
 static void SX1276SetBoardTcxo( uint8_t state )
 {
     // No TCXO component available on this board design.
-#if 0
+#if 1
+	
     if( state == true )
     {
         TCXO_ON( );
-        DelayMs( BOARD_TCXO_WAKEUP_TIME );
+		SX1276Write(REG_LR_TCXO,0x19);
+		DelayMs( BOARD_TCXO_WAKEUP_TIME );
     }
     else
     {
@@ -123,6 +146,8 @@ static void SX1276SetBoardTcxo( uint8_t state )
     }
 #endif
 }
+
+
 
 uint32_t SX1276GetBoardTcxoWakeupTime( void )
 {
@@ -242,14 +267,16 @@ void SX1276SetAntSwLowPower( bool status )
 
 void SX1276AntSwInit( void )
 {
-    GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
-    GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    GpioInit( &AntSwitchPa, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+    GpioInit( &AntSwitchRx, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+	GpioInit( &AntSwitchHL, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
 }
 
 void SX1276AntSwDeInit( void )
 {
-    GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
-    GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+    GpioInit( &AntSwitchPa, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+    GpioInit( &AntSwitchRx, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+	GpioInit( &AntSwitchHL, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
 }
 
 void SX1276SetAntSw( uint8_t opMode )
@@ -257,15 +284,15 @@ void SX1276SetAntSw( uint8_t opMode )
     switch( opMode )
     {
     case RFLR_OPMODE_TRANSMITTER:
-        GpioWrite( &AntSwitchLf, 0 );
-        GpioWrite( &AntSwitchHf, 1 );
+        GpioWrite( &AntSwitchPa, 1 );
+        GpioWrite( &AntSwitchRx, 0 );
         break;
     case RFLR_OPMODE_RECEIVER:
     case RFLR_OPMODE_RECEIVER_SINGLE:
     case RFLR_OPMODE_CAD:
     default:
-        GpioWrite( &AntSwitchLf, 1 );
-        GpioWrite( &AntSwitchHf, 0 );
+        GpioWrite( &AntSwitchPa, 0 );
+        GpioWrite( &AntSwitchRx, 1 );
         break;
     }
 }
