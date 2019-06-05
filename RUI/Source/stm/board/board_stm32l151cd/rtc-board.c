@@ -734,6 +734,7 @@ void RTC_Alarm_IRQHandler( void )
     RtcRecoverMcuStatus( );
     RtcComputeWakeUpTime( );
     BlockLowPowerDuringTask( false );
+	printf("RTC_Alarm_IRQHandler\r\n");
     TimerIrqHandler( );
 }
 

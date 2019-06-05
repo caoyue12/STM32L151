@@ -242,7 +242,7 @@ uint8_t SX1276GetPaSelect( uint32_t channel )
     }
     else
     {
-        return RF_PACONFIG_PASELECT_RFO;
+        return RF_PACONFIG_PASELECT_PABOOST;
     }
 }
 

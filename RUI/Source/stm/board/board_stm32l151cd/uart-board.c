@@ -22,6 +22,7 @@
  */
 #include "stm32l1xx.h"
 #include "utilities.h"
+
 #include "board.h"
 #include "uart-board.h"
 #if defined( USE_USB_CDC )
@@ -340,3 +341,8 @@ void USART1_IRQHandler( void )
 {
     HAL_UART_IRQHandler( &UartHandle );
 }
+
+
+
+
+
