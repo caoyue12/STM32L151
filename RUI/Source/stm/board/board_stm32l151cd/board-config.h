@@ -48,6 +48,8 @@
 //#define BOARD_IOE_EXT
 #define RADIO_ANT_SWITCH_PA								PA_4  //Pa_Boost
 #define RADIO_XTAL_EN                           		PH_1
+//#define LORA_HF_BOARD                                   
+
 #ifdef LORA_HF_BOARD
 	#define RADIO_RESET                                 PB_13
 	#define RADIO_DIO_0                                 PA_11
@@ -120,11 +122,10 @@
 #define OSC_HSE_IN                                  PH_0
 #define OSC_HSE_OUT                                 PH_1
 
-#define USB_DM                                      PA_11
-#define USB_DP                                      PA_12
+//#define USB_DM                                      PA_11
+//#define USB_DP                                      PA_12
 
-#define I2C_SCL                                     PB_6
-#define I2C_SDA                                     PB_7
+
 
 #define BOOT_1                                      PB_2
 
@@ -139,7 +140,7 @@
 #define WKUP1                                       PA_8
 //#define USB_ON                                      PA_2
 
-#define RF_RXTX                                     PA_3
+//#define RF_RXTX                                     PA_3
 
 #define SWDIO                                       PA_13
 #define SWCLK                                       PA_14

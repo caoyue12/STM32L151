@@ -69,14 +69,16 @@ void OnRxTimeout( void );
  * \brief Function executed on Radio Rx Error event
  */
 void OnRxError( void );
-
+uint8_t Buffer[6];
 int main( void )
 {
-   uint8_t Buffer[4];
+   //uint8_t Buffer[4];
    Buffer[0] = 'P';
    Buffer[1] = 'O';
    Buffer[2] = 'N';
    Buffer[3] = 'G';
+   Buffer[2] = '\r';
+   Buffer[3] = '\n';
 //   LoRaMacPrimitives_t LoRaMacPrimitives;
 //   LoRaMacCallback_t LoRaMacCallbacks;
 //   MibRequestConfirm_t mibReq;
@@ -100,14 +102,14 @@ int main( void )
     RadioEvents.RxError = OnRxError;
 
     Radio.Init( &RadioEvents );
-	
-	
-	
+//	
+//	
+//	
 
 
     Radio.SetChannel( 470000000 );
-	
-	Radio.SetTxConfig( MODEM_LORA, 17, 0, 0,
+//	
+	Radio.SetTxConfig( MODEM_LORA, 12, 0, 0,
                                    7, 1,
                                    8, 1,
                                    true, 0, 0, 1, 5000 );
@@ -116,20 +118,24 @@ int main( void )
                                    1, 0, 8,
                                    5, false,
                                    0, true, 0, 0, false, true );
-	//Radio.Rx( 1000 );
-	Radio.Send( Buffer, 4 );
+	Radio.Rx(0);
+	//Radio.Send( Buffer, 4 );
     while( 1 )
     {
-//	  while(printf(SX1276Read(0X12);
-//      while(!(0x08&(SX1276Read(0x12))));
-// 	  printf("Reg TXdone OK\r\n");
-//	  while(1);
-
-	printf("datetemp	\r\n",datetemp++);
-	Delay(5);
-	  
+//	    Radio.Send( Buffer, 4 );
+//		SX1276Write(0x11,0xf7);
+        //printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
+		//printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
+//		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
+//		printf("SX1276Read(0x42)	%02X\r\n",SX1276Read(0x42));
+//		printf("SX1276Read(0x44)	%02X\r\n",SX1276Read(0x44));
 		
-    }
+//		while(!(0x08&(SX1276Read(0x12))));
+//		printf("Reg TXdone OK\r\n");
+		Delay(2);
+		
+		
+	}
 }
 
 
@@ -144,11 +150,16 @@ void OnTxDone( void )
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
     Radio.Sleep( );
-//    BufferSize = size;
-//    memcpy( Buffer, payload, BufferSize );
+//    unsigned char* Buffer;
+    memcpy( Buffer, payload, 4 );
+	
 //    RssiValue = rssi;
 //    SnrValue = snr;
 //    State = RX;
+    
+//   printf("OnRxDone %02X  %02X  %02X  %02X\r\n",Buffer[0],Buffer[1],Buffer[2],Buffer[3]);
+	printf("OnRxDone %s\r\n",Buffer);
+	Radio.Rx(0);
 }
 
 void OnTxTimeout( void )

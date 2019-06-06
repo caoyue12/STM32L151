@@ -137,7 +137,7 @@ static void SX1276SetBoardTcxo( uint8_t state )
     if( state == true )
     {
         TCXO_ON( );
-//		SX1276Write(REG_LR_TCXO,0x19);
+		
 		DelayMs( BOARD_TCXO_WAKEUP_TIME );
     }
     else
@@ -285,6 +285,7 @@ void SX1276SetAntSw( uint8_t opMode )
     {
     case RFLR_OPMODE_TRANSMITTER:
         GpioWrite( &AntSwitchPa, 1 );
+		GpioWrite( &AntSwitchHL, 0 );
         GpioWrite( &AntSwitchRx, 0 );
         break;
     case RFLR_OPMODE_RECEIVER:
@@ -292,6 +293,7 @@ void SX1276SetAntSw( uint8_t opMode )
     case RFLR_OPMODE_CAD:
     default:
         GpioWrite( &AntSwitchPa, 0 );
+		GpioWrite( &AntSwitchHL, 0 );
         GpioWrite( &AntSwitchRx, 1 );
         break;
     }
