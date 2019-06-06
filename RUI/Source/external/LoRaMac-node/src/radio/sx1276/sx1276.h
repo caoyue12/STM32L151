@@ -308,6 +308,8 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                         uint8_t hopPeriod, bool iqInverted, uint32_t timeout );
 						
 				
+	
+				
 
 /*!
  * \brief Computes the packet time on air in ms for the given payload

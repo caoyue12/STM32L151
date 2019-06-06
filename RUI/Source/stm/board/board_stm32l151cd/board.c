@@ -192,6 +192,12 @@ void BoardEnableIrq( void )
     GpioWrite( &Led4, 1 );
 }
 */
+
+
+void testio(void)
+{
+	printf("testio\r\n");
+}
 void BoardInitMcu( void )
 {
     if( McuInitialized == false )
@@ -223,6 +229,12 @@ void BoardInitMcu( void )
 
     SpiInit( &SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
     SX1276IoInit( );
+	
+	
+	Gpio_t test_pin;
+	GpioInit( &test_pin, PB_15, PIN_INPUT, PIN_OPEN_DRAIN, PIN_PULL_DOWN, 0 );
+	GpioSetInterrupt( &test_pin, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, testio );
+	
 
     if( McuInitialized == false )
     {
@@ -258,7 +270,7 @@ void BoardDeInitMcu( void )
     GpioInit( &ioPin, OSC_LSE_IN, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &ioPin, OSC_LSE_OUT, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
-    GpioInit( &UsbDetect, USB_ON, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &UsbDetect, USB_ON, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
 
 uint32_t BoardGetRandomSeed( void )
@@ -370,10 +382,10 @@ static void BoardUnusedIoInit( void )
         GpioInit( &ioPin, USB_DP, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     }
 
-    GpioInit( &ioPin, TEST_POINT1, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, TEST_POINT1, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &ioPin, TEST_POINT2, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &ioPin, TEST_POINT3, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, TEST_POINT4, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, TEST_POINT4, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
     GpioInit( &ioPin, PIN_NC, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &ioPin, BOOT_1, PIN_ANALOGIC, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );

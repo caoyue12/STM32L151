@@ -98,12 +98,18 @@
 #define RADIO_SCLK                                  PA_5
 #define RADIO_NSS                                   PB_0
 
-//#define RADIO_DIO_0                                 PB_11
-#define RADIO_DIO_1                                 PC_13
-//#define RADIO_DIO_2                                 PB_9
-#define RADIO_DIO_3                                 PB_4
-#define RADIO_DIO_4                                 PB_3
-#define RADIO_DIO_5                                 PA_15
+////#define RADIO_DIO_0                                 PB_11
+//#define RADIO_DIO_1                                 PC_13
+////#define RADIO_DIO_2                                 PB_9
+//#define RADIO_DIO_3                                 PB_4
+//#define RADIO_DIO_4                                 PB_3
+//#define RADIO_DIO_5                                 PA_15
+
+#define RADIO_DIO_1                                 PB_1
+
+#define RADIO_DIO_3                                 PH_0
+#define RADIO_DIO_4                                 PC_13
+
 
 #define RADIO_ANT_SWITCH_HF                         PA_0
 #define RADIO_ANT_SWITCH_LF                         PA_1
@@ -131,17 +137,17 @@
 #define BAT_LEVEL_CHANNEL                           ADC_CHANNEL_8
 
 #define WKUP1                                       PA_8
-#define USB_ON                                      PA_2
+//#define USB_ON                                      PA_2
 
 #define RF_RXTX                                     PA_3
 
 #define SWDIO                                       PA_13
 #define SWCLK                                       PA_14
 
-#define TEST_POINT1                                 PB_12
+//#define TEST_POINT1                                 PB_12
 #define TEST_POINT2                                 PB_13
 #define TEST_POINT3                                 PB_14
-#define TEST_POINT4                                 PB_15
+//#define TEST_POINT4                                 PB_15
 
 #define PIN_NC                                      PB_5
 

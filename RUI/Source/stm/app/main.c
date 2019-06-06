@@ -107,10 +107,10 @@ int main( void )
 
     Radio.SetChannel( 470000000 );
 	
-	Radio.SetTxConfig( MODEM_LORA, 14, 0, 0,
+	Radio.SetTxConfig( MODEM_LORA, 17, 0, 0,
                                    7, 1,
                                    8, 1,
-                                   true, 0, 0, 1, 3000 );
+                                   true, 0, 0, 1, 5000 );
 	
 	Radio.SetRxConfig( MODEM_LORA, 0, 7,
                                    1, 0, 8,
@@ -120,10 +120,13 @@ int main( void )
 	Radio.Send( Buffer, 4 );
     while( 1 )
     {
-//	printf("\r\nSX1276Read(0X42)	%02X\r\n",SX1276Read(0X42));
-	//printf("\r\nSX1276Read(0X02)	%02X\r\n",SX1276Read(0X02));
-	DelayMs(5000);
-	
+//	  while(printf(SX1276Read(0X12);
+//      while(!(0x08&(SX1276Read(0x12))));
+// 	  printf("Reg TXdone OK\r\n");
+//	  while(1);
+
+	printf("datetemp	\r\n",datetemp++);
+	Delay(5);
 	  
 		
     }
@@ -135,7 +138,7 @@ void OnTxDone( void )
 {
     Radio.Sleep( );
 //    State = TX;
-printf("OnTxDone\r\n");
+ printf("OnTxDone\r\n");
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )

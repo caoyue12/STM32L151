@@ -84,7 +84,7 @@ void SX1276IoInit( void )
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-//    GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+//  GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
 }
 
 void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
@@ -137,7 +137,7 @@ static void SX1276SetBoardTcxo( uint8_t state )
     if( state == true )
     {
         TCXO_ON( );
-		SX1276Write(REG_LR_TCXO,0x19);
+//		SX1276Write(REG_LR_TCXO,0x19);
 		DelayMs( BOARD_TCXO_WAKEUP_TIME );
     }
     else
