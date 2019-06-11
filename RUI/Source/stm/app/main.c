@@ -118,21 +118,27 @@ int main( void )
                                    1, 0, 8,
                                    5, false,
                                    0, true, 0, 0, false, true );
-	Radio.Rx(0);
-	//Radio.Send( Buffer, 4 );
+//Radio.Rx(0);
+	Radio.Send( Buffer, 4 );
+//	SX1276Reset( );
+//	SX1276SetOpMode( 0x00 );
+//	SX1276SetStby( );
+//  SX1276SetOpMode( MODEM_LORA  );
+//  SX1276Write(0x01,0x88);
+//  SX1276Write(0x01,0x89);
     while( 1 )
     {
 //	    Radio.Send( Buffer, 4 );
 //		SX1276Write(0x11,0xf7);
-        //printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
-		//printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
+        printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
+		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
 //		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
-//		printf("SX1276Read(0x42)	%02X\r\n",SX1276Read(0x42));
-//		printf("SX1276Read(0x44)	%02X\r\n",SX1276Read(0x44));
-		
+		printf("SX1276Read(0x42)	%02X\r\n",SX1276Read(0x42));
+		printf("SX1276Read(0x44)	%02X\r\n",SX1276Read(0x44));
+//		while(1);
 //		while(!(0x08&(SX1276Read(0x12))));
 //		printf("Reg TXdone OK\r\n");
-		Delay(2);
+		Delay(5);
 		
 		
 	}
