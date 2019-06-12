@@ -354,7 +354,7 @@ void RtcEnterLowPowerStopMode( void )
 
 //        // Enable the fast wake up from Ultra low power mode
         HAL_PWREx_EnableFastWakeUp( );          
-		printf("\r\nHAL_PWR_EnterSTOPMode\r\n");
+//		printf("\r\nHAL_PWR_EnterSTOPMode\r\n");
 //        // Enter Stop Mode
         HAL_PWR_EnterSTOPMode( PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI );
     }
@@ -734,7 +734,7 @@ void RTC_Alarm_IRQHandler( void )
     RtcRecoverMcuStatus( );
     RtcComputeWakeUpTime( );
     BlockLowPowerDuringTask( false );
-	printf("RTC_Alarm_IRQHandler\r\n");
+//	printf("RTC_Alarm_IRQHandler\r\n");
     TimerIrqHandler( );
 }
 

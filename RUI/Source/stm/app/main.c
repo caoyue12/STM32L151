@@ -36,15 +36,7 @@
 extern Uart_t Uart1;
 TimerEvent_t time1;
 TimerEvent_t time2;
-void time1call(void)
-{	
-	printf("time1call\r\n");
 
-}
-void time2call(void)
-{
-	printf("time2call\r\n");
-}
 
 static RadioEvents_t RadioEvents;
 
@@ -85,7 +77,7 @@ int main( void )
 	unsigned char datetemp;
 	BoardInitMcu( );
 //  BoardInitPeriph( );
-	TimerInit(&time1,time1call);
+	
 //	TimerInit(&time2,time2call);
 //	TimerSetValue(&time1,2000);
 //	TimerSetValue(&time2,1000);
@@ -119,7 +111,7 @@ int main( void )
                                    5, false,
                                    0, true, 0, 0, false, true );
 //Radio.Rx(0);
-	Radio.Send( Buffer, 4 );
+//	Radio.Send( Buffer, 4 );
 //	SX1276Reset( );
 //	SX1276SetOpMode( 0x00 );
 //	SX1276SetStby( );
@@ -128,17 +120,17 @@ int main( void )
 //  SX1276Write(0x01,0x89);
     while( 1 )
     {
-//	    Radio.Send( Buffer, 4 );
+	    Radio.Send( Buffer, 4 );
 //		SX1276Write(0x11,0xf7);
-        printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
-		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
+//      printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
 //		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
-		printf("SX1276Read(0x42)	%02X\r\n",SX1276Read(0x42));
-		printf("SX1276Read(0x44)	%02X\r\n",SX1276Read(0x44));
+//		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
+//		printf("SX1276Read(0x42)	%02X\r\n",SX1276Read(0x42));
+//		printf("SX1276Read(0x44)	%02X\r\n",SX1276Read(0x44));
 //		while(1);
 //		while(!(0x08&(SX1276Read(0x12))));
 //		printf("Reg TXdone OK\r\n");
-		Delay(5);
+		Delay(3);
 		
 		
 	}
@@ -149,14 +141,15 @@ int main( void )
 void OnTxDone( void )
 {
     Radio.Sleep( );
-//    State = TX;
- printf("OnTxDone\r\n");
+//  State = TX;
+	printf("OnTxDone\r\n");
+	e_printf("hello\r\n");
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
     Radio.Sleep( );
-//    unsigned char* Buffer;
+//  unsigned char* Buffer;
     memcpy( Buffer, payload, 4 );
 	
 //    RssiValue = rssi;
@@ -164,7 +157,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 //    State = RX;
     
 //   printf("OnRxDone %02X  %02X  %02X  %02X\r\n",Buffer[0],Buffer[1],Buffer[2],Buffer[3]);
-	printf("OnRxDone %s\r\n",Buffer);
+//	printf("OnRxDone %s\r\n",Buffer);
 	Radio.Rx(0);
 }
 
@@ -172,19 +165,19 @@ void OnTxTimeout( void )
 {
     Radio.Sleep( );
 //    State = TX_TIMEOUT;
-printf("OnTxTimeout\r\n");
+//printf("OnTxTimeout\r\n");
 }
 
 void OnRxTimeout( void )
 {
     Radio.Sleep( );
-	printf("OnRxTimeout\r\n");
-//    State = RX_TIMEOUT;
+//	printf("OnRxTimeout\r\n");
+//  State = RX_TIMEOUT;
 }
 
 void OnRxError( void )
 {
     Radio.Sleep( );
-//    State = RX_ERROR;
+//  State = RX_ERROR;
 }
 
