@@ -142,7 +142,7 @@ void OnTxDone( void )
 {
     Radio.Sleep( );
 //  State = TX;
-	printf("OnTxDone\r\n");
+//	printf("OnTxDone\r\n");
 	e_printf("hello\r\n");
 }
 

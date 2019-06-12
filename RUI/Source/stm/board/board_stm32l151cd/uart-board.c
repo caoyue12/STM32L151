@@ -360,7 +360,7 @@ void e_printf(const char *format, ...)
     va_start(args, format);
     len = vsnprintf(ll_msg_buf_, MAX_MSG_LEN, &format[0], args);
     va_end(args);
-	UartHandle.Instance = USART1;
+	//UartHandle.Instance = USART1;
     HAL_UART_Transmit(&UartHandle, (uint8_t *)&ll_msg_buf_, len, 0xFFFF);
 }
 
