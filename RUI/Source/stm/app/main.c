@@ -130,7 +130,7 @@ int main( void )
 //		while(1);
 //		while(!(0x08&(SX1276Read(0x12))));
 //		printf("Reg TXdone OK\r\n");
-		Delay(3);
+		Delay(2);
 		
 		
 	}
@@ -142,8 +142,8 @@ void OnTxDone( void )
 {
     Radio.Sleep( );
 //  State = TX;
-//	printf("OnTxDone\r\n");
-	e_printf("hello\r\n");
+	printf("OnTxDone\r\n");
+
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
