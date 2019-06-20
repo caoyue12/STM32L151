@@ -48,7 +48,7 @@
 //#define BOARD_IOE_EXT
 #define RADIO_ANT_SWITCH_PA								PA_4  //Pa_Boost
 #define RADIO_XTAL_EN                           		PH_1
-//#define LORA_HF_BOARD                                   
+#define LORA_HF_BOARD                                   
 
 #ifdef LORA_HF_BOARD
 	#define RADIO_RESET                                 PB_13
@@ -120,7 +120,7 @@
 #define OSC_LSE_OUT                                 PC_15
 
 #define OSC_HSE_IN                                  PH_0
-#define OSC_HSE_OUT                                 PH_1
+//#define OSC_HSE_OUT                                 PH_1
 
 //#define USB_DM                                      PA_11
 //#define USB_DP                                      PA_12

@@ -254,12 +254,12 @@ void SX1276SetAntSwLowPower( bool status )
 
         if( status == false )
         {
-            SX1276SetBoardTcxo( true );
+//            SX1276SetBoardTcxo( true );
             SX1276AntSwInit( );
         }
         else
         {
-            SX1276SetBoardTcxo( false );
+//            SX1276SetBoardTcxo( false );
             SX1276AntSwDeInit( );
         }
     }

@@ -69,8 +69,8 @@ int main( void )
    Buffer[1] = 'O';
    Buffer[2] = 'N';
    Buffer[3] = 'G';
-   Buffer[2] = '\r';
-   Buffer[3] = '\n';
+   Buffer[4] = '\r';
+   Buffer[5] = '\n';
 //   LoRaMacPrimitives_t LoRaMacPrimitives;
 //   LoRaMacCallback_t LoRaMacCallbacks;
 //   MibRequestConfirm_t mibReq;
@@ -97,21 +97,21 @@ int main( void )
 //	
 //	
 //	
+	printf("RAK\r\n");
 
-
-    Radio.SetChannel( 470000000 );
+    Radio.SetChannel( 868000000 );
 //	
 	Radio.SetTxConfig( MODEM_LORA, 12, 0, 0,
                                    7, 1,
                                    8, 1,
-                                   true, 0, 0, 1, 5000 );
+                                   true, 0, 0, 1, 2000 );
 	
 	Radio.SetRxConfig( MODEM_LORA, 0, 7,
                                    1, 0, 8,
                                    5, false,
                                    0, true, 0, 0, false, true );
-//Radio.Rx(0);
-//	Radio.Send( Buffer, 4 );
+//	Radio.Rx(0);
+	Radio.Send( Buffer, 4 );
 //	SX1276Reset( );
 //	SX1276SetOpMode( 0x00 );
 //	SX1276SetStby( );
@@ -157,21 +157,23 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 //    State = RX;
     
 //   printf("OnRxDone %02X  %02X  %02X  %02X\r\n",Buffer[0],Buffer[1],Buffer[2],Buffer[3]);
-//	printf("OnRxDone %s\r\n",Buffer);
+	printf("OnRxDone %s\r\n",Buffer);
 	Radio.Rx(0);
+	
 }
 
 void OnTxTimeout( void )
 {
     Radio.Sleep( );
 //    State = TX_TIMEOUT;
-//printf("OnTxTimeout\r\n");
+	printf("OnTxTimeout\r\n");
+
 }
 
 void OnRxTimeout( void )
 {
     Radio.Sleep( );
-//	printf("OnRxTimeout\r\n");
+	printf("OnRxTimeout\r\n");
 //  State = RX_TIMEOUT;
 }
 
