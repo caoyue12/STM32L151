@@ -106,27 +106,20 @@ int main( void )
                                    8, 1,
                                    true, 0, 0, 1, 2000 );
 	
-<<<<<<< HEAD
+
 	Radio.SetRxConfig( MODEM_LORA, 0, 7,
                                    1, 0, 8,
                                    5, false,
                                    0, true, 0, 0, false, true );
 //	Radio.Rx(0);
-	Radio.Send( Buffer, 4 );
+//	Radio.Send( Buffer, 4 );
 //	SX1276Reset( );
 //	SX1276SetOpMode( 0x00 );
 //	SX1276SetStby( );
 //  SX1276SetOpMode( MODEM_LORA  );
 //  SX1276Write(0x01,0x88);
 //  SX1276Write(0x01,0x89);
-=======
-//	Radio.SetRxConfig( MODEM_LORA, 0, 7,
-//                                   1, 0, 8,
-//                                   5, false,
-//                                   0, true, 0, 0, false, true );
-	//Radio.Rx(0);
-//	Radio.Send( Buffer, 4 );
->>>>>>> 0359a2501ca702909e769ee526989a3dbd51a709
+
     while( 1 )
     {
 	    Radio.Send( Buffer, 4 );
@@ -150,15 +143,11 @@ int main( void )
 void OnTxDone( void )
 {
     Radio.Sleep( );
-<<<<<<< HEAD
+
 //  State = TX;
 	printf("OnTxDone\r\n");
 
-=======
-//    State = TX;
-	printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x01));
-	printf("OnTxDone\r\n");
->>>>>>> 0359a2501ca702909e769ee526989a3dbd51a709
+
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
@@ -196,10 +185,7 @@ void OnRxTimeout( void )
 void OnRxError( void )
 {
     Radio.Sleep( );
-<<<<<<< HEAD
-=======
-	printf("OnRxDone %s\r\n",Buffer);
->>>>>>> 0359a2501ca702909e769ee526989a3dbd51a709
+
 //  State = RX_ERROR;
 }
 
