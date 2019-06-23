@@ -78,7 +78,7 @@ int main( void )
 //	
 	printf("RAK\r\n");
 
-    Radio.SetChannel( 868000000 );
+    Radio.SetChannel( 470000000 );
 //	
 	Radio.SetTxConfig( MODEM_LORA, 12, 0, 0,
                                    7, 1,

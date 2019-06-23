@@ -1095,12 +1095,7 @@ void SX1276SetTx( uint32_t timeout )
                                                   RFLR_IRQFLAGS_CADDONE |
                                                   RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL |
                                                   RFLR_IRQFLAGS_CADDETECTED );
-<<<<<<< HEAD
 
-=======
-												  //SX1276Write(REG_LR_IRQFLAGSMASK,0xf7);
-           
->>>>>>> e3b4417609eb50ed715829be623ab617ad324ae4
                 // DIO0=TxDone
                 SX1276Write( REG_DIOMAPPING1, ( SX1276Read( REG_DIOMAPPING1 ) & RFLR_DIOMAPPING1_DIO0_MASK ) | RFLR_DIOMAPPING1_DIO0_01 );
             }
