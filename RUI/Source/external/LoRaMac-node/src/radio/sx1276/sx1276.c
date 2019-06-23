@@ -1095,7 +1095,12 @@ void SX1276SetTx( uint32_t timeout )
                                                   RFLR_IRQFLAGS_CADDONE |
                                                   RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL |
                                                   RFLR_IRQFLAGS_CADDETECTED );
+<<<<<<< HEAD
 
+=======
+												  //SX1276Write(REG_LR_IRQFLAGSMASK,0xf7);
+           
+>>>>>>> e3b4417609eb50ed715829be623ab617ad324ae4
                 // DIO0=TxDone
                 SX1276Write( REG_DIOMAPPING1, ( SX1276Read( REG_DIOMAPPING1 ) & RFLR_DIOMAPPING1_DIO0_MASK ) | RFLR_DIOMAPPING1_DIO0_01 );
             }
@@ -1247,7 +1252,11 @@ void SX1276SetModem( RadioModems_t modem )
     case MODEM_LORA:
         SX1276SetSleep( );
         SX1276Write( REG_OPMODE, ( SX1276Read( REG_OPMODE ) & RFLR_OPMODE_LONGRANGEMODE_MASK ) | RFLR_OPMODE_LONGRANGEMODE_ON );
+		SX1276SetStby( );
 
+		//		SX1276Write(0x11,0xf7);
+//        printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
+//		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
         SX1276Write( REG_DIOMAPPING1, 0x00 );
         SX1276Write( REG_DIOMAPPING2, 0x00 );
         break;

@@ -48,7 +48,7 @@
 //#define BOARD_IOE_EXT
 #define RADIO_ANT_SWITCH_PA								PA_4  //Pa_Boost
 #define RADIO_XTAL_EN                           		PH_1
-//#define LORA_HF_BOARD                                   
+#define LORA_HF_BOARD                                   
 
 #ifdef LORA_HF_BOARD
 	#define RADIO_RESET                                 PB_13
@@ -113,14 +113,14 @@
 #define RADIO_DIO_4                                 PC_13
 
 
-#define RADIO_ANT_SWITCH_HF                         PA_0
-#define RADIO_ANT_SWITCH_LF                         PA_1
+//#define RADIO_ANT_SWITCH_HF                         PA_0
+//#define RADIO_ANT_SWITCH_LF                         PA_1
 
 #define OSC_LSE_IN                                  PC_14
 #define OSC_LSE_OUT                                 PC_15
 
 #define OSC_HSE_IN                                  PH_0
-#define OSC_HSE_OUT                                 PH_1
+//#define OSC_HSE_OUT                                 PH_1
 
 //#define USB_DM                                      PA_11
 //#define USB_DP                                      PA_12
@@ -129,15 +129,15 @@
 
 #define BOOT_1                                      PB_2
 
-#define GPS_PPS                                     PB_1
+//#define GPS_PPS                                     PB_1
 #define UART_TX                                     PA_9
 #define UART_RX                                     PA_10
 
-#define DC_DC_EN                                    PB_8
-#define BAT_LEVEL_PIN                               PB_0
-#define BAT_LEVEL_CHANNEL                           ADC_CHANNEL_8
+//#define DC_DC_EN                                    PB_8
+//#define BAT_LEVEL_PIN                               PB_0
+//#define BAT_LEVEL_CHANNEL                           ADC_CHANNEL_8
 
-#define WKUP1                                       PA_8
+//#define WKUP1                                       PA_8
 //#define USB_ON                                      PA_2
 
 //#define RF_RXTX                                     PA_3
@@ -146,11 +146,11 @@
 #define SWCLK                                       PA_14
 
 //#define TEST_POINT1                                 PB_12
-#define TEST_POINT2                                 PB_13
-#define TEST_POINT3                                 PB_14
+//#define TEST_POINT2                                 PB_13
+//#define TEST_POINT3                                 PB_14
 //#define TEST_POINT4                                 PB_15
 
-#define PIN_NC                                      PB_5
+//#define PIN_NC                                      PB_5
 
 // Debug pins definition.
 #define RADIO_DBG_PIN_TX                            NC

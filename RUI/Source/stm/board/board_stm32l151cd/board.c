@@ -121,8 +121,8 @@ static void OnCalibrateSystemWakeupTimeTimerEvent( void )
 {
 
     SystemWakeupTimeCalibrated = true;
-	DelayMs(100);
-	printf("\r\nSystemWakeupTimeCalibrated\r\n");
+//	DelayMs(100);
+//	printf("\r\nSystemWakeupTimeCalibrated\r\n");
 }
 
 /*!
@@ -194,10 +194,7 @@ void BoardEnableIrq( void )
 */
 
 
-void testio(void)
-{
-	printf("testio\r\n");
-}
+
 void BoardInitMcu( void )
 {
     if( McuInitialized == false )
@@ -225,13 +222,13 @@ void BoardInitMcu( void )
         SystemClockReConfig( );
     }
 
-    AdcInit( &Adc, BAT_LEVEL_PIN );
+//    AdcInit( &Adc, BAT_LEVEL_PIN );
 
     SpiInit( &SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
     SX1276IoInit( );
 	
 	
-	
+
 
     if( McuInitialized == false )
     {
@@ -262,7 +259,7 @@ void BoardDeInitMcu( void )
     SX1276IoDeInit( );
 
     GpioInit( &ioPin, OSC_HSE_IN, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, OSC_HSE_OUT, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//  GpioInit( &ioPin, OSC_HSE_OUT, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
     GpioInit( &ioPin, OSC_LSE_IN, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &ioPin, OSC_LSE_OUT, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
@@ -311,63 +308,63 @@ void BoardGetUniqueId( uint8_t *id )
 
 static uint16_t BatteryVoltage = BATTERY_MAX_LEVEL;
 
-uint16_t BoardBatteryMeasureVolage( void )
-{
-    uint16_t vdd = 0;
-    uint16_t vref = VREFINT_CAL;
-    uint16_t vdiv = 0;
-    uint16_t batteryVoltage = 0;
+//uint16_t BoardBatteryMeasureVolage( void )
+//{
+//    uint16_t vdd = 0;
+//    uint16_t vref = VREFINT_CAL;
+//    uint16_t vdiv = 0;
+//    uint16_t batteryVoltage = 0;
 
-    vdiv = AdcReadChannel( &Adc, BAT_LEVEL_CHANNEL );
-    //vref = AdcReadChannel( &Adc, ADC_CHANNEL_VREFINT );
+//    vdiv = AdcReadChannel( &Adc, BAT_LEVEL_CHANNEL );
+//    //vref = AdcReadChannel( &Adc, ADC_CHANNEL_VREFINT );
 
-    vdd = ( float )FACTORY_POWER_SUPPLY * ( float )VREFINT_CAL / ( float )vref;
-    batteryVoltage = vdd * ( ( float )vdiv / ( float )ADC_MAX_VALUE );
+//    vdd = ( float )FACTORY_POWER_SUPPLY * ( float )VREFINT_CAL / ( float )vref;
+//    batteryVoltage = vdd * ( ( float )vdiv / ( float )ADC_MAX_VALUE );
 
-    //                                vDiv
-    // Divider bridge  VBAT <-> 470k -<--|-->- 470k <-> GND => vBat = 2 * vDiv
-    batteryVoltage = 2 * batteryVoltage;
-    return batteryVoltage;
-}
+//    //                                vDiv
+//    // Divider bridge  VBAT <-> 470k -<--|-->- 470k <-> GND => vBat = 2 * vDiv
+//    batteryVoltage = 2 * batteryVoltage;
+//    return batteryVoltage;
+//}
 
 uint32_t BoardGetBatteryVoltage( void )
 {
     return BatteryVoltage;
 }
 
-uint8_t BoardGetBatteryLevel( void )
-{
-    uint8_t batteryLevel = 0;
+//uint8_t BoardGetBatteryLevel( void )
+//{
+//    uint8_t batteryLevel = 0;
 
-    BatteryVoltage = BoardBatteryMeasureVolage( );
+//    BatteryVoltage = BoardBatteryMeasureVolage( );
 
-    if( GetBoardPowerSource( ) == USB_POWER )
-    {
-        batteryLevel = 0;
-    }
-    else
-    {
-        if( BatteryVoltage >= BATTERY_MAX_LEVEL )
-        {
-            batteryLevel = 254;
-        }
-        else if( ( BatteryVoltage > BATTERY_MIN_LEVEL ) && ( BatteryVoltage < BATTERY_MAX_LEVEL ) )
-        {
-            batteryLevel = ( ( 253 * ( BatteryVoltage - BATTERY_MIN_LEVEL ) ) / ( BATTERY_MAX_LEVEL - BATTERY_MIN_LEVEL ) ) + 1;
-        }
-        else if( ( BatteryVoltage > BATTERY_SHUTDOWN_LEVEL ) && ( BatteryVoltage <= BATTERY_MIN_LEVEL ) )
-        {
-            batteryLevel = 1;
-        }
-        else //if( BatteryVoltage <= BATTERY_SHUTDOWN_LEVEL )
-        {
-            batteryLevel = 255;
-            //GpioInit( &DcDcEnable, DC_DC_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-            //GpioInit( &BoardPowerDown, BOARD_POWER_DOWN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-        }
-    }
-    return batteryLevel;
-}
+//    if( GetBoardPowerSource( ) == USB_POWER )
+//    {
+//        batteryLevel = 0;
+//    }
+//    else
+//    {
+//        if( BatteryVoltage >= BATTERY_MAX_LEVEL )
+//        {
+//            batteryLevel = 254;
+//        }
+//        else if( ( BatteryVoltage > BATTERY_MIN_LEVEL ) && ( BatteryVoltage < BATTERY_MAX_LEVEL ) )
+//        {
+//            batteryLevel = ( ( 253 * ( BatteryVoltage - BATTERY_MIN_LEVEL ) ) / ( BATTERY_MAX_LEVEL - BATTERY_MIN_LEVEL ) ) + 1;
+//        }
+//        else if( ( BatteryVoltage > BATTERY_SHUTDOWN_LEVEL ) && ( BatteryVoltage <= BATTERY_MIN_LEVEL ) )
+//        {
+//            batteryLevel = 1;
+//        }
+//        else //if( BatteryVoltage <= BATTERY_SHUTDOWN_LEVEL )
+//        {
+//            batteryLevel = 255;
+//            //GpioInit( &DcDcEnable, DC_DC_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//            //GpioInit( &BoardPowerDown, BOARD_POWER_DOWN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+//        }
+//    }
+//    return batteryLevel;
+//}
 
 static void BoardUnusedIoInit( void )
 {
@@ -380,15 +377,15 @@ static void BoardUnusedIoInit( void )
     }
 
 //    GpioInit( &ioPin, TEST_POINT1, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, TEST_POINT2, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, TEST_POINT3, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, TEST_POINT2, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, TEST_POINT3, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 //    GpioInit( &ioPin, TEST_POINT4, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
-    GpioInit( &ioPin, PIN_NC, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, PIN_NC, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &ioPin, BOOT_1, PIN_ANALOGIC, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
 
 //   GpioInit( &ioPin, RF_RXTX, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, WKUP1, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, WKUP1, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
 #if defined( USE_DEBUGGER )
     HAL_DBGMCU_EnableDBGStopMode( );

@@ -29,6 +29,8 @@
 #include "uart-usb-board.h"
 #endif
 
+#include <stdarg.h>
+
 /*!
  * Number of times the UartPutBuffer will try to send the buffer before
  * returning ERROR
@@ -342,7 +344,25 @@ void USART1_IRQHandler( void )
     HAL_UART_IRQHandler( &UartHandle );
 }
 
+//#define MAX_MSG_LEN 127
 
+//static char ll_msg_buf_[MAX_MSG_LEN];
+
+
+
+//void e_printf(const char *format, ...)
+//{
+//    int i;
+//    va_list args;
+//    size_t len;
+//    
+//    /* Format the string */
+//    va_start(args, format);
+//    len = vsnprintf(ll_msg_buf_, MAX_MSG_LEN, &format[0], args);
+//    va_end(args);
+//	//UartHandle.Instance = USART1;
+//    HAL_UART_Transmit(&UartHandle, (uint8_t *)&ll_msg_buf_, len, 0xFFFF);
+//}
 
 
 

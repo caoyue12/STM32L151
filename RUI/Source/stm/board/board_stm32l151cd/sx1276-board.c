@@ -254,12 +254,12 @@ void SX1276SetAntSwLowPower( bool status )
 
         if( status == false )
         {
-//          SX1276SetBoardTcxo( true );
+
             SX1276AntSwInit( );
         }
         else
         {
-//          SX1276SetBoardTcxo( false );
+
             SX1276AntSwDeInit( );
         }
     }
@@ -267,16 +267,16 @@ void SX1276SetAntSwLowPower( bool status )
 
 void SX1276AntSwInit( void )
 {
-    GpioInit( &AntSwitchPa, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
-    GpioInit( &AntSwitchRx, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-	GpioInit( &AntSwitchHL, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    GpioInit( &AntSwitchPa, RADIO_ANT_SWITCH_PA, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+    GpioInit( &AntSwitchRx, RADIO_ANT_SWITCH_RX, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+	GpioInit( &AntSwitchHL, RADIO_ANT_SWITCH_HL, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
 }
 
 void SX1276AntSwDeInit( void )
 {
-    GpioInit( &AntSwitchPa, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
-    GpioInit( &AntSwitchRx, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
-	GpioInit( &AntSwitchHL, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+    GpioInit( &AntSwitchPa, RADIO_ANT_SWITCH_PA, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+    GpioInit( &AntSwitchRx, RADIO_ANT_SWITCH_RX, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+	GpioInit( &AntSwitchHL, RADIO_ANT_SWITCH_HL, PIN_OUTPUT, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
 }
 
 void SX1276SetAntSw( uint8_t opMode )
