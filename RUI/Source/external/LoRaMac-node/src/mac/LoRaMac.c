@@ -1248,7 +1248,7 @@ static void OnMacStateCheckTimerEvent( void )
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
     bool txTimeout = false;
-
+    printf("%s	%d\r\n",__FILE__,__LINE__);
     TimerStop( &MacStateCheckTimer );
 
     if( LoRaMacFlags.Bits.MacDone == 1 )
@@ -1456,6 +1456,7 @@ static void OnTxDelayedTimerEvent( void )
 
 static void OnRxWindow1TimerEvent( void )
 {
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     TimerStop( &RxWindowTimer1 );
     RxSlot = RX_SLOT_WIN_1;
 
@@ -1477,6 +1478,7 @@ static void OnRxWindow1TimerEvent( void )
 
 static void OnRxWindow2TimerEvent( void )
 {
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     TimerStop( &RxWindowTimer2 );
 
     RxWindow2Config.Channel = Channel;
@@ -2056,6 +2058,7 @@ static LoRaMacStatus_t ScheduleTx( bool allowDelayedTx )
         RxWindow1Delay = LoRaMacParams.ReceiveDelay1 + RxWindow1Config.WindowOffset;
         RxWindow2Delay = LoRaMacParams.ReceiveDelay2 + RxWindow2Config.WindowOffset;
     }
+	printf("RxWindow1Delay	%d	RxWindow2Delay	%d\r\n",RxWindow1Delay,RxWindow2Delay);
 	printf("%s	%d\r\n", __FILE__,__LINE__);
 
     // Try to send now

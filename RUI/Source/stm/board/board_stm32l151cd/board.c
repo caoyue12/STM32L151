@@ -122,7 +122,7 @@ static void OnCalibrateSystemWakeupTimeTimerEvent( void )
 
     SystemWakeupTimeCalibrated = true;
 //	DelayMs(100);
-//	printf("\r\nSystemWakeupTimeCalibrated\r\n");
+	printf("\r\nSystemWakeupTimeCalibrated\r\n");
 }
 
 /*!
@@ -193,7 +193,7 @@ void BoardEnableIrq( void )
 }
 */
 
-
+static Gpio_t 	SX1276_ecxo_power;
 
 void BoardInitMcu( void )
 {
@@ -227,6 +227,7 @@ void BoardInitMcu( void )
     SpiInit( &SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
     SX1276IoInit( );
 	
+	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
 	
 
 

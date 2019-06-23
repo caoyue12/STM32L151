@@ -115,17 +115,17 @@ void SX1276IoDeInit( void )
  * \param [IN] state TCXO enabled when true and disabled when false.
  */
 
-static Gpio_t 	SX1276_ecxo_power;
+//static Gpio_t 	SX1276_ecxo_power;
 
 
 void TCXO_ON(void)
 {
-	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+//	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
 }
 
 void TCXO_OFF()
 {
-	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
 
 

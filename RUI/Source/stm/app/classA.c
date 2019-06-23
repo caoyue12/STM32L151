@@ -434,8 +434,7 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
         }
 
         // Switch LED 1 ON
-        GpioWrite( &Led1, 1 );
-        TimerStart( &Led1Timer );
+       
     }
     NextTx = true;
 }
@@ -653,8 +652,8 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
     }
 
     // Switch LED 2 ON for each received downlink
-    GpioWrite( &Led2, 1 );
-    TimerStart( &Led2Timer );
+    
+    
 }
 
 /*!
@@ -665,7 +664,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
  */
 static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 {
-	
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     switch( mlmeConfirm->MlmeRequest )
     {
 	printf("%s	%d\r\n", __FILE__,__LINE__);
@@ -726,6 +725,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
  */
 static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 {
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     switch( mlmeIndication->MlmeIndication )
     {
         case MLME_SCHEDULE_UPLINK:
@@ -738,59 +738,63 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
     }
 }
 
+TimerEvent_t timer1;
+void Timer_test(void)
+{
+	
+	printf("Timer_test\r\n");
+	TimerStart(&timer1);
+}
+
 /**
  * Main application entry point.
  */
 int main( void )
 {
+
+	
+	
     LoRaMacPrimitives_t LoRaMacPrimitives;
     LoRaMacCallback_t LoRaMacCallbacks;
     MibRequestConfirm_t mibReq;
-	LoRaMacStatus_t	State;
+
     BoardInitMcu( );
+	printf("%s	%d\r\n", __FILE__,__LINE__);
+	TimerInit( &timer1, Timer_test );
+	TimerSetValue(&timer1,1000 );
+	TimerStart(&timer1);
     //BoardInitPeriph( );
 
     DeviceState = DEVICE_STATE_INIT;
+	
+	LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
+    LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
+    LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;
+    LoRaMacPrimitives.MacMlmeIndication = MlmeIndication;
+                //LoRaMacCallbacks.GetBatteryLevel = BoardGetBatteryLevel;
+  //  LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION );
 
-    while( 1 )
-    {
-        switch( DeviceState )
-        {
-            case DEVICE_STATE_INIT:
-            {
-                LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
-                LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
-                LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;
-                LoRaMacPrimitives.MacMlmeIndication = MlmeIndication;
-                LoRaMacCallbacks.GetBatteryLevel = BoardGetBatteryLevel;
-                State   = LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION );
-				
-				printf("State %d\r\n",State );
+ //   TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
+if( LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION )==LORAMAC_STATUS_OK)
+	 {
+		printf("%s	%d\r\n", __FILE__,__LINE__);
+	 }
+                
 
-                TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
+    mibReq.Type = MIB_ADR;
+    mibReq.Param.AdrEnable = LORAWAN_ADR_ON;
+	LoRaMacMibSetRequestConfirm( &mibReq );
 
-               
-                mibReq.Type = MIB_ADR;
-                mibReq.Param.AdrEnable = LORAWAN_ADR_ON;
-                LoRaMacMibSetRequestConfirm( &mibReq );
-
-                mibReq.Type = MIB_PUBLIC_NETWORK;
-                mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
-                LoRaMacMibSetRequestConfirm( &mibReq );
-
-#if defined( REGION_EU868 )
-                LoRaMacTestSetDutyCycleOn( LORAWAN_DUTYCYCLE_ON );
-#endif
-                DeviceState = DEVICE_STATE_JOIN;
-                break;
-            }
-            case DEVICE_STATE_JOIN:
-            {
-#if( OVER_THE_AIR_ACTIVATION != 0 )
-                MlmeReq_t mlmeReq;
-
-                // Initialize LoRaMac device unique ID
+    mibReq.Type = MIB_PUBLIC_NETWORK;
+	mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
+     if( LoRaMacMibSetRequestConfirm( &mibReq )==LORAMAC_STATUS_OK)
+	 {
+		printf("%s	%d\r\n", __FILE__,__LINE__);
+	 }
+	 
+	 //                // Initialize LoRaMac device unique ID
                 BoardGetUniqueId( DevEui );
+				MlmeReq_t mlmeReq;
 
                 mlmeReq.Type = MLME_JOIN;
 
@@ -801,98 +805,146 @@ int main( void )
 
                 if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
                 {
-					//printf("if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )\r\n");
-                    DeviceState = DEVICE_STATE_SLEEP;
-                }
-				
-                else
-                {
-                    DeviceState = DEVICE_STATE_CYCLE;
-					
-                }
-#else
-                // Choose a random device address if not already defined in Commissioning.h
-                if( DevAddr == 0 )
-                {
-                    // Random seed initialization
-                    srand1( BoardGetRandomSeed( ) );
-
-                    // Choose a random device address
-                    DevAddr = randr( 0, 0x01FFFFFF );
+                  printf("%s	%d\r\n", __FILE__,__LINE__);  
                 }
 
-                mibReq.Type = MIB_NET_ID;
-                mibReq.Param.NetID = LORAWAN_NETWORK_ID;
-                LoRaMacMibSetRequestConfirm( &mibReq );
+    while( 1 )
+    {
+	//printf("DEVICE_STATE	%d\r\n",DeviceState);
+	DelayMs(1000);
+	
+//        switch( DeviceState )
+//        {
+//            case DEVICE_STATE_INIT:
+//            {
+//                LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
+//                LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
+//                LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;
+//                LoRaMacPrimitives.MacMlmeIndication = MlmeIndication;
+//                //LoRaMacCallbacks.GetBatteryLevel = BoardGetBatteryLevel;
+//                LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION );
 
-                mibReq.Type = MIB_DEV_ADDR;
-                mibReq.Param.DevAddr = DevAddr;
-                LoRaMacMibSetRequestConfirm( &mibReq );
+//                TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
 
-                mibReq.Type = MIB_NWK_SKEY;
-                mibReq.Param.NwkSKey = NwkSKey;
-                LoRaMacMibSetRequestConfirm( &mibReq );
+//                
 
-                mibReq.Type = MIB_APP_SKEY;
-                mibReq.Param.AppSKey = AppSKey;
-                LoRaMacMibSetRequestConfirm( &mibReq );
+//                mibReq.Type = MIB_ADR;
+//                mibReq.Param.AdrEnable = LORAWAN_ADR_ON;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
 
-                mibReq.Type = MIB_NETWORK_JOINED;
-                mibReq.Param.IsNetworkJoined = true;
-                LoRaMacMibSetRequestConfirm( &mibReq );
+//                mibReq.Type = MIB_PUBLIC_NETWORK;
+//                mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
 
-                DeviceState = DEVICE_STATE_SEND;
-#endif
-                break;
-            }
-            case DEVICE_STATE_SEND:
-            {
-                if( NextTx == true )
-                {
-                    PrepareTxFrame( AppPort );
+//#if defined( REGION_EU868 )
+//                LoRaMacTestSetDutyCycleOn( LORAWAN_DUTYCYCLE_ON );
+//#endif
+//                DeviceState = DEVICE_STATE_JOIN;
+//                break;
+//            }
+//            case DEVICE_STATE_JOIN:
+//            {
+//#if( OVER_THE_AIR_ACTIVATION != 0 )
+//                MlmeReq_t mlmeReq;
 
-                    NextTx = SendFrame( );
-                }
-                if( ComplianceTest.Running == true )
-                {
-                    // Schedule next packet transmission
-                    TxDutyCycleTime = 5000; // 5000 ms
-                }
-                else
-                {
-                    // Schedule next packet transmission
-                    TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
-                }
-                DeviceState = DEVICE_STATE_CYCLE;
-                break;
-            }
-            case DEVICE_STATE_CYCLE:
-            {
-                DeviceState = DEVICE_STATE_SLEEP;
+//                // Initialize LoRaMac device unique ID
+//                BoardGetUniqueId( DevEui );
 
-                // Schedule next packet transmission
-                TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
-                TimerStart( &TxNextPacketTimer );
-                break;
-            }
-            case DEVICE_STATE_SLEEP:
-            {
-				//printf("%s	%d\r\n", __FILE__,__LINE__);
-                //Wake up through events
-                //TimerLowPowerHandler( );
-				//printf("%s	%d\r\n", __FILE__,__LINE__);
-                //Process Radio IRQ
-                //Radio.IrqProcess( );
-				//printf("%s	%d\r\n", __FILE__,__LINE__);
-				printf("DEVICE_STATE_SLEEP \r\n");
-				DelayMs(5000);
-                break;
-            }
-            default:
-            {
-                DeviceState = DEVICE_STATE_INIT;
-                break;
-            }
-        }
+//                mlmeReq.Type = MLME_JOIN;
+
+//                mlmeReq.Req.Join.DevEui = DevEui;
+//                mlmeReq.Req.Join.AppEui = AppEui;
+//                mlmeReq.Req.Join.AppKey = AppKey;
+//                mlmeReq.Req.Join.Datarate = LORAWAN_DEFAULT_DATARATE;
+
+//                if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
+//                {
+//                    DeviceState = DEVICE_STATE_CYCLE;
+//                }
+//                else
+//                {
+//                    DeviceState = DEVICE_STATE_CYCLE;
+//                }
+//#else
+//                // Choose a random device address if not already defined in Commissioning.h
+//                if( DevAddr == 0 )
+//                {
+//                    // Random seed initialization
+//                    srand1( BoardGetRandomSeed( ) );
+
+//                    // Choose a random device address
+//                    DevAddr = randr( 0, 0x01FFFFFF );
+//                }
+
+//                mibReq.Type = MIB_NET_ID;
+//                mibReq.Param.NetID = LORAWAN_NETWORK_ID;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
+
+//                mibReq.Type = MIB_DEV_ADDR;
+//                mibReq.Param.DevAddr = DevAddr;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
+
+//                mibReq.Type = MIB_NWK_SKEY;
+//                mibReq.Param.NwkSKey = NwkSKey;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
+
+//                mibReq.Type = MIB_APP_SKEY;
+//                mibReq.Param.AppSKey = AppSKey;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
+
+//                mibReq.Type = MIB_NETWORK_JOINED;
+//                mibReq.Param.IsNetworkJoined = true;
+//                LoRaMacMibSetRequestConfirm( &mibReq );
+
+//                DeviceState = DEVICE_STATE_SEND;
+//#endif
+//                break;
+//            }
+//            case DEVICE_STATE_SEND:
+//            {
+//                if( NextTx == true )
+//                {
+//                    PrepareTxFrame( AppPort );
+
+//                    NextTx = SendFrame( );
+//                }
+//                if( ComplianceTest.Running == true )
+//                {
+//                    // Schedule next packet transmission
+//                    TxDutyCycleTime = 5000; // 5000 ms
+//                }
+//                else
+//                {
+//                    // Schedule next packet transmission
+//                    TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
+//                }
+//                DeviceState = DEVICE_STATE_CYCLE;
+//                break;
+//            }
+//            case DEVICE_STATE_CYCLE:
+//            {
+//                DeviceState = DEVICE_STATE_SLEEP;
+
+//                // Schedule next packet transmission
+//                TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
+//                TimerStart( &TxNextPacketTimer );
+//                break;
+//            }
+//            case DEVICE_STATE_SLEEP:
+//            {
+//				DelayMs(3000);
+//				printf("DEVICE_STATE_SLEEP\r\n");
+//                // Wake up through events
+//                //TimerLowPowerHandler( );
+//                break;
+//            }
+//            default:
+//            {
+//                DeviceState = DEVICE_STATE_INIT;
+//                break;
+//            }
+//        }
+//        
     }
 }
+
