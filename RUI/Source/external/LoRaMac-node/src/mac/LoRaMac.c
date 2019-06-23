@@ -1962,7 +1962,7 @@ LoRaMacStatus_t Send( LoRaMacHeader_t *macHdr, uint8_t fPort, void *fBuffer, uin
 
     // Prepare the frame
     status = PrepareFrame( macHdr, &fCtrl, fPort, fBuffer, fBufferSize );
-
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     // Validate status
     if( status != LORAMAC_STATUS_OK )
     {
@@ -1976,7 +1976,7 @@ LoRaMacStatus_t Send( LoRaMacHeader_t *macHdr, uint8_t fPort, void *fBuffer, uin
 
     // Schedule frame, do not allow delayed transmissions
     status = ScheduleTx( false );
-
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     return status;
 }
 
@@ -2056,6 +2056,7 @@ static LoRaMacStatus_t ScheduleTx( bool allowDelayedTx )
         RxWindow1Delay = LoRaMacParams.ReceiveDelay1 + RxWindow1Config.WindowOffset;
         RxWindow2Delay = LoRaMacParams.ReceiveDelay2 + RxWindow2Config.WindowOffset;
     }
+	printf("%s	%d\r\n", __FILE__,__LINE__);
 
     // Try to send now
     return SendFrameOnChannel( Channel );
@@ -2343,7 +2344,7 @@ LoRaMacStatus_t SendFrameOnChannel( uint8_t channel )
 
     // Send now
     Radio.Send( LoRaMacBuffer, LoRaMacBufferPktLen );
-
+	printf("%s	%d\r\n", __FILE__,__LINE__);
     LoRaMacState |= LORAMAC_TX_RUNNING;
 
     return LORAMAC_STATUS_OK;
@@ -3222,6 +3223,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
     {
         case MLME_JOIN:
         {
+			 
             if( ( LoRaMacState & LORAMAC_TX_DELAYED ) == LORAMAC_TX_DELAYED )
             {
                 return LORAMAC_STATUS_BUSY;
@@ -3233,7 +3235,8 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
             {
                 return LORAMAC_STATUS_PARAMETER_INVALID;
             }
-
+			
+			
             ResetMacParameters( );
 
             LoRaMacFlags.Bits.MlmeReq = 1;
@@ -3247,7 +3250,8 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
             // Setup header information
             macHdr.Value = 0;
             macHdr.Bits.MType  = FRAME_TYPE_JOIN_REQ;
-
+			//printf("status = Send( &macHdr, 0, NULL\r\n");
+			printf("%s	%d\r\n", __FILE__,__LINE__); 
             status = Send( &macHdr, 0, NULL, 0 );
             break;
         }

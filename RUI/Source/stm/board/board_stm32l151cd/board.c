@@ -231,9 +231,6 @@ void BoardInitMcu( void )
     SX1276IoInit( );
 	
 	
-	Gpio_t test_pin;
-	GpioInit( &test_pin, PB_15, PIN_INPUT, PIN_OPEN_DRAIN, PIN_PULL_DOWN, 0 );
-	GpioSetInterrupt( &test_pin, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, testio );
 	
 
     if( McuInitialized == false )

@@ -395,10 +395,13 @@ static void TimerSetTimeout( TimerEvent_t *obj )
 
 void TimerLowPowerHandler( void )
 {
+    printf("%s	%d\r\n", __FILE__,__LINE__);
     if( ( TimerListHead != NULL ) && ( TimerListHead->IsRunning == true ) )
     {
+	printf("%s	%d\r\n", __FILE__,__LINE__);
         if( HasLoopedThroughMain < 5 )
         {
+			printf("%s	%d\r\n", __FILE__,__LINE__);
             HasLoopedThroughMain++;
         }
         else
@@ -406,6 +409,7 @@ void TimerLowPowerHandler( void )
             HasLoopedThroughMain = 0;
             if( GetBoardPowerSource( ) == BATTERY_POWER )
             {
+				printf("%s	%d\r\n", __FILE__,__LINE__);
                 RtcEnterLowPowerStopMode( );
             }
         }

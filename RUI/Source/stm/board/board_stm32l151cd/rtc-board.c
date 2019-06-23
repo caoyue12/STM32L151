@@ -342,6 +342,7 @@ void RtcEnterLowPowerStopMode( void )
 {
     if( ( LowPowerDisableDuringTask == false ) && ( RtcTimerEventAllowsLowPower == true ) )
     {
+		printf("%s	%d\r\n", __FILE__,__LINE__);
         BoardDeInitMcu( );
 
         // Disable the Power Voltage Detector
@@ -351,10 +352,10 @@ void RtcEnterLowPowerStopMode( void )
 
 //        // Enable Ultra low power mode
         HAL_PWREx_EnableUltraLowPower( );    //关闭内部参考电压
-
+		
 //        // Enable the fast wake up from Ultra low power mode
         HAL_PWREx_EnableFastWakeUp( );          
-		printf("\r\nHAL_PWR_EnterSTOPMode\r\n");
+//		printf("\r\nHAL_PWR_EnterSTOPMode\r\n");
 //        // Enter Stop Mode
         HAL_PWR_EnterSTOPMode( PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI );
     }

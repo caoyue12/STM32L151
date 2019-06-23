@@ -260,7 +260,7 @@ void SX1276Init( RadioEvents_t *events )
     }
 
     SX1276SetModem( MODEM_FSK );
-    SX1276Write(REG_LR_TCXO,0x19);
+
     SX1276.Settings.State = RF_IDLE;
 }
 
@@ -271,7 +271,6 @@ RadioState_t SX1276GetStatus( void )
 
 void SX1276SetChannel( uint32_t freq )
 {
-//	SX1276Write( REG_OPMODE, ( SX1276Read( REG_OPMODE ) |RFLR_OPMODE_FREQMODE_ACCESS_HF));
     SX1276.Settings.Channel = freq;
     freq = ( uint32_t )( ( double )freq / ( double )FREQ_STEP );
     SX1276Write( REG_FRFMSB, ( uint8_t )( ( freq >> 16 ) & 0xFF ) );
@@ -1096,9 +1095,7 @@ void SX1276SetTx( uint32_t timeout )
                                                   RFLR_IRQFLAGS_CADDONE |
                                                   RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL |
                                                   RFLR_IRQFLAGS_CADDETECTED );
-												  //SX1276Write(REG_LR_IRQFLAGSMASK,0xf7);
-           printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
-		   printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
+
                 // DIO0=TxDone
                 SX1276Write( REG_DIOMAPPING1, ( SX1276Read( REG_DIOMAPPING1 ) & RFLR_DIOMAPPING1_DIO0_MASK ) | RFLR_DIOMAPPING1_DIO0_01 );
             }
@@ -1522,6 +1519,7 @@ void SX1276OnDio0Irq( void )
                 break;
             case MODEM_LORA:
                 {
+					printf("%s	%d\r\n", __FILE__,__LINE__);
                     int8_t snr = 0;
 
                     // Clear Irq
@@ -1606,6 +1604,7 @@ void SX1276OnDio0Irq( void )
             }
             break;
         case RF_TX_RUNNING:
+			printf("%s	%d\r\n", __FILE__,__LINE__);
             TimerStop( &TxTimeoutTimer );
             // TxDone interrupt
             switch( SX1276.Settings.Modem )
