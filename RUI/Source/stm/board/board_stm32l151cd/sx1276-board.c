@@ -132,7 +132,7 @@ void TCXO_OFF()
 static void SX1276SetBoardTcxo( uint8_t state )
 {
     // No TCXO component available on this board design.
-#if 1
+#if 0
 	
     if( state == true )
     {

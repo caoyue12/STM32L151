@@ -215,7 +215,7 @@ void BoardInitMcu( void )
 
         BoardUnusedIoInit( );
 
-        I2cInit( &I2c, I2C_1, I2C_SCL, I2C_SDA );
+//        I2cInit( &I2c, I2C_1, I2C_SCL, I2C_SDA );
     }
     else
     {
@@ -227,18 +227,19 @@ void BoardInitMcu( void )
     SpiInit( &SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
     SX1276IoInit( );
 	
+//	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
 	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-	
 
 
     if( McuInitialized == false )
     {
         McuInitialized = true;
-        if( GetBoardPowerSource( ) == BATTERY_POWER )
-        {
-            CalibrateSystemWakeupTime( );
-        }
+//        if( GetBoardPowerSource( ) == BATTERY_POWER )
+//        {
+//            CalibrateSystemWakeupTime( );
+//        }
     }
+	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
 }
 
 void BoardResetMcu( void )
@@ -254,16 +255,16 @@ void BoardDeInitMcu( void )
 {
     Gpio_t ioPin;
 
-    AdcDeInit( &Adc );
+ //   AdcDeInit( &Adc );
 
     SpiDeInit( &SX1276.Spi );
     SX1276IoDeInit( );
 
-    GpioInit( &ioPin, OSC_HSE_IN, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, OSC_HSE_IN, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 //  GpioInit( &ioPin, OSC_HSE_OUT, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
-    GpioInit( &ioPin, OSC_LSE_IN, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, OSC_LSE_OUT, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, OSC_LSE_IN, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, OSC_LSE_OUT, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
 //    GpioInit( &UsbDetect, USB_ON, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
@@ -370,6 +371,14 @@ uint32_t BoardGetBatteryVoltage( void )
 static void BoardUnusedIoInit( void )
 {
     Gpio_t ioPin;
+	
+	 for (int i = 0; i < 8 * 16; i++) {
+        if(i==UART_TX || i== UART_RX) {
+            continue;
+        }
+        GpioInit( &ioPin, i, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_DOWN, 0 );
+    }
+	
 
     if( GetBoardPowerSource( ) == BATTERY_POWER )
     {
@@ -383,7 +392,7 @@ static void BoardUnusedIoInit( void )
 //    GpioInit( &ioPin, TEST_POINT4, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
 //    GpioInit( &ioPin, PIN_NC, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &ioPin, BOOT_1, PIN_ANALOGIC, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
+//    GpioInit( &ioPin, BOOT_1, PIN_ANALOGIC, PIN_OPEN_DRAIN, PIN_NO_PULL, 0 );
 
 //   GpioInit( &ioPin, RF_RXTX, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 //    GpioInit( &ioPin, WKUP1, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 );

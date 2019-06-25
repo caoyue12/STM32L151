@@ -660,6 +660,7 @@ static void OnRadioTxDone( void )
     else
     {
         OpenContinuousRx2Window( );
+		printf("%s	%d",__FILE__,__LINE__);
     }
 
     // Setup timers
@@ -667,6 +668,7 @@ static void OnRadioTxDone( void )
     {
         TimerSetValue( &RxWindowTimer1, RxWindow1Delay );
         TimerStart( &RxWindowTimer1 );
+		printf("%s	%d",__FILE__,__LINE__);
         if( LoRaMacDeviceClass != CLASS_C )
         {
             TimerSetValue( &RxWindowTimer2, RxWindow2Delay );
