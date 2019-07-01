@@ -234,12 +234,12 @@ void BoardInitMcu( void )
     if( McuInitialized == false )
     {
         McuInitialized = true;
-//        if( GetBoardPowerSource( ) == BATTERY_POWER )
-//        {
-//            CalibrateSystemWakeupTime( );
-//        }
+        if( GetBoardPowerSource( ) == BATTERY_POWER )
+       {
+            CalibrateSystemWakeupTime( );
+        }
     }
-	GpioInit( &SX1276_ecxo_power, RADIO_XTAL_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+	
 }
 
 void BoardResetMcu( void )

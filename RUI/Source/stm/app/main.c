@@ -39,6 +39,14 @@ void OnRxTimeout( void );
 /*!
  * \brief Function executed on Radio Rx Error event
  */
+ 
+void  time2call(void)
+{
+	printf("123\r\n");
+	TimerStart(&time1 );
+}
+ 
+ 
 void OnRxError( void );
 uint8_t Buffer[6];
 int main( void )
@@ -57,11 +65,11 @@ int main( void )
 	BoardInitMcu( );
 //  BoardInitPeriph( );
 	
-//	TimerInit(&time2,time2call);
-//	TimerSetValue(&time1,2000);
+	TimerInit(&time1,time2call);
+	TimerSetValue(&time1,2000);
 //	TimerSetValue(&time2,1000);
 	   
-//	TimerStart(&time1 );
+	TimerStart(&time1 );
 	
 	
 	
@@ -101,7 +109,7 @@ int main( void )
 
     while( 1 )
     {
-	    Radio.Send( Buffer, 4 );
+//	    Radio.Send( Buffer, 4 );
 //		SX1276Write(0x11,0xf7);
 //      printf("SX1276Read(0x11)	%02X\r\n",SX1276Read(0x11));
 //		printf("SX1276Read(0x12)	%02X\r\n",SX1276Read(0x12));
@@ -111,7 +119,7 @@ int main( void )
 //		while(1);
 //		while(!(0x08&(SX1276Read(0x12))));
 //		printf("Reg TXdone OK\r\n");
-		Delay(5);
+//		Delay(5);
 		
 		
 	}

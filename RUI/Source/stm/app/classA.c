@@ -28,7 +28,8 @@
 #include "gpio.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
-
+#include "delay.h"
+#include "stdio.h"
 
 
 #define ACTIVE_REGION LORAMAC_REGION_CN470
@@ -206,12 +207,12 @@ static void PrepareTxFrame( uint8_t port )
     case 2:
         switch( region )
         {
-            case LORAMAC_REGION_CN470:
+            //case LORAMAC_REGION_CN470:
             case LORAMAC_REGION_CN779:
             case LORAMAC_REGION_EU433:
             case LORAMAC_REGION_EU868:
             case LORAMAC_REGION_IN865:
-            case LORAMAC_REGION_KR920:
+            case LORAMAC_REGION_CN470:
             {
 
                 AppDataSizeBackup = AppDataSize = 16;
@@ -301,7 +302,7 @@ static bool SendFrame( void )
     if( LoRaMacQueryTxPossible( AppDataSize, &txInfo ) != LORAMAC_STATUS_OK )
     {
         // Send empty frame in order to flush MAC commands
-        mcpsReq.Type = MCPS_UNCONFIRMED;
+        mcpsReq.Type = MCPS_CONFIRMED;
         mcpsReq.Req.Unconfirmed.fBuffer = NULL;
         mcpsReq.Req.Unconfirmed.fBufferSize = 0;
         mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
@@ -310,7 +311,7 @@ static bool SendFrame( void )
     {
         if( IsTxConfirmed == false )
         {
-            mcpsReq.Type = MCPS_UNCONFIRMED;
+            mcpsReq.Type = MCPS_CONFIRMED;
             mcpsReq.Req.Unconfirmed.fPort = AppPort;
             mcpsReq.Req.Unconfirmed.fBuffer = AppData;
             mcpsReq.Req.Unconfirmed.fBufferSize = AppDataSize;
@@ -339,7 +340,7 @@ static bool SendFrame( void )
  */
 static void OnTxNextPacketTimerEvent( void )
 {
-	
+	printf("OnTxNextPacketTimerEven\r\n");
     MibRequestConfirm_t mibReq;
     LoRaMacStatus_t status;
 
@@ -413,12 +414,14 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
         {
             case MCPS_UNCONFIRMED:
             {
-                // Check Datarate
+                printf("MCPS_UNCONFIRMED\r\n");
+				// Check Datarate 
                 // Check TxPower
                 break;
             }
             case MCPS_CONFIRMED:
             {
+				 printf("MCPS_CONFIRMED\r\n");
                 // Check Datarate
                 // Check TxPower
                 // Check AckReceived
@@ -436,6 +439,11 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
         // Switch LED 1 ON
        
     }
+	else
+	{
+		printf("%s	%d\r\n",__FILE__,__LINE__);
+		NextTx = false;
+	}
     NextTx = true;
 }
 
@@ -456,6 +464,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
     {
         case MCPS_UNCONFIRMED:
         {
+			printf("%s	%d\r\n",__FILE__,__LINE__);
             break;
         }
         case MCPS_CONFIRMED:
@@ -664,10 +673,10 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
  */
 static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 {
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
     switch( mlmeConfirm->MlmeRequest )
     {
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
         case MLME_JOIN:
         {
             if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
@@ -685,15 +694,19 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
                 mlmeReq.Req.Join.AppEui = AppEui;
                 mlmeReq.Req.Join.AppKey = AppKey;
                 mlmeReq.Req.Join.Datarate = LORAWAN_DEFAULT_DATARATE;
-
-                if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
-                {
-                    DeviceState = DEVICE_STATE_SLEEP;
-                }
-                else
-                {
-                    DeviceState = DEVICE_STATE_CYCLE;
-                }
+				LoRaMacStatus_t LORAMAC_STATUS;
+				LORAMAC_STATUS=	LoRaMacMlmeRequest( &mlmeReq );
+				printf("LORAMAC_STATUS	%d",LORAMAC_STATUS);
+//                if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
+//                {
+//					printf("%s	%d\r\n",__FILE__,__LINE__);
+//                    DeviceState = DEVICE_STATE_SLEEP;
+//                }
+//                else
+//                {	
+//					printf("%s	%d\r\n",__FILE__,__LINE__);
+//                    DeviceState = DEVICE_STATE_CYCLE;
+//                }
             }
             break;
         }
@@ -725,7 +738,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
  */
 static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 {
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
     switch( mlmeIndication->MlmeIndication )
     {
         case MLME_SCHEDULE_UPLINK:
@@ -752,17 +765,17 @@ void Timer_test(void)
 int main( void )
 {
 
-	
+	NextTx = true;
 	
     LoRaMacPrimitives_t LoRaMacPrimitives;
     LoRaMacCallback_t LoRaMacCallbacks;
     MibRequestConfirm_t mibReq;
 
     BoardInitMcu( );
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
 	TimerInit( &timer1, Timer_test );
 	TimerSetValue(&timer1,1000 );
-	TimerStart(&timer1);
+//	TimerStart(&timer1);
     //BoardInitPeriph( );
 
     DeviceState = DEVICE_STATE_INIT;
@@ -777,7 +790,7 @@ int main( void )
  //   TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
 if( LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION )==LORAMAC_STATUS_OK)
 	 {
-		printf("%s	%d\r\n", __FILE__,__LINE__);
+		/********************/
 	 }
                 
 
@@ -789,11 +802,11 @@ if( LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION 
 	mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
      if( LoRaMacMibSetRequestConfirm( &mibReq )==LORAMAC_STATUS_OK)
 	 {
-		printf("%s	%d\r\n", __FILE__,__LINE__);
+		/********************/
 	 }
 	 
-	 //                // Initialize LoRaMac device unique ID
-                BoardGetUniqueId( DevEui );
+	 //         Initialize LoRaMac device unique ID
+     //           BoardGetUniqueId( DevEui );
 				MlmeReq_t mlmeReq;
 
                 mlmeReq.Type = MLME_JOIN;
@@ -802,16 +815,24 @@ if( LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks, ACTIVE_REGION 
                 mlmeReq.Req.Join.AppEui = AppEui;
                 mlmeReq.Req.Join.AppKey = AppKey;
                 mlmeReq.Req.Join.Datarate = LORAWAN_DEFAULT_DATARATE;
-
+				//printf("%02X %02X %02X %02X %02X \r\n",DevEui[0],DevEui[1],DevEui[2],DevEui[3],DevEui[4]);
                 if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
                 {
-                  printf("%s	%d\r\n", __FILE__,__LINE__);  
+                  /********************/  
                 }
 
     while( 1 )
     {
-	//printf("DEVICE_STATE	%d\r\n",DeviceState);
-	DelayMs(1000);
+	
+//	printf("DEVICE_STATE	%d\r\n",DeviceState);
+//	Delay(5);
+	if( DeviceState == DEVICE_STATE_SEND &&NextTx == true)
+	{
+		 PrepareTxFrame( AppPort );
+		 
+		 SendFrame( );
+		// Delay(20);
+	}
 	
 //        switch( DeviceState )
 //        {

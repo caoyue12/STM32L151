@@ -668,7 +668,7 @@ static void OnRadioTxDone( void )
     {
         TimerSetValue( &RxWindowTimer1, RxWindow1Delay );
         TimerStart( &RxWindowTimer1 );
-		printf("%s	%d",__FILE__,__LINE__);
+		//printf("%s	%d",__FILE__,__LINE__);
         if( LoRaMacDeviceClass != CLASS_C )
         {
             TimerSetValue( &RxWindowTimer2, RxWindow2Delay );
@@ -1247,10 +1247,11 @@ static void OnRadioRxTimeout( void )
 
 static void OnMacStateCheckTimerEvent( void )
 {
+	printf("OnMacStateCheckTimerEvent\r\n");
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
     bool txTimeout = false;
-    printf("%s	%d\r\n",__FILE__,__LINE__);
+    /********************/
     TimerStop( &MacStateCheckTimer );
 
     if( LoRaMacFlags.Bits.MacDone == 1 )
@@ -1458,7 +1459,8 @@ static void OnTxDelayedTimerEvent( void )
 
 static void OnRxWindow1TimerEvent( void )
 {
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	
+	//printf("OnRxWindow1TimerEvent	%s	%d\r\n", __FILE__,__LINE__);
     TimerStop( &RxWindowTimer1 );
     RxSlot = RX_SLOT_WIN_1;
 
@@ -1480,7 +1482,7 @@ static void OnRxWindow1TimerEvent( void )
 
 static void OnRxWindow2TimerEvent( void )
 {
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
     TimerStop( &RxWindowTimer2 );
 
     RxWindow2Config.Channel = Channel;
@@ -1966,7 +1968,7 @@ LoRaMacStatus_t Send( LoRaMacHeader_t *macHdr, uint8_t fPort, void *fBuffer, uin
 
     // Prepare the frame
     status = PrepareFrame( macHdr, &fCtrl, fPort, fBuffer, fBufferSize );
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
     // Validate status
     if( status != LORAMAC_STATUS_OK )
     {
@@ -1980,7 +1982,7 @@ LoRaMacStatus_t Send( LoRaMacHeader_t *macHdr, uint8_t fPort, void *fBuffer, uin
 
     // Schedule frame, do not allow delayed transmissions
     status = ScheduleTx( false );
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
     return status;
 }
 
@@ -2010,8 +2012,9 @@ static LoRaMacStatus_t ScheduleTx( bool allowDelayedTx )
     nextChan.LastAggrTx = AggregatedLastTxDoneTime;
 
     // Select channel
+	printf("%s	%d\r\n",__FILE__,__LINE__);
     status = RegionNextChannel( LoRaMacRegion, &nextChan, &Channel, &dutyCycleTimeOff, &AggregatedTimeOff );
-
+	printf("%s	%d\r\n",__FILE__,__LINE__);
     if( status != LORAMAC_STATUS_OK )
     {
         if( ( status == LORAMAC_STATUS_DUTYCYCLE_RESTRICTED ) && 
@@ -2023,15 +2026,18 @@ static LoRaMacStatus_t ScheduleTx( bool allowDelayedTx )
             {// Send later - prepare timer
                 LoRaMacState |= LORAMAC_TX_DELAYED;
                 TimerSetValue( &TxDelayedTimer, dutyCycleTimeOff );
+				printf("%s	%d\r\n",__FILE__,__LINE__);
                 TimerStart( &TxDelayedTimer );
             }
             return LORAMAC_STATUS_OK;
         }
         else
         {// State where the MAC cannot send a frame
+			printf("%s	%d\r\n",__FILE__,__LINE__);
             return status;
         }
     }
+	printf("%s	%d\r\n",__FILE__,__LINE__);
 
     // Compute Rx1 windows parameters
     RegionComputeRxWindowParameters( LoRaMacRegion,
@@ -2061,9 +2067,10 @@ static LoRaMacStatus_t ScheduleTx( bool allowDelayedTx )
         RxWindow2Delay = LoRaMacParams.ReceiveDelay2 + RxWindow2Config.WindowOffset;
     }
 	printf("RxWindow1Delay	%d	RxWindow2Delay	%d\r\n",RxWindow1Delay,RxWindow2Delay);
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
 
     // Try to send now
+	printf("SendFrameOnChannel Channel	%d\r\n",Channel);
     return SendFrameOnChannel( Channel );
 }
 
@@ -2349,7 +2356,7 @@ LoRaMacStatus_t SendFrameOnChannel( uint8_t channel )
 
     // Send now
     Radio.Send( LoRaMacBuffer, LoRaMacBufferPktLen );
-	printf("%s	%d\r\n", __FILE__,__LINE__);
+	/********************/
     LoRaMacState |= LORAMAC_TX_RUNNING;
 
     return LORAMAC_STATUS_OK;
@@ -3256,7 +3263,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
             macHdr.Value = 0;
             macHdr.Bits.MType  = FRAME_TYPE_JOIN_REQ;
 			//printf("status = Send( &macHdr, 0, NULL\r\n");
-			printf("%s	%d\r\n", __FILE__,__LINE__); 
+			/********************/ 
             status = Send( &macHdr, 0, NULL, 0 );
             break;
         }

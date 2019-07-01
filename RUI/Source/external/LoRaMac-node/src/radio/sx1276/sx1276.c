@@ -1523,7 +1523,7 @@ void SX1276OnDio0Irq( void )
                 break;
             case MODEM_LORA:
                 {
-					printf("%s	%d\r\n", __FILE__,__LINE__);
+					/********************/
                     int8_t snr = 0;
 
                     // Clear Irq
@@ -1608,7 +1608,7 @@ void SX1276OnDio0Irq( void )
             }
             break;
         case RF_TX_RUNNING:
-			printf("%s	%d\r\n", __FILE__,__LINE__);
+			/********************/
             TimerStop( &TxTimeoutTimer );
             // TxDone interrupt
             switch( SX1276.Settings.Modem )

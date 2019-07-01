@@ -342,7 +342,7 @@ void RtcEnterLowPowerStopMode( void )
 {
     if( ( LowPowerDisableDuringTask == false ) && ( RtcTimerEventAllowsLowPower == true ) )
     {
-		printf("%s	%d\r\n", __FILE__,__LINE__);
+		/********************/
         BoardDeInitMcu( );
 
         // Disable the Power Voltage Detector
